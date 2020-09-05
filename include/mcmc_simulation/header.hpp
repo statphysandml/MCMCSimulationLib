@@ -14,7 +14,9 @@
 #include "markov_chain.hpp"
 #include "measure_policy.hpp"
 #include "simulation.hpp"
-#include "sampler.hpp"
+
+#include "sampler/gaussian_sampler.hpp"
+#include "sampler/uniform_sampler.hpp"
 
 using json = nlohmann::json;
 

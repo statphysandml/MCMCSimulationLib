@@ -7,13 +7,20 @@
 //using json = nlohmann::json;
 
 #include "param_helper/params.hpp"
+#include "measure_policy.hpp"
+
 
 class SystemBaseParameters : public Parameters {
 public:
     using Parameters::Parameters;
 
     void write_to_file(const std::string& root_dir) {
-        Parameters::write_to_file(root_dir, "systembase_params");
+        Parameters::write_to_file(root_dir, param_file_name());
+    }
+
+    static const std::string param_file_name()
+    {
+        return "systembase_params";
     }
 };
 
@@ -56,7 +63,30 @@ public:
         return systembase().at(i);
     }
 
+    std::vector<std::string> perform_measure()
+    {
+        std::vector<std::string> results;
+        for(auto const& element: measures) {
+            results.push_back(element->measure(systembase()));
+        }
+        return results;
+    }
+
+    std::vector<std::string> get_measure_names()
+    {
+        std::vector<std::string> results;
+        for(auto const& element: measures) {
+            results.push_back(element->name());
+        }
+        return results;
+    }
+
 //    virtual void save_config(int i) = 0;
+
+protected:
+    std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > measures;
+
+    void concat_measures(std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> >& measures_);
 
 private:
     Derived& systembase() {
@@ -67,5 +97,13 @@ private:
         return *static_cast<const Derived*>(this);
     }
 };
+
+template <typename Derived>
+void SystemBase<Derived>::concat_measures(
+        std::vector< std::unique_ptr<common_measures::MeasurePolicy< Derived>> >& measures_)
+{
+    std::move(begin(measures_), end(measures_), std::inserter(measures, end(measures)));
+}
+
 
 #endif

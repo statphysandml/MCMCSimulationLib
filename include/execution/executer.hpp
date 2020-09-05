@@ -5,17 +5,23 @@
 #ifndef MAIN_EXECUTER_HPP
 #define MAIN_EXECUTER_HPP
 
+#include <Python.h>
+
 #include <iostream>
 #include <map>
 #include <utility>
-
-#include <Python.h>
 
 #include "param_helper/params.hpp"
 #include "../mcmc_simulation/util/path_parameters.hpp"
 #include "../mcmc_simulation/simulation.hpp"
 
 #include "modes/expectation_value.hpp"
+
+
+std::string get_python_scripts_path();
+void initialize_python();
+void finalize_python();
+
 
 struct Executer
 {
@@ -93,6 +99,20 @@ struct Executer
                     SimulationParameters<SBP, ExpectationValueParameters> simparams = SimulationParameters<SBP, ExpectationValueParameters>::generate_simulation_from_file(path_parameters.get_rel_config_path(), path_parameters.mode_type);
                     Simulation<SBP, ExpectationValueParameters> sim(simparams);
                     sim.run();
+
+                    FILE* file;
+                    auto args = prepare_python_script("expectation_value");
+                    PySys_SetArgv(args.first, args.second);
+                    file = fopen((get_python_scripts_path() + "/modes/expectation_value.py").c_str(), "r");
+                    // file = fopen("./../python_scripts/modes/expectation_value.py","r");
+                    // file = fopen("expectation_value.py","r");
+                    PyRun_SimpleFile(file, "expectation_value.py");
+                    fclose(file);
+                    auto cwd = gcp();
+                    PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+
+                    // PyRun_SimpleString("os.chdir('cu_work_dir')");
+                    break;
 /*                    VisualizationParameters visualization_parameters(config_file, path_parameters);
                     exec_visualization(visualization_parameters, dir); */
                 }
@@ -107,15 +127,7 @@ struct Executer
 
                 /* SimulationParameters<SystemBaseParams, ExpectationValueParameters> simparams(filename, dir, mode_name);
                 Simulation<SystemBaseParams, ExpectationValueParameters> sim(simparams);
-                sim.single_run();
-
-                FILE* file;
-                auto args = prepare_python_script("expectation_value");
-                PySys_SetArgv(args.first, args.second);
-                file = fopen("./../python_scripts/modes/expectation_value.py","r");
-                PyRun_SimpleFile(file, "expectation_value.py");
-                fclose(file);
-                break; */
+                sim.single_run(); */
             }
             case correlation_time:
             {
@@ -149,13 +161,19 @@ struct Executer
 
     std::pair<int, wchar_t**> prepare_python_script(std::string python_file)
     {
-        int argc = 4;
-        const char * argv[4];
+        int argc = 2;
+        const char * argv[2];
 
         argv[0] = python_file.c_str();
-        /* argv[1] = filename.c_str();
-        argv[2] = dir.c_str();
-        argv[3] = root_dir.c_str(); */
+        argv[1] = path_parameters.files_dir.c_str();
+        PyRun_SimpleString(("import os; os.chdir('" + gcp() + path_parameters.sim_root_dir + "')").c_str());
+
+        // argv[2] = path_parameters.sim_root_dir.c_str(); -> go to current sim_root_dir
+        /* if(path_parameters.rel_path)sdf
+            argv[3] = "True";
+        else
+            argv[3] = "False"; */
+
         auto** _argv = (wchar_t**) PyMem_Malloc(sizeof(wchar_t*)*argc);
         for (int i=0; i<argc; i++) {
             wchar_t* arg = Py_DecodeLocale(argv[i], NULL);
@@ -182,7 +200,7 @@ void run_from_file(int argc, char **argv)
 {
     std::string mode_type = std::string(argv[1]);
     std::string files_dir = std::string(argv[2]);
-    std::string sim_root_dir = "/data/";
+    std::string sim_root_dir = "/./";
     bool rel_path = true;
     if(argc > 3) {
         sim_root_dir = std::string(argv[3]);
@@ -197,5 +215,15 @@ void run_from_file(int argc, char **argv)
     Executer executer(path_parameters);
     executer.main<SBP>();
 }
+
+template <typename SBP>
+void execute(const std::string mode_type, const std::string files_dir, const std::string sim_root_dir="/./", const bool rel_path=true)
+{
+    PathParameters path_parameters(mode_type, files_dir, sim_root_dir, rel_path);
+    Executer executer(path_parameters);
+    executer.main<SBP>();
+}
+
+
 
 #endif //MAIN_EXECUTER_HPP

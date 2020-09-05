@@ -53,9 +53,7 @@ public:
 
     void run()
     {
-        uint num = mp.number_of_measurements + mp.start_measuring;
-
-        std::cout << "Number of sweeps: " << num * mp.number_of_measurements << std::endl;
+        std::cout << "Number of measurements: " << mp.number_of_measurements << " with " << mp.number_of_measurements * mp.measure_interval + mp.start_measuring << " sweeps" << std::endl;
 
         for(uint z = 0; z < mp.repetitions; z++) {
             //if(z%100 == 0)
@@ -68,15 +66,17 @@ public:
                 }
                 os << std::endl;
             }
-            for(uint i = 0; i < num; i++) {
-                if (i >= mp.start_measuring) {
-                    std::vector<std::string> measures = system_base->measure();
-                    for(auto const& element: measures) {
-                        os << element << "\t";
-                    }
-                    os << std::endl;
+
+            system_base->update(mp.start_measuring);
+
+            for(uint i = 0; i < mp.number_of_measurements; i++) {
+                std::vector<std::string> measures = system_base->measure();
+                for(auto const& element: measures) {
+                    os << element << "\t";
                 }
-                if ( i >= mp.start_measuring && (i - mp.start_measuring) % 1000 == 0)
+                os << std::endl;
+
+                if ( i % 1000 == 0)
                 {
                     std::cout << "########## i:" << i << /*"\n" << system_base <<*/ std::endl;
                 }

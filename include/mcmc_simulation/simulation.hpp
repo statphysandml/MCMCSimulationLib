@@ -24,14 +24,14 @@ public:
      * and written if it does not yet exists */
 
     // Constructor for loading from params
-    explicit SimulationParameters(const json params_, const std::string& mode_) : Parameters(params_), mode(mode_)
+    explicit SimulationParameters(const json params_, const std::string& mode_, const bool traceable_=true) : Parameters(params_), mode(mode_), traceable(traceable_)
     {
         // measure_interval = get_value_by_key("measure_interval");
 
         // *** SIMULATION PARAMETERS ***
         rel_config_path = get_value_by_key<std::string>("rel_config_path");
-        if(rel_config_path == "None")
-            traceable = false;
+        /* if(rel_config_path == "None")
+            traceable = false; */
         rel_data_path = get_value_by_key<std::string>("rel_data_path");
 
         // Optionally
@@ -49,6 +49,14 @@ public:
             std::cout << "Create root directory" << std::endl;
             boost::filesystem::create_directories(gcp() + rel_data_path);
         }
+        else
+        {
+            std::cout << "Clear data directory" << std::endl;
+            boost::filesystem::path path_to_remove(gcp() + rel_data_path);
+            for (boost::filesystem::directory_iterator end_dir_it, it(path_to_remove); it!=end_dir_it; ++it) {
+                boost::filesystem::remove_all(it->path());
+            }
+        }
 
         // Create folder in config directory if not present and if simulation should be traceable
         if(traceable and !boost::filesystem::is_directory(gcp() + rel_config_path))
@@ -59,18 +67,23 @@ public:
 
         // *** SYSTEM BASE PARAMETERS *** (default, from file, from json object)
         systembase_params = std::make_unique<SBP>(
-                generate_parameter_class_json<SimulationParameters<SBP, EP>, SBP> (*this, "systembase", rel_config_path),
+                generate_parameter_class_json<SimulationParameters<SBP, EP>, SBP> (*this, systembase_params->param_file_name(), rel_config_path),
                         rel_config_path);
 
         // *** EXECUTION PARAMETERS ***
-        // Load execution parameters from params object
+        // Load execution parameters from params object -> enables to use
         std::string execution_params_path = get_value_by_key<std::string>("execution_params_path", rel_config_path);
-        if(!boost::filesystem::is_regular_file(gcp() + execution_params_path + "/" + mode + "_params.json")) {
-            execution_params = std::make_unique<EP>(get_value_by_key<json>("execution"));
-            delete_entry("execution");
+        if(haskey("execution_params")) {// !boost::filesystem::is_regular_file(gcp() + execution_params_path + "/" + mode + "_params.json")) {
+            execution_params = std::make_unique<EP>(get_value_by_key<json>("execution_params"));
+            delete_entry("execution_params");
             if(traceable)
                 execution_params->write_to_file(execution_params_path);
         }
+        // Load from params object
+        /* else if()
+        {
+
+        } */
         // Load execution parameters from file
         else {
             std::cout << "Load execution parameters from file based on given mode" << std::endl;
@@ -109,7 +122,7 @@ public:
             std::cout << "Generated all necessary simulation parameter config files for the computation of " + mode
                       << ". Run simulation in a console by running/rerunning" << std::endl;
             std::cout << "\n#############################################\n./{Executable} " << mode <<
-                      " " << rel_config_path << "\n#############################################\n" << std::endl;
+                      " " << rel_config_path.substr(9, rel_config_path.size() - 9) << "\n#############################################\n" << std::endl;
         }
     }
 
@@ -134,10 +147,11 @@ public:
                         {"rp_minimum", rp_minimum_},
                         {"rp_maximum", rp_maximum_},
                         {"rp_number", rp_number_},
-                        {"systembase", systembase_params_.get_json()},
-                        {"execution", execution_params_.get_json()}
+                        {systembase_params_.param_file_name(), systembase_params_.get_json()},
+                        {"execution_params", execution_params_.get_json()}
                 },
-                EP::name()
+                EP::name(),
+                false
         );
     }
 
@@ -163,11 +177,13 @@ public:
                         {"rp_minimum", rp_minimum_},
                         {"rp_maximum", rp_maximum_},
                         {"rp_number", rp_number_},
-                        {"systembase", systembase_params_.get_json()},
-                        {"execution", execution_params_.get_json()}
+                        {systembase_params_.param_file_name(), systembase_params_.get_json()},
+                        {"execution_params", execution_params_.get_json()}
                 },
                 EP::name()
         );
+
+        // ToDo: Is it better to remove systembase and execution afters for this case - for consistency with a pure run from file?
     }
 
     // Constructor that uses existing mode parameters and only refers to generally set simulation parameters
@@ -192,28 +208,34 @@ public:
                         {"rp_maximum", rp_maximum_},
                         {"rp_number", rp_number_}
                 },
-                mode_
+                mode_,
+                true
         );
     }
 
     // Constructor for loading from file
     static SimulationParameters generate_simulation_from_file(const std::string& rel_config_path_, const std::string& mode_)
     {
-        auto params_ = Parameters::read_parameter_file(rel_config_path_, "sim_params");
-        return SimulationParameters(params_, mode_);
+        auto params_ = Parameters::read_parameter_file(rel_config_path_, param_file_name());
+        return SimulationParameters(params_, mode_, false);
     }
 
-    void write_to_file() const {
-        Parameters::write_to_file(rel_config_path, "sim_params");
-        std::string systembase_params_path = get_value_by_key<std::string>("systembase_params_path", rel_config_path);
+    void write_to_file() {
+        json systembase_params_ = systembase_params->get_json();
+        delete_entry(systembase_params->param_file_name());
+        std::string systembase_params_path = get_value_by_key<std::string>(systembase_params->param_file_name() + "_path", rel_config_path);
         systembase_params->write_to_file(systembase_params_path);
+
+        Parameters::write_to_file(rel_config_path, param_file_name());
+        add_entry(systembase_params->param_file_name(), systembase_params_);
+
     }
 
     Parameters build_expanded_raw_parameters()
     {
         Parameters parameters = Parameters::create_by_params(params);
-        parameters.add_entry("systembase", systembase_params->build_expanded_raw_parameters().get_json());
-        parameters.add_entry("execution", execution_params->build_expanded_raw_parameters().get_json());
+        parameters.add_entry(systembase_params->param_file_name(), systembase_params->build_expanded_raw_parameters().get_json());
+        parameters.add_entry("execution_params", execution_params->build_expanded_raw_parameters().get_json());
         return parameters;
     }
 
@@ -225,7 +247,12 @@ public:
         auto expanded_parameters = build_expanded_raw_parameters().get_json();
         json new_system_params = update_running_parameter(
                 expanded_parameters, running_parameter_path, new_running_parameter);
-        systembase_params = std::make_unique<SBP>(new_system_params["systembase"], rel_config_path);
+        systembase_params = std::make_unique<SBP>(new_system_params[systembase_params->param_file_name()], rel_config_path);
+    }
+
+    static const std::string param_file_name()
+    {
+        return "sim_params";
     }
 
 private:
@@ -248,7 +275,7 @@ private:
     std::unique_ptr<MarkovChainParameters> markovchain_params;
 
     // bool from_file = false;
-    bool traceable = true;
+    const bool traceable;
 };
 
 

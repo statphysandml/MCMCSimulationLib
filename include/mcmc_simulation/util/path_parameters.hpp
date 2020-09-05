@@ -11,7 +11,7 @@ struct PathParameters
 {
     PathParameters(const std::string mode_type_,
                    const std::string files_dir_,
-                   const std::string sim_root_dir_="/data/",
+                   const std::string sim_root_dir_="/./",
                    const bool rel_path_=true) :
             mode_type(mode_type_), files_dir(files_dir_), sim_root_dir(sim_root_dir_), rel_path(rel_path_)
     {
@@ -20,25 +20,25 @@ struct PathParameters
 
     std::string get_rel_config_path() const
     {
-        if(!boost::filesystem::is_directory(gcp() + "/configs/" + files_dir)) {
+        if(!boost::filesystem::is_directory(gcp() + sim_root_dir + "/configs/" + files_dir)) {
             std::cout << "Create " << files_dir << " directory in configs/ for config files" << std::endl;
-            boost::filesystem::create_directories(gcp() + "/configs/" + files_dir);
+            boost::filesystem::create_directories(gcp() + sim_root_dir + "/configs/" + files_dir);
         }
         return "/configs/" + files_dir + "/";
     }
 
     std::string get_rel_data_path() const
     {
-        if(!boost::filesystem::is_directory(gcp() + "/data/" + files_dir)) {
+        if(!boost::filesystem::is_directory(gcp() + sim_root_dir +  + "/data/" + files_dir)) {
             std::cout << "Create " << files_dir << " directory in data/ for config files" << std::endl;
-            boost::filesystem::create_directories(gcp() + "/data/" + files_dir);
+            boost::filesystem::create_directories(gcp() + sim_root_dir +  "/data/" + files_dir);
         }
         return "/data/" + files_dir + "/";
     }
 
     const std::string mode_type;
     const std::string files_dir;
-    const std::string sim_root_dir; // ToDo: Currently not used!
+    const std::string sim_root_dir; // ToDo: Currently not used! -> might be set per default on gcp() and optionally on some other dir where a configs and a data directory are generated
     const bool rel_path;
     bool written_to_file;
 };

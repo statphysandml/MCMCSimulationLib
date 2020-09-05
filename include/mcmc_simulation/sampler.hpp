@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-// #include "simulation_lib/random.hpp"
+#include "util/random.hpp"
 
 struct Sampler
 {

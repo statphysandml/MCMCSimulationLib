@@ -14,7 +14,7 @@
 - Remove inheritance and introduce static_asserts -> does this work properly if function is not used actively?
 - Use enable_if or something similar... */
 
-struct GaussianSampler //  : Sampler
+struct GaussianSampler : Sampler
 {
     GaussianSampler(const double eps_) : eps(eps_)
     {
