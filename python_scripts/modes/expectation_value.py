@@ -5,16 +5,10 @@ import numpy as np
 import pandas as pd
 
 
-from pystatplottools.ppd_loading.loading import ConfigurationLoader, load_json
 from pystatplottools.ppd_distributions.expectation_value import ExpectationValue
 
 
-def load_json_params(path, param_name):
-    params = load_json(path + "/" + param_name + ".json")
-    for key in list(params.keys()):
-        if "params_path" in key and key != "execution_params_path":
-            params[key[:-5]] = load_json_params(os.getcwd() + "/" + params[key] + "/", key[:-5])
-    return params
+from util.json import load_configs, load_data
 
 
 def compute_measure_over_config(data, measure_name):
@@ -82,20 +76,8 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
     # Load configs and data
     cwd = os.getcwd()
 
-    config_path = os.getcwd() + "/configs/" + files_dir
-    data_path = os.getcwd() + "/data/" + files_dir
-
-    sim_params = load_json_params(config_path, "sim_params")
-    execution_params = load_json_params(config_path, "expectation_value_params")
-
-    if sim_params["running_parameter"] == 'None':
-        running_parameter = "default"
-    else:
-        running_parameter = sim_params["running_parameter"]
-
-    data, filenames = ConfigurationLoader.load_all_configurations(
-        path=data_path,
-        running_parameter=running_parameter)
+    sim_params, execution_params, running_parameter = load_configs(files_dir=files_dir, mode="expectation_value")
+    data, filenames = load_data(files_dir=files_dir, running_parameter=running_parameter, identifier="expectation_value")
 
     # Compute measures based on the given configurations that have not been computed during the simulation
     post_measures = execution_params["post_measures"]
@@ -158,10 +140,7 @@ if __name__ == '__main__':
         print("FilesDir:", sys.argv[1])  # , "SimRootDir:", sys.argv[2], "RelPath:", sys.argv[3])
         expectation_value(sys.argv[1])  # , sys.argv[2], sys.argv[3])
     else:
-        os.chdir("/home/lukas/LatticeModelImplementations/main_project")
-        # expectation_value("IsingModel")  # , ".", True)
-        # expectation_value("XYModelMetropolis")  # , ".", True)
-        expectation_value("XYModelHMC")  # , ".", True)
-        # expectation_value("PolySiteModelComplexLangevin")  # , ".", True)
-        # expectation_value("PolySiteModelCobridMonteCarlo")
-        # load_expectation_value_results("XYModel")
+        # os.chdir("/home/lukas/LatticeModelImplementations/examples")
+        os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
+        # expectation_value("IsingModelMetropolis")  # , ".", True)
+        expectation_value("DetailedBalanceAccuracyComplexPolynomialModelComplexLangevinD", ".", True)

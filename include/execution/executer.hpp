@@ -16,6 +16,9 @@
 #include "../mcmc_simulation/simulation.hpp"
 
 #include "modes/expectation_value.hpp"
+#include "modes/correlation_time.hpp"
+#include "modes/equilibriate.hpp"
+#include "modes/plot_site_distribution.hpp"
 
 
 std::string get_python_scripts_path();
@@ -25,12 +28,10 @@ void finalize_python();
 
 struct Executer
 {
-    enum ExecutionMode {expectation_value, correlation_time, plot_site_distribution};
+    enum ExecutionMode {expectation_value, correlation_time, equilibriate, plot_site_distribution};
     static const std::map< std::string, ExecutionMode> mode_resolver;
 
     Executer(const PathParameters path_parameters_) : path_parameters(path_parameters_)
-    /* const std::string mode_name_, const std::string filename_, const std::string dir_, const std::string root_dir_, const bool rel_path_ = true) :
-    mode_name(mode_name_), filename(filename_), dir(dir_), root_dir(root_dir_), rel_path(rel_path_), mode(mode_resolver.at(mode_name)) */
     {}
 
     static std::string mode_to_string (ExecutionMode mode_) {
@@ -39,6 +40,8 @@ struct Executer
                 return "expectation_value";
             case correlation_time:
                 return "correlation_time";
+            case equilibriate:
+                return "equilibriate";
             case plot_site_distribution:
                 return "plot_site_distribution";
             default:
@@ -46,8 +49,8 @@ struct Executer
         }
     }
 
-    /* static void exec_visualization(const VisualizationParameters& visualization_parameters, std::string dir); */
-    static void prep_exec_expectation_value(const PathParameters path_parameters);
+    template<typename ExecutionParams, typename SBP>
+    static void prep_execution(const PathParameters path_parameters);
 
     template <typename SBP>
     void main()
@@ -88,11 +91,7 @@ struct Executer
             case expectation_value:
             {
                 if(in_preparation) {
-                    prep_exec_expectation_value(path_parameters);
-                    SimulationParameters<SBP, ExpectationValueParameters> simparams = SimulationParameters<SBP, ExpectationValueParameters>::generate_simulation_from_mode(
-                            path_parameters.get_rel_config_path(),
-                            path_parameters.get_rel_data_path(),
-                            path_parameters.mode_type);
+                    prep_execution<ExpectationValueParameters, SBP>(path_parameters);
                 }
                 else
                 {
@@ -112,9 +111,6 @@ struct Executer
                     PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                     // PyRun_SimpleString("os.chdir('cu_work_dir')");
-                    break;
-/*                    VisualizationParameters visualization_parameters(config_file, path_parameters);
-                    exec_visualization(visualization_parameters, dir); */
                 }
                 break;
 
@@ -131,27 +127,74 @@ struct Executer
             }
             case correlation_time:
             {
-                /* SimulationParameters<SystemBaseParams, CorrelationTimeParameters> simparams(filename, dir, mode_name);
-                Simulation<SystemBaseParams, CorrelationTimeParameters> sim(simparams);
-                sim.single_run();
+                if(in_preparation) {
+                    prep_execution<CorrelationTimeParameters, SBP>(path_parameters);
+                }
+                else
+                {
+                    SimulationParameters<SBP, CorrelationTimeParameters> simparams = SimulationParameters<SBP, CorrelationTimeParameters>::generate_simulation_from_file(path_parameters.get_rel_config_path(), path_parameters.mode_type);
+                    Simulation<SBP, CorrelationTimeParameters> sim(simparams);
+                    sim.run();
 
-                FILE* file;
-                auto args = prepare_python_script("correlation_time");
-                PySys_SetArgv(args.first, args.second);
-                file = fopen("./../python_scripts/modes/correlation_time.py","r");
-                PyRun_SimpleFile(file, "correlation_time.py");
-                fclose(file);
-                break; */
+                    FILE* file;
+                    auto args = prepare_python_script("correlation_time");
+                    PySys_SetArgv(args.first, args.second);
+                    file = fopen((get_python_scripts_path() + "/modes/correlation_time.py").c_str(), "r");
+                    // file = fopen("./../python_scripts/modes/expectation_value.py","r");
+                    // file = fopen("expectation_value.py","r");
+                    PyRun_SimpleFile(file, "correlation_time.py");
+                    fclose(file);
+                    auto cwd = gcp();
+                    PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+
+                    // PyRun_SimpleString("os.chdir('cu_work_dir')");
+                    break;
+                }
             }
+            case equilibriate:
+            {
+                if(in_preparation) {
+                    prep_execution<EquilibriateParameters, SBP>(path_parameters);
+                }
+                else
+                {
+                    SimulationParameters<SBP, EquilibriateParameters> simparams = SimulationParameters<SBP, EquilibriateParameters>::generate_simulation_from_file(path_parameters.get_rel_config_path(), path_parameters.mode_type);
+                    Simulation<SBP, EquilibriateParameters> sim(simparams);
+                    sim.run();
+
+                    FILE* file;
+                    auto args = prepare_python_script("equilibriate");
+                    PySys_SetArgv(args.first, args.second);
+                    file = fopen((get_python_scripts_path() + "/modes/equilibriate.py").c_str(), "r");
+                    // file = fopen("./../python_scripts/modes/expectation_value.py","r");
+                    // file = fopen("expectation_value.py","r");
+                    PyRun_SimpleFile(file, "equilibriate.py");
+                    fclose(file);
+                    auto cwd = gcp();
+                    PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+
+                    // PyRun_SimpleString("os.chdir('cu_work_dir')");
+                    break;
+                }
+            };
             case plot_site_distribution:
             {
-                /* FILE* file;
-                auto args = prepare_python_script("plot_site_distribution");
-                PySys_SetArgv(args.first, args.second);
-                file = fopen("./../python_scripts/modes/plot_site_distribution.py","r");
-                PyRun_SimpleFile(file, "plot_site_distribution.py");
-                fclose(file);
-                break; */
+                if(in_preparation) {
+                    prep_execution<PlotSiteDistributionParameters, SBP>(path_parameters);
+                }
+                else
+                {
+                    FILE* file;
+                    auto args = prepare_python_script("plot_site_distribution");
+                    PySys_SetArgv(args.first, args.second);
+                    file = fopen((get_python_scripts_path() + "/modes/plot_site_distribution.py").c_str(), "r");
+                    PyRun_SimpleFile(file, "plot_site_distribution.py");
+                    fclose(file);
+                    auto cwd = gcp();
+                    PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+
+                    break;
+                }
             }
             default:
                 std::cout << "mode not known..." << std::endl;
@@ -182,13 +225,6 @@ struct Executer
 
         return std::pair<int, wchar_t**> {argc, _argv};
     }
-
-    /* const std::string mode_name;
-    const std::string filename;
-    const std::string dir;
-    const std::string root_dir;
-    const bool rel_path;
-    const ExecutionMode mode; */
     const PathParameters path_parameters;
 };
 
@@ -224,6 +260,17 @@ void execute(const std::string mode_type, const std::string files_dir, const std
     executer.main<SBP>();
 }
 
+template<typename ExecutionParams, typename SBP>
+void Executer::prep_execution(const PathParameters path_parameters)
+{
+    ExecutionParams expectation_value_parameters(json {});
+    expectation_value_parameters.write_to_file(path_parameters.get_rel_config_path());
+
+    SimulationParameters<SBP, ExecutionParams> simparams = SimulationParameters<SBP, ExecutionParams>::generate_simulation_from_mode(
+            path_parameters.get_rel_config_path(),
+            path_parameters.get_rel_data_path(),
+            path_parameters.mode_type);
+}
 
 
 #endif //MAIN_EXECUTER_HPP

@@ -5,8 +5,11 @@
 #ifndef MAIN_CORRELATION_TIME_HPP
 #define MAIN_CORRELATION_TIME_HPP
 
-#include "../simulation_lib/parameters.hpp"
-#include "../simulation_lib/json.hpp"
+#include "param_helper/params.hpp"
+#include "param_helper/json.hpp"
+
+#include "../../mcmc_simulation/markov_chain.hpp"
+
 using json = nlohmann::json;
 
 class CorrelationTimeParameters : public Parameters {
@@ -31,15 +34,33 @@ public:
                   {"measures", measures_}})
     {}
 
-    void write_to_file(const std::string& root_dir, const std::string& filename) {
-        Parameters::write_to_file(root_dir, "correlation_time_params_" + filename);
+    /* CorrelationTimeParameters(
+            const std::string rel_config_path_
+            uint minimum_sample_size_,
+            uint start_measuring_,
+            json measures_={}
+    ) : CorrelationTimeParameters(
+            json {{"minimum_sample_size", minimum_sample_size_},
+                  {"maximum_correlation_time", maximum_correlation_time_},
+                  {"start_measuring", start_measuring_},
+                  {"measures", measures_}})
+    {} */
+
+    void write_to_file(const std::string& root_dir) {
+        Parameters::write_to_file(root_dir, "correlation_time_params");
+    }
+
+    Parameters build_expanded_raw_parameters() const
+    {
+        Parameters parameters(params);
+        return parameters;
     }
 
     static std::string name() {
         return "correlation_time";
     }
 
-    std::unique_ptr<MarkovChainParameters> generate_markovchain_params()
+    std::unique_ptr<MarkovChainParameters> generate_markovchain_params(std::string running_parameter="None", double rp=0)
     {
         return std::make_unique<MarkovChainParameters>(
                 1,

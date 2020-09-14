@@ -9,20 +9,17 @@
 #include "markov_chain.hpp"
 
 #include "param_helper/json.hpp"
+#include "param_helper/fileos.hpp"
+
 using json = nlohmann::json;
 
 json::iterator get_running_parameter_iterator(json& params, std::vector<std::string> running_parameter_path);
 
 json update_running_parameter(const json params, std::vector<std::string> running_parameter_path, double new_running_parameter);
 
-// TODO: Enable that the entire simulation file can be viewed optionally - a function might be written for that
-
 template <typename SBP, typename EP>
 class SimulationParameters : public Parameters {
 public:
-    /* In general it holds that an additional params file is always used if present,
-     * and written if it does not yet exists */
-
     // Constructor for loading from params
     explicit SimulationParameters(const json params_, const std::string& mode_, const bool traceable_=true) : Parameters(params_), mode(mode_), traceable(traceable_)
     {
@@ -51,11 +48,11 @@ public:
         }
         else
         {
-            std::cout << "Clear data directory" << std::endl;
+            /* std::cout << "Clear data directory" << std::endl;
             boost::filesystem::path path_to_remove(gcp() + rel_data_path);
             for (boost::filesystem::directory_iterator end_dir_it, it(path_to_remove); it!=end_dir_it; ++it) {
                 boost::filesystem::remove_all(it->path());
-            }
+            } */
         }
 
         // Create folder in config directory if not present and if simulation should be traceable
@@ -96,9 +93,6 @@ public:
         auto &execution_params_measures = execution_params->get_measures();
         if(!execution_params_measures.empty())
             systembase_params->update_measures(execution_params_measures);
-
-        // *** MARKOV CHAIN PARAMETERS ***
-        markovchain_params = execution_params->generate_markovchain_params();
 
         // *** RUNNING PARAMETER ***
         if(running_parameter != "None")
@@ -220,6 +214,17 @@ public:
         return SimulationParameters(params_, mode_, false);
     }
 
+    void initialize_simulation_parameters(const double rp=0)
+    {
+        if(running_parameter != "None") {
+            markovchain_params = execution_params->generate_markovchain_params(running_parameter, rp);
+            update_system_params_by_new_running_parameter(rp);
+        }
+        else {
+            markovchain_params = execution_params->generate_markovchain_params();
+        }
+    }
+
     void write_to_file() {
         json systembase_params_ = systembase_params->get_json();
         delete_entry(systembase_params->param_file_name());
@@ -287,39 +292,23 @@ public:
 
     void run() {
         if(mp.running_parameter == "None")
-            single_run();
+            single_run(mp.mode);
         else
         {
             for (double rp = mp.rp_minimum; rp <= mp.rp_maximum; rp += (mp.rp_maximum - mp.rp_minimum) / mp.rp_number) {
-                run_single_running_parameter(rp);
+                single_run(mp.mode + "_" + mp.running_parameter + "=" + std::to_string(rp), rp);
             }
         }
     }
 
-    void run_single_running_parameter(const double rp) {
-        mp.update_system_params_by_new_running_parameter(rp);
+    void single_run(std::string filename, const double rp=0) {
+        mp.initialize_simulation_parameters(rp);
 
-        write_setting_file(mp.rel_data_path, mp.mode + "_" + mp.running_parameter + "=" + std::to_string(rp));
+        write_setting_file(mp.rel_data_path, filename);
 
-        std::ofstream os;
-        os.open(gcp() + mp.rel_data_path + "/" + mp.mode + "_" + mp.running_parameter + "=" + std::to_string(rp)  + ".dat");
-        // RAIIOFStream os (gcp() + "/data/" + mp.root_dir + "/" + mp.running_parameter + "=" + std::to_string(rp)  + ".dat");
-        MarkovChain<SBP> mc(*mp.markovchain_params, *mp.systembase_params, os); //os.get());
+        Fileos os (gcp() + mp.rel_data_path + "/" + filename  + ".dat");
+        MarkovChain<SBP> mc(*mp.markovchain_params, *mp.systembase_params, os.get());
         mc.run();
-
-        os.close();
-    }
-
-    void single_run() {
-        write_setting_file(mp.rel_data_path, mp.mode);
-
-        std::ofstream os;
-        os.open(gcp() + mp.rel_data_path + "/" + mp.mode + ".dat");
-
-        MarkovChain<SBP> mc(*mp.markovchain_params, *mp.systembase_params, os);
-        mc.run();
-
-        os.close();
     }
 
 private:

@@ -74,14 +74,15 @@ public:
                 for(auto const& element: measures) {
                     os << element << "\t";
                 }
-                os << std::endl;
+                os << "\n";
 
                 if ( i % 1000 == 0)
                 {
-                    std::cout << "########## i:" << i << /*"\n" << system_base <<*/ std::endl;
+                    std::cout << "########## i:" << i << /*"\n" << system_base <<*/ "\n";
                 }
                 system_base->update(mp.measure_interval);
             }
+            std::cout << std::endl;
         }
     }
 private:

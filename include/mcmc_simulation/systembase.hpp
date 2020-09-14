@@ -63,6 +63,16 @@ public:
         return systembase().at(i);
     }
 
+    const auto operator()() const
+    {
+        return systembase().get_system_representation();
+    }
+
+    auto& operator()()
+    {
+        return systembase().get_system_representation();
+    }
+
     std::vector<std::string> perform_measure()
     {
         std::vector<std::string> results;
