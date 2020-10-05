@@ -7,6 +7,8 @@ import pandas as pd
 
 from pystatplottools.ppd_distributions.expectation_value import ExpectationValue
 
+sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/")
+sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/util/")
 
 from util.json import load_configs, load_data
 
@@ -102,7 +104,7 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
                                  exp_values=['mean', 'max', 'min', 'secondMoment', 'fourthMoment'])
     expectation_values = ep.expectation_values
 
-    if "n_means_bootstrap" in execution_params.keys():
+    if "n_means_bootstrap" in execution_params.keys() and execution_params["n_means_bootstrap"] != 0:
         ep.compute_error_with_bootstrap(n_means_boostrap=execution_params["n_means_bootstrap"],
                                         number_of_measurements=execution_params["number_of_measurements"],
                                         columns=expectation_value_measures,
@@ -143,4 +145,4 @@ if __name__ == '__main__':
         # os.chdir("/home/lukas/LatticeModelImplementations/examples")
         os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
         # expectation_value("IsingModelMetropolis")  # , ".", True)
-        expectation_value("DetailedBalanceAccuracyComplexPolynomialModelComplexLangevinD", ".", True)
+        expectation_value("ExpectationValueComplexPolynomialModelCobridMonteCarloA", ".", True)

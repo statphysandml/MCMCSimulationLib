@@ -1,0 +1,17 @@
+//
+// Created by lukas on 28.09.20.
+//
+
+#include "../../../include/mcmc_simulation/sampler/gaussian_sampler.hpp"
+
+template<>
+std::complex<double> GaussianSampler::random_state()
+{
+    return {std::sqrt(2 * eps) * normal(gen), 0.1};
+}
+
+template<>
+std::complex<double> GaussianSampler::propose_state(std::complex<double> site)
+{
+    return site + std::complex<double>{std::sqrt(2 * eps) * normal(gen), 0.0};
+}

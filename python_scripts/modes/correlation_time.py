@@ -6,6 +6,8 @@ import sys
 import numpy as np
 import pandas as pd
 
+sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/")
+sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/util/")
 
 from util.json import load_configs, load_data
 

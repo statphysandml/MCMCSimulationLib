@@ -5,7 +5,6 @@
 #ifndef MAIN_HAT_FUNCTION_SAMPLER_HPP
 #define MAIN_HAT_FUNCTION_SAMPLER_HPP
 
-
 #include "../sampler.hpp"
 
 

@@ -15,7 +15,9 @@
 #include "measure_policy.hpp"
 #include "simulation.hpp"
 
+#include "sampler/dummy_sampler.hpp"
 #include "sampler/gaussian_sampler.hpp"
+#include "sampler/hat_function_sampler.hpp"
 #include "sampler/uniform_sampler.hpp"
 
 using json = nlohmann::json;
