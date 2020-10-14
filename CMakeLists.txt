@@ -4,11 +4,11 @@ project(MCMCSimulationLib)
 set(CMAKE_CXX_STANDARD 14)
 
 # Python
-set(PYTHON_LIBRARIES "/home/lukas/.miniconda3/envs/flowequation/lib/libpython3.7m.so")
-set(PYTHON_EXECUTABLE "/home/lukas/.miniconda3/envs/flowequation/bin/python3.7m")
-set(Python3_ROOT_DIR "/home/lukas/.miniconda3/envs/flowequation/")
-include_directories("/home/lukas/.miniconda3/envs/flowequation/include/python3.7m")
-find_package(PythonInterp 3 REQUIRED)
+set(PYTHON_LIBRARIES "/remote/lin34/kades/.conda/envs/pytorchlocal3/lib/libpython3.8m.so")
+set(PYTHON_EXECUTABLE "/remote/lin34/kades/.conda/envs/pytorchlocal3/bin/python3.8m")
+set(Python3_ROOT_DIR "/remote/lin34/kades/.conda/envs/pytorchlocal3/")
+include_directories("/remote/lin34/kades/.conda/envs/pytorchlocal3/include/python3.8m")
+# find_package(PythonInterp 3 REQUIRED) # Not working at the university
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(${PYTHON_INCLUDE_DIRS})
@@ -24,9 +24,9 @@ add_library(mcmcsimulationlib STATIC
         src/execution/executer.cpp)
 
         
-find_library(ParamHelper NAMES libparamhelper.a PATHS /home/lukas/ParamHelper/lib)
+find_library(ParamHelper NAMES libparamhelper.a PATHS /remote/lin34/kades/ParamHelper/lib)
 message("ParamHelper = ${ParamHelper}")
-include_directories(/home/lukas/ParamHelper/include/)
+include_directories(/remote/lin34/kades/ParamHelper/include/)
 target_link_libraries(mcmcsimulationlib ${PYTHON_LIBRARIES} ${ParamHelper})
 
 
