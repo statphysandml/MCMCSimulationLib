@@ -10,17 +10,13 @@ if [ -v path_to_boost ]; then
 cat >>../CMakeLists.txt <<EOL
 set(BOOST_ROOT "${path_to_boost}")
 EOL
-else
+fi
 cat >>../CMakeLists.txt <<EOL
 FIND_PACKAGE( Boost 1.67 REQUIRED COMPONENTS filesystem)
 if(Boost_FOUND)
-include_directories(\${Boost_INCLUDE_DIRS})
-message("Boost = \${Boost_INCLUDE_DIRS}")
+    include_directories(\${Boost_INCLUDE_DIRS})
+    message("Boost = \${Boost_INCLUDE_DIRS}")
 endif()
-EOL
-fi
-cat >>../CMakeLists.txt <<EOL
-
 
 # Python
 set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
@@ -46,16 +42,18 @@ add_library(mcmcsimulationlib STATIC
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
 include_directories(${path_to_param_helper}include/)
-target_link_libraries(mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper})
+target_link_libraries(mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper} \${Boost_LIBRARIES})
 
 
-# CMake instructions to test using the static lib
+# CMake instructions to test using the static lib - doesn't work so far
 
-SET( APP_EXE StaticTest )
+# SET( APP_EXE StaticTest )
 
-ADD_EXECUTABLE( \${APP_EXE}
-        src/main.cpp )
+# ADD_EXECUTABLE( \${APP_EXE}
+#         src/main.cpp )
 
-TARGET_LINK_LIBRARIES( \${APP_EXE}
-        mcmcsimulationlib)
-EOL
+# include_directories(\${Boost_INCLUDE_DIRS})
+        
+# TARGET_LINK_LIBRARIES( \${APP_EXE}
+#         mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper} \${Boost_LIBRARIES})
+# EOL
