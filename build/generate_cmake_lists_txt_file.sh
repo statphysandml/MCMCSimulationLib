@@ -9,6 +9,7 @@ EOL
 if [ -v path_to_boost ]; then
 cat >>../CMakeLists.txt <<EOL
 set(BOOST_ROOT "${path_to_boost}")
+FIND_PACKAGE( Boost REQUIRED COMPONENTS filesystem)
 EOL
 else
 cat >>../CMakeLists.txt <<EOL
@@ -46,7 +47,7 @@ add_library(mcmcsimulationlib STATIC
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
 include_directories(${path_to_param_helper}include/)
-target_link_libraries(mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper} \${Boost_LIBRARIES})
+target_link_libraries(mcmcsimulationlib \${ParamHelper} \${Boost_LIBRARIES} \${PYTHON_LIBRARIES})
 
 
 SET( APP_EXE StaticTest )
@@ -56,4 +57,5 @@ ADD_EXECUTABLE( \${APP_EXE}
         
 TARGET_LINK_LIBRARIES( \${APP_EXE}
         mcmcsimulationlib)
+
 EOL
