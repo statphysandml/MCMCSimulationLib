@@ -101,10 +101,12 @@ struct Executer
         std::string qsubfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
         std::string progoutfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename + ".txt";
         std::string progerrfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "error_run_" + filename + ".txt";
+        int res;
         if(Executer::cluster_mode == "on_cluster")
-            system(("qsub -o " + progoutfile + " -e " + progerrfile + " " + qsubfile).c_str()); // submit the process to queue
+            res = system(("qsub -o " + progoutfile + " -e " + progerrfile + " " + qsubfile).c_str()); // submit the process to queue
         else
-            system(("nice -n 17 bash " + qsubfile + " > " + progoutfile + " 2> " + progerrfile).c_str()); // execute processes on local system
+            res = system(("nice -n 17 bash " + qsubfile + " > " + progoutfile + " 2> " + progerrfile).c_str()); // execute processes on local system
+        std::cout << "System code " << res << std::endl;
     }
 
     void prepare_execution_on_gpu_cluster() {
