@@ -36,18 +36,18 @@ struct UniformSampler //  : public Sampler
 
     struct transformer_func
     {
-#ifdef THRUST
+/* #ifdef THRUST -> needs to be fixed
         __host__ __device__
-#endif
+#endif */
         double operator() (const double val)
         {
             return val;
         }
     };
 
-#ifdef THRUST
-    __host__ __device__
-#endif
+/* #ifdef THRUST -> needs to be fixed
+        __host__ __device__
+#endif */
     double jacobian(const double x)
     {
         return 1.0;

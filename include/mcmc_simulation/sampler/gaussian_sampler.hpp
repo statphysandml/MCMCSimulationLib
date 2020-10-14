@@ -52,18 +52,18 @@ struct GaussianSampler : Sampler
 
     struct transformer_func
     {
-#ifdef THRUST
+/* #ifdef THRUST -> needs to be fixed
         __host__ __device__
-#endif
+#endif */
         double operator() (const double val)
         {
             return std::log((1.0 + val) / (1.0 - val));
         }
     };
 
-#ifdef THRUST
+/* #ifdef THRUST -> needs to be fixed
     __host__ __device__
-#endif
+#endif */
     double jacobian(const double x)
     {
         return -2.0 / (std::pow(x, 2.0) - 1.0);

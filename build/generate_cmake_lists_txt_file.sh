@@ -56,4 +56,4 @@ target_link_libraries(mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper} \${
         
 # TARGET_LINK_LIBRARIES( \${APP_EXE}
 #         mcmcsimulationlib \${PYTHON_LIBRARIES} \${ParamHelper} \${Boost_LIBRARIES})
-# EOL
+EOL
