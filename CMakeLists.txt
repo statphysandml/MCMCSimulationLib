@@ -19,12 +19,17 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 # set(PYTHON_EXECUTABLE "/home/kades/.conda/envs/pytorchlocal3/bin/python3.7m")
 # find_package(PythonInterp 3 REQUIRED)
 
+SET(PythonLibraryPath "/home/lukas/.miniconda3/envs/flowequation/")
+message("Python library path = ${PythonLibraryPath}")
+
 message("Python executable = ${PYTHON_EXECUTABLE}")
 
 add_library(mcmcsimulationlib STATIC
         src/mcmc_simulation/simulation.cpp
         src/mcmc_simulation/util/random.cpp
         src/mcmc_simulation/sampler/gaussian_sampler.cpp
+        src/mcmc_simulation/sampler/hat_function_sampler.cpp
+        src/mcmc_simulation/sampler/uniform_sampler.cpp
         src/execution/executer.cpp)
 
 find_library(ParamHelper NAMES libparamhelper.a PATHS /home/lukas/ParamHelper/lib)

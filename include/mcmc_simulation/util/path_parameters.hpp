@@ -36,6 +36,15 @@ struct PathParameters
         return "/data/" + files_dir + "/";
     }
 
+    std::string get_rel_cpu_bash_script_path() const
+    {
+        if(!boost::filesystem::is_directory(gcp() + sim_root_dir +  + "/cpu_cluster_runs/" + files_dir)) {
+            std::cout << "Create " << files_dir << " directory in cpu_cluster_runs/ for bash scripts and output files of respective runs" << std::endl;
+            boost::filesystem::create_directories(gcp() + sim_root_dir +  "/cpu_cluster_runs/" + files_dir);
+        }
+        return "/cpu_cluster_runs/" + files_dir + "/";
+    }
+
     const std::string mode_type;
     const std::string files_dir;
     const std::string sim_root_dir; // ToDo: Currently not used! -> might be set per default on gcp() and optionally on some other dir where a configs and a data directory are generated

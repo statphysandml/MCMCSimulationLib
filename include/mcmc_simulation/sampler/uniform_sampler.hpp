@@ -23,16 +23,44 @@ struct UniformSampler //  : public Sampler
         return site + eps * uniform(gen);
     }
 
-    const static std::string name() {
-        return "UniformSampler";
-    }
-
     double get_eps() const
     {
         return eps;
     }
+
+    template<typename T>
+    std::pair<double, double> get_integration_bounds(const T& site) const
+    {
+        return std::pair<double, double> (site.real() - eps, site.real() + eps);
+    }
+
+    struct transformer_func
+    {
+#ifdef THRUST
+        __host__ __device__
+#endif
+        double operator() (const double val)
+        {
+            return val;
+        }
+    };
+
+#ifdef THRUST
+    __host__ __device__
+#endif
+    double jacobian(const double x)
+    {
+        return 1.0;
+    }
+
+    const static std::string name() {
+        return "UniformSampler";
+    }
+
     const double eps;
     std::uniform_real_distribution<double> uniform;
+
+    transformer_func transformer;
 };
 
 #endif //MAIN_UNIFORM_SAMPLER_HPP

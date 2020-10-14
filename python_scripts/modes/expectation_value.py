@@ -101,7 +101,7 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
         exp_value for exp_value in expectation_value_measures if exp_value not in black_expectation_value_list]
 
     ep.compute_expectation_value(columns=expectation_value_measures,
-                                 exp_values=['mean', 'max', 'min', 'secondMoment', 'fourthMoment'])
+                                 exp_values=['mean', 'max', 'min'])  # , 'secondMoment', 'fourthMoment'
     expectation_values = ep.expectation_values
 
     if "n_means_bootstrap" in execution_params.keys() and execution_params["n_means_bootstrap"] != 0:
@@ -113,7 +113,7 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
         bootstrap_errors = ep.bootstrap_errors
         results = pd.concat([expectation_values, bootstrap_errors], keys=["ExpectationValue", "BootstrapError"], axis=1)
     else:
-        results = pd.concat([expectation_values], keys=["ExpectationValue", "BootstrapError"], axis=1)
+        results = pd.concat([expectation_values], keys=["ExpectationValue",], axis=1)
 
     results = results.transpose()
     results.index.names = ["Measure", "Observable", "Statistics"]

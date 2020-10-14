@@ -44,12 +44,40 @@ struct GaussianSampler : Sampler
         return 1.0/sqrt(2 * M_PI) * std::exp(-1.0 * std::pow(site, 2)/2.0);
     }
 
+    template<typename T>
+    std::pair<double, double> get_integration_bounds(const T& site) const
+    {
+        return std::pair<double, double> (-1.0, 1.0);
+    }
+
+    struct transformer_func
+    {
+#ifdef THRUST
+        __host__ __device__
+#endif
+        double operator() (const double val)
+        {
+            return std::log((1.0 + val) / (1.0 - val));
+        }
+    };
+
+#ifdef THRUST
+    __host__ __device__
+#endif
+    double jacobian(const double x)
+    {
+        return -2.0 / (std::pow(x, 2.0) - 1.0);
+    }
+
+
     const static std::string name() {
         return "GaussianSampler";
     }
 
     const double eps;
     std::normal_distribution<double> normal;
+
+    transformer_func transformer;
 };
 
 #endif //MAIN_GAUSSIAN_SAMPLER_HPP
