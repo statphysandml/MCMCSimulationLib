@@ -76,8 +76,8 @@ struct Executer
         Fileos fileos (gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh");
         auto& os = fileos.get();
         os << "#!/bin/bash\n";
-        os << "#PBS -l nodes=1:ppn=1:medium\n";
-        os << "#PBS -q medium\n";
+        os << "#PBS -l nodes=1:ppn=1:medium_buster\n";
+        os << "#PBS -q medium_buster\n";
         os << "#PBS -l nice=19\n";
         os << "#PBS -l mem=2gb\n";
         os << "#PBS -l vmem=2gb\n";
