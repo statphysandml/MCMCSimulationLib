@@ -4,6 +4,24 @@ project(MCMCSimulationLib)
 
 set(CMAKE_CXX_STANDARD 14)
 
+# Boost
+EOL
+if [ -v path_to_boost ]; then
+cat >>../CMakeLists.txt <<EOL
+set(BOOST_ROOT "${path_to_boost}")
+EOL
+else
+cat >>../CMakeLists.txt <<EOL
+FIND_PACKAGE( Boost 1.67 REQUIRED COMPONENTS filesystem)
+if(Boost_FOUND)
+include_directories(\${Boost_INCLUDE_DIRS})
+message("Boost = \${Boost_INCLUDE_DIRS}")
+endif()
+EOL
+fi
+cat >>../CMakeLists.txt <<EOL
+
+
 # Python
 set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
 set(PYTHON_EXECUTABLE "${path_to_python3}bin/python${python_version}m")
