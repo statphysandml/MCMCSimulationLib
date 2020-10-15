@@ -54,7 +54,7 @@ public:
 
     std::unique_ptr<MarkovChainParameters> generate_markovchain_params(std::string running_parameter="None", double rp=0)
     {
-        return std::make_unique<MarkovChainParameters>(1, 0, 0, 0);
+        return std::make_unique<MarkovChainParameters>(1, 0, 0, 0, "hot");
     }
 
     json& get_measures()

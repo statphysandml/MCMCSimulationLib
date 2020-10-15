@@ -111,7 +111,7 @@ public:
         uint equilibriation_time = start_measuring;
         if(equilibriate_rel_results_path != "None")
         {
-            auto equilibriation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "equilibriate_results");
+            auto equilibriation_time_results = Parameters::read_parameter_file(equilibriate_rel_results_path, "equilibriate_results");
             std::string rp_key;
             if(running_parameter == "None")
                 rp_key = "default";
@@ -125,7 +125,8 @@ public:
                 correlation_time,
                 number_of_measurements,
                 1,
-                equilibriation_time);
+                equilibriation_time,
+                "hot");
     }
 
     json& get_measures()

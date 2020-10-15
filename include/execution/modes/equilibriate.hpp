@@ -58,7 +58,8 @@ public:
                 1,
                 number_of_steps,
                 sample_size,
-                0);
+                0,
+                "alternating");
     }
 
     json& get_measures()

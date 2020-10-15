@@ -66,7 +66,8 @@ public:
                 1,
                 minimum_sample_size + maximum_correlation_time,
                 1,
-                start_measuring);
+                start_measuring,
+                "hot");
     }
 
     json& get_measures()

@@ -18,18 +18,21 @@ public:
         number_of_measurements = get_value_by_key<uint>("number_of_measurements");
         repetitions = get_value_by_key<uint>("repetitions");
         start_measuring = get_value_by_key<uint>("start_measuring");
+        starting_mode = get_value_by_key<std::string>("starting_mode", "hot");
     }
 
     MarkovChainParameters(
             uint measure_interval_,
             uint number_of_measurements_,
             uint repetitions_,
-            uint start_measuring_
+            uint start_measuring_,
+            std::string starting_mode_="hot"
     ) : MarkovChainParameters(
             json {{"measure_interval", measure_interval_},
                   {"number_of_measurements", number_of_measurements_},
                   {"repetitions", repetitions_},
-                  {"start_measuring", start_measuring_}})
+                  {"start_measuring", start_measuring_},
+                  {"starting_mode", starting_mode_}})
     {}
 
     void write_to_file(const std::string& root_dir) {
@@ -43,6 +46,7 @@ private:
     uint number_of_measurements;
     uint repetitions;
     uint start_measuring;
+    std::string starting_mode;
 };
 
 template < typename SBP >
@@ -55,10 +59,17 @@ public:
     {
         std::cout << "Number of measurements: " << mp.number_of_measurements << " with " << mp.number_of_measurements * mp.measure_interval + mp.start_measuring << " sweeps" << std::endl;
 
+        std::string starting_mode;
+        if(mp.starting_mode == "alternating")
+            starting_mode ="hot";
+        else
+            starting_mode = mp.starting_mode;
+
         for(uint z = 0; z < mp.repetitions; z++) {
             //if(z%100 == 0)
             //    std::cout << z*1.0/sim.rep << " " << std::flush;
             auto system_base = sbp.generate(); // Smart pointer
+            system_base->initialize(starting_mode);
             if(z == 0) {
                 std::vector<std::string> measure_names = system_base->measure_names();
                 for(auto const& element: measure_names) {
@@ -83,6 +94,14 @@ public:
                 system_base->update(mp.measure_interval);
             }
             std::cout << std::endl;
+
+            if(starting_mode == "alternating")
+            {
+                if(starting_mode == "hot")
+                    starting_mode = "cold";
+                else
+                    starting_mode = "hot";
+            }
         }
     }
 private:

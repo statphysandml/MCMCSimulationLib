@@ -33,6 +33,11 @@ public:
         systembase().update_step(measure_interval);
     }
 
+    void init(std::string starting_mode)
+    {
+        systembase().initialize(starting_mode);
+    }
+
     std::vector<std::string> measure()
     {
         return systembase().perform_measure();
