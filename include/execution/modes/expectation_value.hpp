@@ -24,7 +24,7 @@ public:
 
         measures = get_value_by_key<json>("measures", {});
         post_measures = get_value_by_key<json>("post_measures", {});
-        n_means_bootstrap = get_value_by_key<uint>("n_means_bootstrap", 0);
+        n_means_bootstrap = get_value_by_key<uint>("n_means_bootstrap", 200);
     }
 
     ExpectationValueParameters(
