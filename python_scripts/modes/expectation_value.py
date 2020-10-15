@@ -1,14 +1,14 @@
 import sys
 import os
 import copy
-import numpy as np
-import pandas as pd
-
-
-from pystatplottools.ppd_distributions.expectation_value import ExpectationValue
 
 sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/")
 sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/util/")
+
+from pystatplottools.ppd_distributions.expectation_value import ExpectationValue
+
+import numpy as np
+import pandas as pd
 
 from util.json import load_configs, load_data
 

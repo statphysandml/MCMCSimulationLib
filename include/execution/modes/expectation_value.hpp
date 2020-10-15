@@ -33,7 +33,7 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=0
+            uint n_means_bootstrap_=200
     ) : ExpectationValueParameters(
             json {{"measure_interval", measure_interval_},
                   {"number_of_measurements", number_of_measurements_},
@@ -49,10 +49,10 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=0
+            uint n_means_bootstrap_=200
     ) : ExpectationValueParameters(
             json {{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
-                  {"measure_interval", 0},
+                  {"measure_interval", 200},
                   {"number_of_measurements", number_of_measurements_},
                   {"start_measuring", start_measuring_},
                   {"measures", measures_},
@@ -67,11 +67,11 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=0
+            uint n_means_bootstrap_=200
     ) : ExpectationValueParameters(
             json {{"equilibriate_rel_results_path", equilibriate_rel_results_path_},
                   {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
-                  {"measure_interval", 0},
+                  {"measure_interval", 200},
                   {"number_of_measurements", number_of_measurements_},
                   {"start_measuring", start_measuring_},
                   {"measures", measures_},
