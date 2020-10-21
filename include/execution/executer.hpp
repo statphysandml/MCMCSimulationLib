@@ -79,8 +79,8 @@ struct Executer
         os << "#PBS -l nodes=1:ppn=1:medium_buster\n";
         os << "#PBS -q medium_buster\n";
         os << "#PBS -l nice=19\n";
-        os << "#PBS -l mem=2gb\n";
-        os << "#PBS -l vmem=2gb\n";
+        os << "#PBS -l mem=3gb\n";
+        os << "#PBS -l vmem=3gb\n";
         os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
         os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
