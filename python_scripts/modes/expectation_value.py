@@ -145,6 +145,6 @@ if __name__ == '__main__':
         expectation_value(sys.argv[1])  # , sys.argv[2], sys.argv[3])
     else:
         # os.chdir("/home/lukas/LatticeModelImplementations/examples")
-        os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
+        # os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
         # expectation_value("IsingModelMetropolis")  # , ".", True)
         expectation_value("ExpectationValueComplexPolynomialModelCobridMonteCarloA", ".", True)
