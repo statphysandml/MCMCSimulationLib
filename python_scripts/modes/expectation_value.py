@@ -2,8 +2,8 @@ import sys
 import os
 import copy
 
-sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/")
-sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/util/")
+# sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/")
+# sys.path.append("/home/lukas/MCMCSimulationLib/python_scripts/util/")
 
 from pystatplottools.ppd_distributions.expectation_value import ExpectationValue
 
@@ -129,13 +129,15 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
 
 
 def load_expectation_value_results(files_dir):
-    results = pd.read_json(os.getcwd() + "/results/" + files_dir + "/expectation_value_results.json")
-    results = results.transpose()
-    results = results.set_index(["Measure", "Observable", "Statistics"])
-    # results.index.names = ["Measure", "Observable", "Statistics"]
-    results = results.transpose()
-    return results
-
+	 if os.path.exists(os.getcwd() + "/results/" + files_dir + "/expectation_value_results.json"):
+	    results = pd.read_json(os.getcwd() + "/results/" + files_dir + "/expectation_value_results.json")
+	    results = results.transpose()
+	    results = results.set_index(["Measure", "Observable", "Statistics"])
+	    # results.index.names = ["Measure", "Observable", "Statistics"]
+	    results = results.transpose()
+	    return results
+	 else:
+	     return None
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
