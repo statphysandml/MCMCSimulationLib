@@ -52,7 +52,7 @@ public:
             uint n_means_bootstrap_=200
     ) : ExpectationValueParameters(
             json {{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
-                  {"measure_interval", 200},
+                  {"measure_interval", 0},
                   {"number_of_measurements", number_of_measurements_},
                   {"start_measuring", start_measuring_},
                   {"measures", measures_},
@@ -71,7 +71,7 @@ public:
     ) : ExpectationValueParameters(
             json {{"equilibriate_rel_results_path", equilibriate_rel_results_path_},
                   {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
-                  {"measure_interval", 200},
+                  {"measure_interval", 0},
                   {"number_of_measurements", number_of_measurements_},
                   {"start_measuring", start_measuring_},
                   {"measures", measures_},
@@ -95,7 +95,7 @@ public:
 
     std::unique_ptr<MarkovChainParameters> generate_markovchain_params(std::string running_parameter="None", double rp=0)
     {
-        uint correlation_time = measure_interval;
+        uint correlation_time = measure_interval; // default
         if(correlation_time_rel_results_path != "None")
         {
             auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "correlation_time_results");
