@@ -164,14 +164,14 @@ struct Executer
                           Simulation<SBP, ExpectationValueParameters> sim(simparams);
                           sim.run();
 
-                          /* FILE* file;
+                          FILE* file;
                           auto args = prepare_python_script("expectation_value");
                           PySys_SetArgv(args.first, args.second);
                           file = fopen((Executer::get_python_scripts_path() + "/modes/expectation_value.py").c_str(), "r");
                           PyRun_SimpleFile(file, "expectation_value.py");
                           fclose(file);
                           auto cwd = gcp();
-                          PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str()); */
+                          PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                           // PyRun_SimpleString("os.chdir('cu_work_dir')");
                       }
