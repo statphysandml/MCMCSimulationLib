@@ -79,8 +79,8 @@ struct Executer
         os << "#PBS -l nodes=1:ppn=1:medium_buster\n";
         os << "#PBS -q medium_buster\n";
         os << "#PBS -l nice=19\n";
-        os << "#PBS -l mem=3gb\n";
-        os << "#PBS -l vmem=3gb\n";
+        os << "#PBS -l mem=2gb\n"; // 15gb
+        os << "#PBS -l vmem=2gb\n"; // 15gb
         os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
         os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
@@ -164,14 +164,14 @@ struct Executer
                           Simulation<SBP, ExpectationValueParameters> sim(simparams);
                           sim.run();
 
-                          FILE* file;
+                          /* FILE* file;
                           auto args = prepare_python_script("expectation_value");
                           PySys_SetArgv(args.first, args.second);
                           file = fopen((Executer::get_python_scripts_path() + "/modes/expectation_value.py").c_str(), "r");
                           PyRun_SimpleFile(file, "expectation_value.py");
                           fclose(file);
                           auto cwd = gcp();
-                          PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+                          PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str()); */
 
                           // PyRun_SimpleString("os.chdir('cu_work_dir')");
                       }
