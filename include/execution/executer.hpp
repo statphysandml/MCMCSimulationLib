@@ -81,7 +81,7 @@ struct Executer
         os << "#PBS -l nice=19\n";
         os << "#PBS -l mem=2gb\n"; // 15gb
         os << "#PBS -l vmem=2gb\n"; // 15gb
-        os << "#PBS -l walltime=72:00:00\n" << std::endl;
+        os << "#PBS -l walltime=06:00:00\n" << std::endl;
 
         os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
         os << "cd " << gcp() << path_parameters.sim_root_dir << "release/" << "\n";
