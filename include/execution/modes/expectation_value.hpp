@@ -95,7 +95,7 @@ public:
 
     std::unique_ptr<MarkovChainParameters> generate_markovchain_params(std::string running_parameter="None", double rp=0)
     {
-        uint correlation_time = measure_interval; // default
+        uint correlation_time = measure_interval; // defaultgut
         if(correlation_time_rel_results_path != "None")
         {
             auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "correlation_time_results");
