@@ -13,7 +13,7 @@ import pandas as pd
 from util.json import load_configs, load_data
 
 
-def compute_measure_over_config(data, measure_name):
+def compute_measure_over_config(data, measure_name, sim_params):
     if measure_name == "1stMoment":
         return compute_nth_moment(data, 1, measure_name)
     elif measure_name == "2ndMoment":
@@ -27,30 +27,38 @@ def compute_measure_over_config(data, measure_name):
         return ["Energy"]
     elif measure_name == "TwoPointCorrelator":
         return compute_two_point_correlator(data, key="Config")
-    elif measure_name == "ReweightedComplexPolynomialModelComplex2ndMoment":
-        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_complex_2nd_moment
-        compute_reweighted_complex_polynomial_model_complex_2nd_moment(data)
-        return ["ReweightedComplexPolynomialModelComplex2ndMomentReal",
-                "ReweightedComplexPolynomialModelComplex2ndMomentImag",
-                "ReweightedComplexPolynomialModelComplex2ndMomentAbs"]
-    elif measure_name == "ReweightedComplexPolynomialModelPhaseFactor":
-        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_phase_factor
-        compute_reweighted_complex_polynomial_model_phase_factor(data)
-        return ["ReweightedComplexPolynomialModelPhaseFactorReal",
-                "ReweightedComplexPolynomialModelPhaseFactorImag",
-                "ReweightedComplexPolynomialModelPhaseFactorAbs"]
-    elif measure_name == "ReweightedPolynomialModel2ndMoment":
-        from util.helper_for_observables import compute_reweighted_polynomial_model_2nd_moment
+    elif "ReCPMComplex2ndMoment" in measure_name:
+        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_complex_2nd_moment, extract_couplings
+        imag_sigma = sim_params["systembase_params"]["model_params"]["sigma"][1]
+        real_lambda = sim_params["systembase_params"]["model_params"]["lambda"][0]
+        imag_lambda = sim_params["systembase_params"]["model_params"]["lambda"][1]
+        target_real_lambda, target_imag_lambda, target_imag_sigma = extract_couplings(measure_name=measure_name)
+        new_measure_names = [measure_name + "Real", measure_name + "Imag", measure_name + "Abs"]
+        compute_reweighted_complex_polynomial_model_complex_2nd_moment(data, real_lambda, imag_lambda, imag_sigma, target_real_lambda, target_imag_lambda, target_imag_sigma, new_measure_names)
+        return new_measure_names
+    elif "ReCPMPhaseFactor" in measure_name:
+        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_phase_factor, extract_couplings
+        imag_sigma = sim_params["systembase_params"]["model_params"]["sigma"][1]
+        real_lambda = sim_params["systembase_params"]["model_params"]["lambda"][0]
+        imag_lambda = sim_params["systembase_params"]["model_params"]["lambda"][1]
+        target_real_lambda, target_imag_lambda, target_imag_sigma = extract_couplings(measure_name=measure_name)
+        new_measure_names = [measure_name + "Real", measure_name + "Imag", measure_name + "Abs"]
+        compute_reweighted_complex_polynomial_model_phase_factor(data, real_lambda, imag_lambda, imag_sigma, target_real_lambda, target_imag_lambda, target_imag_sigma, new_measure_names)
+        return new_measure_names
+    elif "ReweightedPolynomialModel2ndMoment" in measure_name:
+        from util.helper_for_observables import compute_reweighted_polynomial_model_2nd_moment, extract_imag_lambda_and_imag_sigma
+        imag_lambda, imag_sigma = extract_imag_lambda_and_imag_sigma(measure_name=measure_name)
         compute_reweighted_polynomial_model_2nd_moment(data)
-        return ["ReweightedPolynomialModel2ndMomentReal",
-                "ReweightedPolynomialModel2ndMomentImag",
-                "ReweightedPolynomialModel2ndMomentAbs"]
-    elif measure_name == "ReweightedPolynomialModelPhaseFactor":
-        from util.helper_for_observables import compute_reweighted_polynomial_model_phase_factor
+        return [measure_name + "Real",
+                measure_name + "Imag",
+                measure_name + "Abs"]
+    elif "ReweightedPolynomialModelPhaseFactor" in measure_name:
+        from util.helper_for_observables import compute_reweighted_polynomial_model_phase_factor, extract_imag_lambda_and_imag_sigma
+        imag_lambda, imag_sigma = extract_imag_lambda_and_imag_sigma(measure_name=measure_name)
         compute_reweighted_polynomial_model_phase_factor(data)
-        return ["ReweightedPolynomialModelPhaseFactorReal",
-                "ReweightedPolynomialModelPhaseFactorImag",
-                "ReweightedPolynomialModelPhaseFactorAbs"]
+        return [measure_name + "Real",
+                measure_name + "Imag",
+                measure_name + "Abs"]
     else:
         assert False, "Unknown measure"
 
@@ -87,11 +95,11 @@ def compute_abs_mean(data):
     return ["AbsMean"]
 
 
-def compute_measures_over_config(data, measures):
+def compute_measures_over_config(data, measures, sim_params):
     effective_measures = copy.deepcopy(measures)
     for measure in measures:
         if measure not in data.columns:
-            new_measures = compute_measure_over_config(data=data, measure_name=measure)
+            new_measures = compute_measure_over_config(data=data, measure_name=measure, sim_params=sim_params)
             if len(new_measures) > 0:
                 effective_measures += new_measures
                 effective_measures.remove(measure)
@@ -108,7 +116,7 @@ def expectation_value(files_dir, sim_root_dir="", rel_path="./"):
     # Compute measures based on the given configurations that have not been computed during the simulation
     post_measures = execution_params["post_measures"]
     if post_measures is not None:
-        post_measures = compute_measures_over_config(data=data, measures=post_measures)
+        post_measures = compute_measures_over_config(data=data, measures=post_measures, sim_params=sim_params)
 
 
     # Compute the expectation values and the bootstrap error
@@ -169,9 +177,9 @@ if __name__ == '__main__':
         expectation_value(sys.argv[1])  # , sys.argv[2], sys.argv[3])
     else:
         # os.chdir("/home/lukas/LatticeModelImplementations/examples")
-        # os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
+        os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
         # expectation_value("IsingModelMetropolis")  # , ".", True)
         # expectation_value("ExpectationValueComplexPolynomialModelCobridMonteCarloA", ".", True)
-        os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code/projects/ReweightingComplexDistributions")
-        expectation_value("ComplexPolynomialModelDifferentSigmaImags", ".", True)
+        # os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code/projects/ReweightingComplexDistributions")
+        expectation_value("LongRuns1ComplexPolynomialModelCLE_ReLambda0.000000ImLambda0.000000ImSigma1.000000")
 
