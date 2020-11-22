@@ -98,14 +98,15 @@ public:
         uint correlation_time = measure_interval; // defaultgut
         if(correlation_time_rel_results_path != "None")
         {
-            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "correlation_time_results");
+            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path + "/", "correlation_time_results");
             std::string rp_key;
             if(running_parameter == "None")
                 rp_key = "default";
             else
                 rp_key = std::to_string(rp);
-            std::cout << "Looking for correlation time for rp=" << rp << " in correlation_time_results.json" << std::endl;
+            std::cout << "Looking for correlation time for rp=" << rp << " in correlation_time.json" << std::endl;
             correlation_time = Parameters::value_by_key<uint>(correlation_time_results["CorrelationTime"], rp_key);
+            std::cout << "Found correlation time: " << correlation_time << std::endl;
         }
 
         uint equilibriation_time = start_measuring;
