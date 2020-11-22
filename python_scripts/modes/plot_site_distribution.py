@@ -106,5 +106,5 @@ if __name__ == '__main__':
         # os.chdir("/home/lukas/LatticeModelImplementations/examples")
         os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
         # correlation_time("PolySiteModelComplexLangevin")
-        plot_site_distribution("CubicModelComplexMetropolisB")
+        plot_site_distribution("PM1111")
         # custom_site_distribution("CubicModelComplexMetropolisB", (0.05, 1.0))

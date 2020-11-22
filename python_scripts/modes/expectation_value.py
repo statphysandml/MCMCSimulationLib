@@ -23,10 +23,34 @@ def compute_measure_over_config(data, measure_name):
     elif measure_name == "AbsMean":
         return compute_abs_mean(data)
     elif measure_name == "Energy":
-        data.insert(len(data.columns), "Energy", data["Config"].apply(lambda x: np.abs(np.mean(x))))
+        data = data.insert(len(data.columns), "Energy", data["Config"].apply(lambda x: np.abs(np.mean(x))))
         return ["Energy"]
     elif measure_name == "TwoPointCorrelator":
         return compute_two_point_correlator(data, key="Config")
+    elif measure_name == "ReweightedComplexPolynomialModelComplex2ndMoment":
+        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_complex_2nd_moment
+        compute_reweighted_complex_polynomial_model_complex_2nd_moment(data)
+        return ["ReweightedComplexPolynomialModelComplex2ndMomentReal",
+                "ReweightedComplexPolynomialModelComplex2ndMomentImag",
+                "ReweightedComplexPolynomialModelComplex2ndMomentAbs"]
+    elif measure_name == "ReweightedComplexPolynomialModelPhaseFactor":
+        from util.helper_for_observables import compute_reweighted_complex_polynomial_model_phase_factor
+        compute_reweighted_complex_polynomial_model_phase_factor(data)
+        return ["ReweightedComplexPolynomialModelPhaseFactorReal",
+                "ReweightedComplexPolynomialModelPhaseFactorImag",
+                "ReweightedComplexPolynomialModelPhaseFactorAbs"]
+    elif measure_name == "ReweightedPolynomialModel2ndMoment":
+        from util.helper_for_observables import compute_reweighted_polynomial_model_2nd_moment
+        compute_reweighted_polynomial_model_2nd_moment(data)
+        return ["ReweightedPolynomialModel2ndMomentReal",
+                "ReweightedPolynomialModel2ndMomentImag",
+                "ReweightedPolynomialModel2ndMomentAbs"]
+    elif measure_name == "ReweightedPolynomialModelPhaseFactor":
+        from util.helper_for_observables import compute_reweighted_polynomial_model_phase_factor
+        compute_reweighted_polynomial_model_phase_factor(data)
+        return ["ReweightedPolynomialModelPhaseFactorReal",
+                "ReweightedPolynomialModelPhaseFactorImag",
+                "ReweightedPolynomialModelPhaseFactorAbs"]
     else:
         assert False, "Unknown measure"
 
@@ -147,4 +171,7 @@ if __name__ == '__main__':
         # os.chdir("/home/lukas/LatticeModelImplementations/examples")
         # os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code")
         # expectation_value("IsingModelMetropolis")  # , ".", True)
-        expectation_value("ExpectationValueComplexPolynomialModelCobridMonteCarloA", ".", True)
+        # expectation_value("ExpectationValueComplexPolynomialModelCobridMonteCarloA", ".", True)
+        os.chdir("/home/lukas/BellInequalityLangevin/Paper_ComplexMonteCarlo/Code/projects/ReweightingComplexDistributions")
+        expectation_value("ComplexPolynomialModelDifferentSigmaImags", ".", True)
+

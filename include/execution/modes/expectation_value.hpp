@@ -24,7 +24,7 @@ public:
 
         measures = get_value_by_key<json>("measures", {});
         post_measures = get_value_by_key<json>("post_measures", {});
-        n_means_bootstrap = get_value_by_key<uint>("n_means_bootstrap", 200);
+        n_means_bootstrap = get_value_by_key<uint>("n_means_bootstrap", 50);
     }
 
     ExpectationValueParameters(
@@ -33,7 +33,7 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=200
+            uint n_means_bootstrap_=50
     ) : ExpectationValueParameters(
             json {{"measure_interval", measure_interval_},
                   {"number_of_measurements", number_of_measurements_},
@@ -49,7 +49,7 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=200
+            uint n_means_bootstrap_=50
     ) : ExpectationValueParameters(
             json {{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
                   {"measure_interval", 0},
@@ -67,7 +67,7 @@ public:
             uint start_measuring_,
             json measures_={},
             json post_measures_={},
-            uint n_means_bootstrap_=200
+            uint n_means_bootstrap_=50
     ) : ExpectationValueParameters(
             json {{"equilibriate_rel_results_path", equilibriate_rel_results_path_},
                   {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
@@ -98,7 +98,7 @@ public:
         uint correlation_time = measure_interval; // defaultgut
         if(correlation_time_rel_results_path != "None")
         {
-            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "correlation_time_results");
+            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path, "correlation_time");
             std::string rp_key;
             if(running_parameter == "None")
                 rp_key = "default";

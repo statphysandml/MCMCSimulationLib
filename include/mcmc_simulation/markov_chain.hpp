@@ -57,7 +57,8 @@ public:
 
     void run()
     {
-        std::cout << "Number of measurements: " << mp.number_of_measurements << " with " << mp.number_of_measurements * mp.measure_interval + mp.start_measuring << " sweeps" << std::endl;
+        std::cout << "Execute Markov Chain with " << mp.number_of_measurements << " measures with measure interval " <<
+            mp.measure_interval << ".\nStart measuring after " << mp.start_measuring << " sweeps.\n -- Total number of total sweeps " << long(mp.number_of_measurements) * long(mp.measure_interval) + long(mp.start_measuring) << " -- " << std::endl;
 
         std::string starting_mode;
         if(mp.starting_mode == "alternating")
