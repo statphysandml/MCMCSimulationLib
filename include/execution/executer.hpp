@@ -81,7 +81,7 @@ struct Executer
         os << "#PBS -l nice=19\n";
         os << "#PBS -l mem=2gb\n"; // 15gb
         os << "#PBS -l vmem=2gb\n"; // 15gb
-        os << "#PBS -l walltime=06:00:00\n" << std::endl;
+        os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
         os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
         os << "cd " << gcp() << path_parameters.sim_root_dir << "release/" << "\n";
@@ -96,7 +96,7 @@ struct Executer
     }
 
     void run_execution_on_cpu_cluster() {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         std::string filename = path_parameters.mode_type + "_" + path_parameters.files_dir;
         std::string qsubfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
         std::string progoutfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename + ".txt";
