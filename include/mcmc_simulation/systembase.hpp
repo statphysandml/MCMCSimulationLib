@@ -10,17 +10,36 @@
 #include "measure_policy.hpp"
 
 
-class SystemBaseParameters : public Parameters {
+class SystemBaseParameters : public impl_helper::params::Parameters {
 public:
     using Parameters::Parameters;
 
-    void write_to_file(const std::string& root_dir) {
-        Parameters::write_to_file(root_dir, param_file_name());
-    }
+    // Enables execution modes to temporarily use their own measures -> further good argument to add measures to system base parameters
+    virtual void update_measures(const json& measures_)
+    {}
 
-    static const std::string param_file_name()
+    // Default parameter name for system parameters
+    static const std::string name()
     {
         return "systembase_params";
+    }
+
+    void write_to_file(const std::string& root_dir) {
+        Parameters::write_to_file(root_dir, name());
+    }
+
+    // Function that enables to add parameters of other used classes with parameters
+    virtual impl_helper::params::Parameters build_expanded_raw_parameters() const
+    {
+        Parameters parameters(params);
+        return parameters;
+    }
+
+    // Implement this function with your respective "SystemClass" as "std::unique_ptr<SystemClass> generate() { return std::make_unique<SystemClass>(*this); }"
+    template<typename System>
+    std::unique_ptr<System> generate() {
+        std::cout << "This function needs to be defined for your associate system class." << std::endl;
+        std::exit(EXIT_FAILURE);
     }
 };
 
@@ -48,11 +67,6 @@ public:
         return systembase().get_measure_names();
     }
 
-    /*auto& get_system()
-    {
-        return systembase().get_system();
-    }*/
-
     const auto size() const
     {
         return systembase().get_size();
@@ -78,7 +92,9 @@ public:
         return systembase().get_system_representation();
     }
 
-    std::vector<std::string> perform_measure()
+    // Predefined measure method
+
+    virtual std::vector<std::string> perform_measure()
     {
         std::vector<std::string> results;
         for(auto const& element: measures) {
@@ -87,13 +103,13 @@ public:
         return results;
     }
 
-    std::vector<std::string> get_measure_names()
+    virtual std::vector<std::string> get_measure_names()
     {
-        std::vector<std::string> results;
+        std::vector<std::string> measure_names;
         for(auto const& element: measures) {
-            results.push_back(element->name());
+            measure_names.push_back(element->name());
         }
-        return results;
+        return measure_names;
     }
 
 //    virtual void save_config(int i) = 0;

@@ -10,16 +10,16 @@
 
 using json = nlohmann::json;
 
-class PlotSiteDistributionParameters : public Parameters {
+class PlotSiteDistributionParameters : public impl_helper::params::Parameters {
 public:
     explicit PlotSiteDistributionParameters(const json params_) : Parameters(params_)
     {
-        xkey = get_value_by_key<std::string>("xkey", "x");
-        ykey = get_value_by_key<std::string>("ykey", "y");
-        rmin_x = get_value_by_key<double>("rmin_x", -1.0);
-        rmax_x = get_value_by_key<double>("rmax_x", 1.0);
-        rmin_y = get_value_by_key<double>("rmin_y", -1.0);
-        rmax_y = get_value_by_key<double>("rmax_y", 1.0);
+        xkey = get_entry<std::string>("xkey", "x");
+        ykey = get_entry<std::string>("ykey", "y");
+        rmin_x = get_entry<double>("rmin_x", -1.0);
+        rmax_x = get_entry<double>("rmax_x", 1.0);
+        rmin_y = get_entry<double>("rmin_y", -1.0);
+        rmax_y = get_entry<double>("rmax_y", 1.0);
     }
 
     PlotSiteDistributionParameters(

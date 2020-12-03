@@ -10,15 +10,15 @@
 using json = nlohmann::json;
 //#include "systembase.hpp"
 
-class MarkovChainParameters : public Parameters {
+class MarkovChainParameters : public impl_helper::params::Parameters {
 public:
     explicit MarkovChainParameters(const json params_) : Parameters(params_)
     {
-        measure_interval = get_value_by_key<uint>("measure_interval");
-        number_of_measurements = get_value_by_key<uint>("number_of_measurements");
-        repetitions = get_value_by_key<uint>("repetitions");
-        start_measuring = get_value_by_key<uint>("start_measuring");
-        starting_mode = get_value_by_key<std::string>("starting_mode", "hot");
+        measure_interval = get_entry<uint>("measure_interval");
+        number_of_measurements = get_entry<uint>("number_of_measurements");
+        repetitions = get_entry<uint>("repetitions");
+        start_measuring = get_entry<uint>("start_measuring");
+        starting_mode = get_entry<std::string>("starting_mode", "hot");
     }
 
     MarkovChainParameters(
@@ -96,7 +96,7 @@ public:
             }
             std::cout << std::endl;
 
-            if(starting_mode == "alternating")
+            if(mp.starting_mode == "alternating")
             {
                 if(starting_mode == "hot")
                     starting_mode = "cold";

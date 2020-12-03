@@ -9,7 +9,7 @@
 #include "markov_chain.hpp"
 
 #include "param_helper/json.hpp"
-#include "param_helper/fileos.hpp"
+#include "param_helper/filesystem.hpp"
 
 using json = nlohmann::json;
 
@@ -18,74 +18,41 @@ json::iterator get_running_parameter_iterator(json& params, std::vector<std::str
 json update_running_parameter(const json params, std::vector<std::string> running_parameter_path, double new_running_parameter);
 
 template <typename SBP, typename EP>
-class SimulationParameters : public Parameters {
+class SimulationParameters : public impl_helper::params::Parameters {
 public:
     // Constructor for loading from params
-    explicit SimulationParameters(const json params_, const std::string& mode_, const bool traceable_=true) : Parameters(params_), mode(mode_), traceable(traceable_)
+    explicit SimulationParameters(const json params_) : Parameters(params_), mode(EP::name()),
+        rel_data_path(get_entry<std::string>("rel_data_path")), // The remaining parameters are all optional
+        running_parameter_kind(get_entry<std::string>("running_parameter_kind", "None")),
+        running_parameter(get_entry<std::string>("running_parameter", "None")),
+        rp_minimum(get_entry<double>("rp_minimum", 0)),
+        rp_maximum(get_entry<double>("rp_maximum", 0)),
+        rp_number(get_entry<int>("rp_number", 0))
     {
-        // measure_interval = get_value_by_key("measure_interval");
-
-        // *** SIMULATION PARAMETERS ***
-        rel_config_path = get_value_by_key<std::string>("rel_config_path");
-        /* if(rel_config_path == "None")
-            traceable = false; */
-        rel_data_path = get_value_by_key<std::string>("rel_data_path");
-
-        // Optionally
-        running_parameter_kind = get_value_by_key<std::string>("running_parameter_kind", "None");
-        running_parameter = get_value_by_key<std::string>("running_parameter", "None");
-        rp_minimum = get_value_by_key<double>("rp_minimum", 0);
-        rp_maximum = get_value_by_key<double>("rp_maximum", 0);
-        rp_number = get_value_by_key<int>("rp_number", 0);
-
-
-        // *** DIRECTORIES *** -> ToDo: Problems if config file is loaded from somewhere else?
+        // *** DIRECTORIES ***
         // Create folder in data directory if not present
-        if(!boost::filesystem::is_directory(gcp() + rel_data_path))
+        if(!impl_helper::fs::direxists(impl_helper::fs::gcp() + rel_data_path))
         {
-            std::cout << "Create root directory" << std::endl;
-            boost::filesystem::create_directories(gcp() + rel_data_path);
-        }
-        else
-        {
-            /* std::cout << "Clear data directory" << std::endl;
-            boost::filesystem::path path_to_remove(gcp() + rel_data_path);
-            for (boost::filesystem::directory_iterator end_dir_it, it(path_to_remove); it!=end_dir_it; ++it) {
-                boost::filesystem::remove_all(it->path());
-            } */
-        }
-
-        // Create folder in config directory if not present and if simulation should be traceable
-        if(traceable and !boost::filesystem::is_directory(gcp() + rel_config_path))
-        {
-            std::cout << "Create config directory" << std::endl;
-            boost::filesystem::create_directories(gcp() + rel_config_path);
+            std::cout << "Create data directory" << std::endl;
+            impl_helper::fs::generate_directory_if_not_present(rel_data_path);
         }
 
         // *** SYSTEM BASE PARAMETERS *** (default, from file, from json object)
         systembase_params = std::make_unique<SBP>(
-                generate_parameter_class_json<SimulationParameters<SBP, EP>, SBP> (*this, systembase_params->param_file_name(), rel_config_path),
-                        rel_config_path);
+                generate_parameter_class_json<SimulationParameters<SBP, EP>, SBP> (*this, systembase_params->name()), "None");
+                        // rel_config_path);
 
         // *** EXECUTION PARAMETERS ***
         // Load execution parameters from params object -> enables to use
-        std::string execution_params_path = get_value_by_key<std::string>("execution_params_path", rel_config_path);
-        if(haskey("execution_params")) {// !boost::filesystem::is_regular_file(gcp() + execution_params_path + "/" + mode + "_params.json")) {
-            execution_params = std::make_unique<EP>(get_value_by_key<json>("execution_params"));
-            delete_entry("execution_params");
-            if(traceable)
-                execution_params->write_to_file(execution_params_path);
+        if(haskey("execution_params")) {
+            execution_params = std::make_unique<EP>(get_entry<json>("execution_params"));
         }
-        // Load from params object
-        /* else if()
-        {
-
-        } */
         // Load execution parameters from file
         else {
             std::cout << "Load execution parameters from file based on given mode" << std::endl;
+            std::string execution_params_path = get_entry<std::string>("execution_params_path"); // , rel_config_path);
             execution_params = std::make_unique<EP>(
-                    Parameters::read_parameter_file(execution_params_path, mode + "_params"));
+                    impl_helper::fs::read_parameter_file(execution_params_path, mode + "_params"));
         }
 
         // *** MEASURES ***
@@ -101,22 +68,13 @@ public:
             auto expanded_parameters = build_expanded_raw_parameters();
             // std::cout << expanded_parameters << std::endl;
             running_parameter_path = std::vector<std::string> {};
-            auto running_parameter_kind_path_found = construct_parameter_path(expanded_parameters.get_json(), running_parameter_kind, running_parameter_path);
+            auto running_parameter_kind_path_found = impl_helper::params::construct_parameter_path(expanded_parameters.get_json(), running_parameter_kind, running_parameter_path);
             if(!running_parameter_kind_path_found)
             {
                 std::cout << "Running parameter kind not found" << std::endl;
                 std::exit(EXIT_FAILURE);
             }
             running_parameter_path.push_back(running_parameter);
-        }
-
-        if(traceable)
-        {
-            this->write_to_file();
-            std::cout << "Generated all necessary simulation parameter config files for the computation of " + mode
-                      << ". Run simulation in a console by running/rerunning" << std::endl;
-            std::cout << "\n#############################################\n./{Executable} " << mode <<
-                      " " << rel_config_path.substr(9, rel_config_path.size() - 9) << "\n#############################################\n" << std::endl;
         }
     }
 
@@ -134,26 +92,33 @@ public:
     {
         return SimulationParameters(
                 json {
-                        {"rel_config_path", "None"},
                         {"rel_data_path", rel_data_path_},
                         {"running_parameter_kind", running_parameter_kind_},
                         {"running_parameter", running_parameter_},
                         {"rp_minimum", rp_minimum_},
                         {"rp_maximum", rp_maximum_},
                         {"rp_number", rp_number_},
-                        {systembase_params_.param_file_name(), systembase_params_.get_json()},
+                        {systembase_params_.name(), systembase_params_.get_json()},
                         {"execution_params", execution_params_.get_json()}
-                },
-                EP::name(),
-                false
+                }
         );
     }
 
-    // Constructor for generating an entire simulation WITH the storage of the config files
-    static SimulationParameters generate_traceable_simulation(
+    // Constructor for loading from file without an adaptation of the simulation parameters
+    static SimulationParameters generate_simulation_from_file(
+            const std::string& rel_sim_params_path_,
+            const std::string& rel_execution_params_path="")
+    {
+        auto params_ = impl_helper::fs::read_parameter_file(rel_sim_params_path_, name());
+        if(rel_execution_params_path != "")
+            params_["execution_params_path"] = rel_execution_params_path;
+        return SimulationParameters<SBP, EP> (params_);
+    }
+
+    // Constructor for generating a simulation for already given execution_parameters
+    static SimulationParameters generate_simulation_for_execution_params_from_path(
             SBP& systembase_params_,
-            EP& execution_params_,
-            const std::string& rel_config_path_,
+            const std::string& rel_execution_params_path_,
             const std::string& rel_data_path_,
             const std::string& running_parameter_kind_="None",
             const std::string& running_parameter_="None",
@@ -164,27 +129,23 @@ public:
     {
         return SimulationParameters(
                 json {
-                        {"rel_config_path", rel_config_path_},
                         {"rel_data_path", rel_data_path_},
                         {"running_parameter_kind", running_parameter_kind_},
                         {"running_parameter", running_parameter_},
                         {"rp_minimum", rp_minimum_},
                         {"rp_maximum", rp_maximum_},
                         {"rp_number", rp_number_},
-                        {systembase_params_.param_file_name(), systembase_params_.get_json()},
-                        {"execution_params", execution_params_.get_json()}
-                },
-                EP::name()
+                        {systembase_params_.name(), systembase_params_.get_json()},
+                        {"execution_params_path", rel_execution_params_path_}
+                }
         );
-
-        // ToDo: Is it better to remove systembase and execution afters for this case - for consistency with a pure run from file?
     }
 
-    // Constructor that uses existing mode parameters and only refers to generally set simulation parameters
-    static SimulationParameters generate_simulation_from_mode(
-            const std::string& rel_config_path_,
+    // Constructor for generating a simulation for already given systembase and execution_parameters
+    static SimulationParameters generate_custom_simulation(
+            const std::string& rel_systembase_params_path_,
+            const std::string& rel_execution_params_path_,
             const std::string& rel_data_path_,
-            const std::string& mode_,
             const std::string& running_parameter_kind_="None",
             const std::string& running_parameter_="None",
             const double rp_minimum_=0.0,
@@ -192,26 +153,24 @@ public:
             const int rp_number_=0.0
     )
     {
+        if(!impl_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SBP::name(), true))
+        {
+            std::cout << "Systembase parameters have not been found" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+
         return SimulationParameters(
                 json {
-                        {"rel_config_path", rel_config_path_},
                         {"rel_data_path", rel_data_path_},
                         {"running_parameter_kind", running_parameter_kind_},
                         {"running_parameter", running_parameter_},
                         {"rp_minimum", rp_minimum_},
                         {"rp_maximum", rp_maximum_},
-                        {"rp_number", rp_number_}
-                },
-                mode_,
-                true
+                        {"rp_number", rp_number_},
+                        {SBP::name() + "_path", rel_systembase_params_path_},
+                        {"execution_params_path", rel_execution_params_path_}
+                }
         );
-    }
-
-    // Constructor for loading from file
-    static SimulationParameters generate_simulation_from_file(const std::string& rel_config_path_, const std::string& mode_)
-    {
-        auto params_ = Parameters::read_parameter_file(rel_config_path_, param_file_name());
-        return SimulationParameters(params_, mode_, false);
     }
 
     void initialize_simulation_parameters(const double rp=0)
@@ -225,21 +184,37 @@ public:
         }
     }
 
-    void write_to_file() {
-        json systembase_params_ = systembase_params->get_json();
-        delete_entry(systembase_params->param_file_name());
-        std::string systembase_params_path = get_value_by_key<std::string>(systembase_params->param_file_name() + "_path", rel_config_path);
+    void write_to_file(std::string rel_config_path) {
+        // Create folder in config directory if not present
+        if(!impl_helper::fs::direxists(impl_helper::fs::gcp() + rel_config_path))
+        {
+            std::cout << "Create config directory" << std::endl;
+            impl_helper::fs::generate_directory_if_not_present(rel_config_path);
+        }
+
+        std::string execution_params_path = get_entry<std::string>("execution_params_path", rel_config_path); // First one enables loading it from somewhere else!
+        execution_params->write_to_file(execution_params_path);
+
+        std::string systembase_params_path = get_entry<std::string>(systembase_params->name() + "_path", rel_config_path);
         systembase_params->write_to_file(systembase_params_path);
 
-        Parameters::write_to_file(rel_config_path, param_file_name());
-        add_entry(systembase_params->param_file_name(), systembase_params_);
+        json execution_params_ = get_entry<json>("execution_params");
+        delete_entry("execution_params");
+
+        json systembase_params_ = systembase_params->get_json();
+        delete_entry(systembase_params->name());
+
+        Parameters::write_to_file(rel_config_path, name());
+
+        add_entry("execution_params", execution_params_);
+        add_entry(systembase_params->name(), systembase_params_);
 
     }
 
     Parameters build_expanded_raw_parameters()
     {
         Parameters parameters = Parameters::create_by_params(params);
-        parameters.add_entry(systembase_params->param_file_name(), systembase_params->build_expanded_raw_parameters().get_json());
+        parameters.add_entry(systembase_params->name(), systembase_params->build_expanded_raw_parameters().get_json());
         parameters.add_entry("execution_params", execution_params->build_expanded_raw_parameters().get_json());
         return parameters;
     }
@@ -252,10 +227,10 @@ public:
         auto expanded_parameters = build_expanded_raw_parameters().get_json();
         json new_system_params = update_running_parameter(
                 expanded_parameters, running_parameter_path, new_running_parameter);
-        systembase_params = std::make_unique<SBP>(new_system_params[systembase_params->param_file_name()], rel_config_path);
+        systembase_params = std::make_unique<SBP>(new_system_params[systembase_params->name()], rel_config_path);
     }
 
-    static const std::string param_file_name()
+    static const std::string name()
     {
         return "sim_params";
     }
@@ -278,9 +253,6 @@ private:
     int rp_number;
 
     std::unique_ptr<MarkovChainParameters> markovchain_params;
-
-    // bool from_file = false;
-    const bool traceable;
 };
 
 
@@ -306,7 +278,7 @@ public:
 
         write_setting_file(mp.rel_data_path, filename);
 
-        Fileos os (gcp() + mp.rel_data_path + "/" + filename  + ".dat");
+        impl_helper::fs::Fileos os (impl_helper::fs::gcp() + mp.rel_data_path + "/" + filename  + ".dat");
         MarkovChain<SBP> mc(*mp.markovchain_params, *mp.systembase_params, os.get());
         mc.run();
     }
@@ -314,11 +286,11 @@ public:
 private:
     SimulationParameters<SBP, EP> &mp;
 
-    // To get explicit informations about the particular run? It might be reasonable to add expanded files to the output -> do this!
-    void write_setting_file(const std::string& rel_config_path, const std::string &filename) const
+    // To get explicit informations about the particular run
+    void write_setting_file(const std::string& rel_path, const std::string &filename) const
     {
         auto raw_parameters = mp.build_expanded_raw_parameters();
-        raw_parameters.write_to_file(rel_config_path, filename);
+        raw_parameters.write_to_file(rel_path, filename);
     }
 };
 

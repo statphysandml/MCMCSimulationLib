@@ -12,14 +12,14 @@
 
 using json = nlohmann::json;
 
-class CorrelationTimeParameters : public Parameters {
+class CorrelationTimeParameters : public impl_helper::params::Parameters {
 public:
     explicit CorrelationTimeParameters(const json params_) : Parameters(params_)
     {
-        minimum_sample_size = get_value_by_key<uint>("minimum_sample_size", 100);
-        maximum_correlation_time = get_value_by_key<uint>("maximum_correlation_time", 1000);
-        start_measuring = get_value_by_key<uint>("start_measuring", 0);
-        measures = get_value_by_key<json>("measures", {});
+        minimum_sample_size = get_entry<uint>("minimum_sample_size", 100);
+        maximum_correlation_time = get_entry<uint>("maximum_correlation_time", 1000);
+        start_measuring = get_entry<uint>("start_measuring", 0);
+        measures = get_entry<json>("measures", {});
     }
 
     CorrelationTimeParameters(

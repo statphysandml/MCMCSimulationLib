@@ -73,7 +73,7 @@ struct Executer
         }
 
         std::string filename = path_parameters.mode_type + "_" + path_parameters.files_dir;
-        Fileos fileos (gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh");
+        impl_helper::fs::Fileos fileos (impl_helper::fs::gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh");
         auto& os = fileos.get();
         os << "#!/bin/bash\n";
         os << "#PBS -l nodes=1:ppn=1:medium_buster\n";
@@ -84,9 +84,9 @@ struct Executer
         os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
         os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
-        os << "cd " << gcp() << path_parameters.sim_root_dir << "release/" << "\n";
-        // os << gcp() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  path_parameters.mode_type << " " << path_parameters.files_dir << std::endl;
-        os << gcp() << path_parameters.sim_root_dir << "release/" << Executer::executable_name << " " \
+        os << "cd " << impl_helper::fs::gcp() << path_parameters.sim_root_dir << "release/" << "\n";
+        // os << impl_helper::fs::gcp() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  path_parameters.mode_type << " " << path_parameters.files_dir << std::endl;
+        os << impl_helper::fs::gcp() << path_parameters.sim_root_dir << "release/" << Executer::executable_name << " " \
            << path_parameters.mode_type << " " << path_parameters.files_dir << " " << path_parameters.sim_root_dir << " " \
            << path_parameters.rel_path;
         if(additional_args.size() != 0)
@@ -98,9 +98,9 @@ struct Executer
     void run_execution_on_cpu_cluster() {
         std::this_thread::sleep_for(std::chrono::seconds(3));
         std::string filename = path_parameters.mode_type + "_" + path_parameters.files_dir;
-        std::string qsubfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
-        std::string progoutfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename + ".txt";
-        std::string progerrfile = gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "error_run_" + filename + ".txt";
+        std::string qsubfile = impl_helper::fs::gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
+        std::string progoutfile = impl_helper::fs::gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename + ".txt";
+        std::string progerrfile = impl_helper::fs::gcp() + path_parameters.sim_root_dir + "/" + path_parameters.get_rel_cpu_bash_script_path() + "error_run_" + filename + ".txt";
         int res;
         if(Executer::cluster_mode == "on_cluster")
             res = system(("qsub -o " + progoutfile + " -e " + progerrfile + " " + qsubfile).c_str()); // submit the process to queue
@@ -127,12 +127,12 @@ struct Executer
         bool in_preparation;
 
         // Load config_file from file if present
-        if (Parameters::check_if_parameter_file_exists(path_parameters.get_rel_config_path() + "/",
+        if (impl_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_path() + "/",
                                                        path_parameters.mode_type + "_params",
                                                        path_parameters.rel_path)) {
             std::cout << "Mode = " << path_parameters.mode_type << " will be executed based on provided json file"
                       << std::endl;
-            // config_file = Parameters::read_parameter_file(path_parameters.get_rel_config_path() + "/", path_parameters.mode_type + "_params", path_parameters.rel_path);
+            // config_file = impl_helper::fs::read_parameter_file(path_parameters.get_rel_config_path() + "/", path_parameters.mode_type + "_params", path_parameters.rel_path);
             mode = mode_resolver.at(path_parameters.mode_type);
             in_preparation = false;
             // Can probably be shifted to somewhere else
@@ -170,7 +170,7 @@ struct Executer
                           file = fopen((Executer::get_python_scripts_path() + "/modes/expectation_value.py").c_str(), "r");
                           PyRun_SimpleFile(file, "expectation_value.py");
                           fclose(file);
-                          auto cwd = gcp();
+                          auto cwd = impl_helper::fs::gcp();
                           PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                           // PyRun_SimpleString("os.chdir('cu_work_dir')");
@@ -205,7 +205,7 @@ struct Executer
                     file = fopen((Executer::get_python_scripts_path() + "/modes/correlation_time.py").c_str(), "r");
                     PyRun_SimpleFile(file, "correlation_time.py");
                     fclose(file);
-                    auto cwd = gcp();
+                    auto cwd = impl_helper::fs::gcp();
                     PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                     // PyRun_SimpleString("os.chdir('cu_work_dir')");
@@ -229,7 +229,7 @@ struct Executer
                     file = fopen((Executer::get_python_scripts_path() + "/modes/equilibriate.py").c_str(), "r");
                     PyRun_SimpleFile(file, "equilibriate.py");
                     fclose(file);
-                    auto cwd = gcp();
+                    auto cwd = impl_helper::fs::gcp();
                     PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                     // PyRun_SimpleString("os.chdir('cu_work_dir')");
@@ -249,7 +249,7 @@ struct Executer
                     file = fopen((Executer::get_python_scripts_path() + "/modes/plot_site_distribution.py").c_str(), "r");
                     PyRun_SimpleFile(file, "plot_site_distribution.py");
                     fclose(file);
-                    auto cwd = gcp();
+                    auto cwd = impl_helper::fs::gcp();
                     PyRun_SimpleString(("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
 
                     break;
@@ -268,7 +268,7 @@ struct Executer
 
         argv[0] = python_file.c_str();
         argv[1] = path_parameters.files_dir.c_str();
-        PyRun_SimpleString(("import os; os.chdir('" + gcp() + path_parameters.sim_root_dir + "')").c_str());
+        PyRun_SimpleString(("import os; os.chdir('" + impl_helper::fs::gcp() + path_parameters.sim_root_dir + "')").c_str());
 
         // argv[2] = path_parameters.sim_root_dir.c_str(); -> go to current sim_root_dir
         /* if(path_parameters.rel_path)sdf

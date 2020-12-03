@@ -16,14 +16,14 @@
 
 using json = nlohmann::json;
 
-class EquilibriateParameters : public Parameters {
+class EquilibriateParameters : public impl_helper::params::Parameters {
 public:
     explicit EquilibriateParameters(const json params_) : Parameters(params_)
     {
-        sample_size = get_value_by_key<uint>("sample_size", 100);
-        number_of_steps = get_value_by_key<uint>("number_of_steps", 1000);
-        measures = get_value_by_key<json>("measures", {});
-        post_measures = get_value_by_key<json>("post_measures", {});
+        sample_size = get_entry<uint>("sample_size", 100);
+        number_of_steps = get_entry<uint>("number_of_steps", 1000);
+        measures = get_entry<json>("measures", {});
+        post_measures = get_entry<json>("post_measures", {});
     }
 
     EquilibriateParameters(

@@ -12,19 +12,19 @@
 
 using json = nlohmann::json;
 
-class ExpectationValueParameters : public Parameters {
+class ExpectationValueParameters : public impl_helper::params::Parameters {
 public:
     explicit ExpectationValueParameters(const json params_) : Parameters(params_)
     {
-        correlation_time_rel_results_path = get_value_by_key<std::string>("correlation_time_rel_results_path", "None");
-        equilibriate_rel_results_path = get_value_by_key<std::string>("equilibriate_rel_results_path", "None");
-        measure_interval = get_value_by_key<uint>("measure_interval", 100);
-        number_of_measurements = get_value_by_key<uint>("number_of_measurements", 1000);
-        start_measuring = get_value_by_key<uint>("start_measuring", 0);
+        correlation_time_rel_results_path = get_entry<std::string>("correlation_time_rel_results_path", "None");
+        equilibriate_rel_results_path = get_entry<std::string>("equilibriate_rel_results_path", "None");
+        measure_interval = get_entry<uint>("measure_interval", 100);
+        number_of_measurements = get_entry<uint>("number_of_measurements", 1000);
+        start_measuring = get_entry<uint>("start_measuring", 0);
 
-        measures = get_value_by_key<json>("measures", {});
-        post_measures = get_value_by_key<json>("post_measures", {});
-        n_means_bootstrap = get_value_by_key<uint>("n_means_bootstrap", 50);
+        measures = get_entry<json>("measures", {});
+        post_measures = get_entry<json>("post_measures", {});
+        n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 50);
     }
 
     ExpectationValueParameters(
@@ -98,28 +98,28 @@ public:
         uint correlation_time = measure_interval; // defaultgut
         if(correlation_time_rel_results_path != "None")
         {
-            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_rel_results_path + "/", "correlation_time_results");
+            auto correlation_time_results = impl_helper::fs::read_parameter_file(correlation_time_rel_results_path + "/", "correlation_time_results");
             std::string rp_key;
             if(running_parameter == "None")
                 rp_key = "default";
             else
                 rp_key = std::to_string(rp);
             std::cout << "Looking for correlation time for rp=" << rp << " in correlation_time.json" << std::endl;
-            correlation_time = Parameters::value_by_key<uint>(correlation_time_results["CorrelationTime"], rp_key);
+            correlation_time = impl_helper::params::entry_by_key<uint>(correlation_time_results["CorrelationTime"], rp_key);
             std::cout << "Found correlation time: " << correlation_time << std::endl;
         }
 
         uint equilibriation_time = start_measuring;
         if(equilibriate_rel_results_path != "None")
         {
-            auto equilibriation_time_results = Parameters::read_parameter_file(equilibriate_rel_results_path, "equilibriate_results");
+            auto equilibriation_time_results = impl_helper::fs::read_parameter_file(equilibriate_rel_results_path, "equilibriate_results");
             std::string rp_key;
             if(running_parameter == "None")
                 rp_key = "default";
             else
                 rp_key = std::to_string(rp);
             std::cout << "Looking for equilibriation time for rp=" << rp << " in equilibriate_results.json" << std::endl;
-            equilibriation_time = Parameters::value_by_key<uint>(equilibriation_time_results["EqulibriationTime"], rp_key);
+            equilibriation_time = impl_helper::params::entry_by_key<uint>(equilibriation_time_results["EqulibriationTime"], rp_key);
         }
 
         return std::make_unique<MarkovChainParameters>(
