@@ -3,6 +3,9 @@ lib/
 build/config.sh
 CMakeLists.txt
 __pycache__/
+
+include/execution/config.h.in
+include/execution/config.h
 examples/*
 !examples/include/
 examples/include/*

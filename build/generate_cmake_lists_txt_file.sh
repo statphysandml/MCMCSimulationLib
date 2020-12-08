@@ -20,7 +20,17 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
 message("Python executable = \${PYTHON_EXECUTABLE}")
 
+set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}python_scripts/")
+
 option(PYTHON "Enable Python" ON)
+
+if(NOT CONDA_ACTIVATE_PATH)
+    set(CONDA_ACTIVATE_PATH "${path_to_conda_activate}")
+endif()
+
+if(NOT VIRTUAL_ENV)
+    set(VIRTUAL_ENV "${virtual_env}")
+endif()
 EOL
 else
 cat >>../CMakeLists.txt <<EOL
@@ -28,6 +38,12 @@ option(PYTHON "Disable Python" OFF)
 EOL
 fi
 cat >>../CMakeLists.txt <<EOL
+
+if(NOT CLUSTER_MODE)
+    set(CLUSTER_MODE "${cluster_mode}") # else local
+endif()
+
+configure_file(./include/execution/config.h.in ../include/execution/config.h @ONLY)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system") 
 

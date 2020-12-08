@@ -7,12 +7,12 @@ namespace mcmc {
     namespace execution {
 
         std::string Executer::executable_name = "None";
-        std::string Executer::cluster_mode = "locally";
-        std::string Executer::conda_activate_path = "/home/lukas/.miniconda3/bin/activate";
-        std::string Executer::virtual_env = "flowequation";
+        std::string Executer::cluster_mode = CLUSTER_MODE;
 
 #ifdef PYTHON
-        std::string Executer::python_scripts_path = "/home/lukas/MCMCSimulationLib/python_scripts/";
+        std::string Executer::conda_activate_path = CONDA_ACTIVATE_PATH;
+        std::string Executer::virtual_env = VIRTUAL_ENV;
+        std::string Executer::python_scripts_path = PYTHON_SCRIPTS_PATH;
 
         void initialize_python() {
             Py_Initialize();
@@ -43,9 +43,9 @@ namespace mcmc {
                                         const std::string python_scripts_path_) {
             Executer::set_executable_name(executable_name_);
             Executer::set_cluster_mode(cluster_mode_);
+#ifdef PYTHON
             Executer::set_conda_activate_path(conda_activate_path_);
             Executer::set_virtual_env(virtual_env_);
-#ifdef PYTHON
             Executer::set_python_scripts_path(python_scripts_path_);
 #endif
         }

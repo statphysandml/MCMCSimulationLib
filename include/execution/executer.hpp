@@ -15,6 +15,8 @@
 #include <chrono>
 #include <thread>
 
+#include "config.h"
+
 #include "param_helper/params.hpp"
 #include "../mcmc_simulation/util/path_parameters.hpp"
 #include "../mcmc_simulation/simulation.hpp"
@@ -35,8 +37,8 @@ namespace mcmc {
 
         void initialize_executer_params(const std::string executable_name_,
                                         const std::string cluster_mode_,
-                                        const std::string conda_activate_path_,
-                                        const std::string virtual_env_,
+                                        const std::string conda_activate_path_="",
+                                        const std::string virtual_env_="",
                                         const std::string python_scripts_path_="");
 
         struct Executer {
@@ -283,6 +285,16 @@ namespace mcmc {
                 std::cout << "Setting python scripts path to " << python_scripts_path_ << std::endl;
             }
 
+            static void set_conda_activate_path(const std::string conda_activate_path_) {
+                Executer::conda_activate_path = conda_activate_path_;
+                std::cout << "Setting conda activate path to " << Executer::conda_activate_path << std::endl;
+            }
+
+            static void set_virtual_env(const std::string virtual_env_) {
+                Executer::virtual_env = virtual_env_;
+                std::cout << "Setting virtual_env to " << Executer::virtual_env << std::endl;
+            }
+
 #endif
 
             static std::string get_executable_name() {
@@ -301,16 +313,6 @@ namespace mcmc {
             static void set_cluster_mode(const std::string cluster_mode_) {
                 Executer::cluster_mode = cluster_mode_;
                 std::cout << "Setting cluster mode to " << Executer::cluster_mode << std::endl;
-            }
-
-            static void set_conda_activate_path(const std::string conda_activate_path_) {
-                Executer::conda_activate_path = conda_activate_path_;
-                std::cout << "Setting conda activate path to " << Executer::conda_activate_path << std::endl;
-            }
-
-            static void set_virtual_env(const std::string virtual_env_) {
-                Executer::virtual_env = virtual_env_;
-                std::cout << "Setting virtual_env to " << Executer::virtual_env << std::endl;
             }
 
             const mcmc::util::PathParameters path_parameters;
