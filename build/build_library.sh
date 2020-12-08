@@ -14,4 +14,4 @@ cd lib
 cmake ..
 make -j9
 
-cd ./build/
+cd ../build/
