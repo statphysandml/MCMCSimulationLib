@@ -74,7 +74,8 @@ In this example, the mean value and other observalbes are computed for the Ising
 // Setting up system parameters (beta, J, h, dimensions)
 IsingModelParameters system_params(0.4, 1.0, 0.0, {4, 4});
 
-// Setting up execution parameters (number of equilibrium steps, number of measurements, correlation time, measures, optional measures that are computed in python)
+/* Setting up execution parameters (number of equilibrium steps, number of measurements, correlation time,
+* measures, optional measures that are computed in python) */
 typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
 ExpectationValueParams execution_parameters(
     100, 10000, 100, {"AbsMean", "SecondMoment", "Mean"}, {}
@@ -84,7 +85,7 @@ ExpectationValueParams execution_parameters(
 // Setting up simulation parameters
 std::string target_name = "IsingModelSimulation";
 std::string rel_data_path = "/data/" + target_name + "/";
-auto simulation_params = mcmc::simulation::SimulationParameters< IsingModelParameters , ExpectationValueParams >::generate_simulation(
+auto simulation_params = mcmc::simulation::SimulationParameters< IsingModelParameters, ExpectationValueParams >::generate_simulation(
     system_params, execution_parameters, rel_data_path,
     "systembase_params", "beta", 0.1, 0.7, 6);
 
@@ -120,12 +121,13 @@ public:
         }
     }
 
-    IsingModelParameters(double beta_, double J_, double h_, std::vector<int> dimensions_) : IsingModelParameters(json{
+    IsingModelParameters(double beta_, double J_, double h_, std::vector<int> dimensions_) :
+        IsingModelParameters(json{
             {"beta", beta_},
             {"J", J_},
             {"h", h_},
             {"dimensions", dimensions_}
-    })
+        })
     {}
 
     std::unique_ptr<IsingModel> generate() { return std::make_unique<IsingModel>(*this); }
@@ -225,9 +227,11 @@ private:
     //site, moving dimension, direction
     int neigh_dir(int n, int d, bool dir) const {
         if(dir)
-            return n-n%(imsp.dim_mul[d]*imsp.dimensions[d])+(n+imsp.dim_mul[d])%(imsp.dim_mul[d]*imsp.dimensions[d]);
+            return n-n%(imsp.dim_mul[d]*imsp.dimensions[d]) +
+                (n+imsp.dim_mul[d])%(imsp.dim_mul[d]*imsp.dimensions[d]);
         else
-            return n-n%(imsp.dim_mul[d]*imsp.dimensions[d])+(n-imsp.dim_mul[d]+imsp.dim_mul[d]*imsp.dimensions[d])%(imsp.dim_mul[d]*imsp.dimensions[d]);
+            return n-n%(imsp.dim_mul[d]*imsp.dimensions[d])+
+                (n-imsp.dim_mul[d]+imsp.dim_mul[d]*imsp.dimensions[d])% (imsp.dim_mul[d]*imsp.dimensions[d]);
     }
 };
 ```
