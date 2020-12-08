@@ -1,15 +1,19 @@
-#!/bin/bash
+# Build submodule
 
-# Submodules
-path_to_param_helper="./external_submodules/ParamHelper/"
+git submodule update --init
 
-source config.sh
+cd external_submodules/ParamHelper/build
+bash build_submodules.sh
 
-source generate_cmake_lists_txt_file.sh
+cd ../../../
+
+# Build library
+
+# Copy config_tempalte rm to config.sh and adapt paths
+
+cd build/
+bash build_library.sh
 
 cd ../
-mkdir lib
-cd lib
 
-cmake ..
-make -j9
+
