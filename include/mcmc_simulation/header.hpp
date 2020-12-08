@@ -11,6 +11,7 @@
 
 
 #include "systembase.hpp"
+#include "systembase_measures.hpp"
 #include "markov_chain.hpp"
 #include "measure_policy.hpp"
 #include "simulation.hpp"

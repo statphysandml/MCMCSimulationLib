@@ -70,6 +70,13 @@ def compute_complex_polynomial_model_probability_measure(data, real_lambda, imag
     data.insert(len(data.columns), new_measure_names[1], np.imag(dat))
     data.insert(len(data.columns), new_measure_names[2], np.abs(dat))
 
+def compute_complex_polynomial_model_probability_measure(data, real_lambda, imag_lambda, imag_sigma, new_measure_names):
+    dat = np.exp(-1.0 * get_energy_of_dat(data, real_lambda, imag_lambda, imag_sigma)).values
+    data.insert(len(data.columns), new_measure_names[0], np.real(dat))
+    data.insert(len(data.columns), new_measure_names[1], np.imag(dat))
+    data.insert(len(data.columns), new_measure_names[2], np.abs(dat))
+
+
 ''' Not used at the moment '''
 
 

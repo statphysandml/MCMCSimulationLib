@@ -3,3 +3,12 @@ lib/
 build/config.sh
 CMakeLists.txt
 __pycache__/
+examples/*
+!examples/include/
+examples/include/*
+!examples/include/ising_model.hpp
+!examples/include/save_and_load.hpp
+!examples/include/simple_simulation.hpp
+!examples/src/
+examples/src/*
+!examples/src/main.cpp
