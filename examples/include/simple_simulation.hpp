@@ -29,7 +29,7 @@ void simple_simulation() {
 
 
     // Setting up simulation parameters
-    std::string target_name = "HelloWorldSimulation";
+    std::string target_name = "SimpleSimulation";
     std::string rel_data_path = "/data/" + target_name + "/";
     auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseTemplateParameters , ExpectationValueParams >::generate_simulation(
             system_params, execution_parameters, rel_data_path,

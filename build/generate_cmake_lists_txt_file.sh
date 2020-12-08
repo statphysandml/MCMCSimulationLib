@@ -20,7 +20,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
 message("Python executable = \${PYTHON_EXECUTABLE}")
 
-set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}python_scripts/")
+set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
 
 option(PYTHON "Enable Python" ON)
 

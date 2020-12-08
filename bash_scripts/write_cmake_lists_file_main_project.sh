@@ -20,7 +20,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
 message("Python executable = \${PYTHON_EXECUTABLE}")
 
-set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}python_scripts/")
+set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
 
 option(PYTHON "Enable Python" ON)
 
@@ -60,9 +60,9 @@ message("ParamHelper = \${ParamHelper}")
 include_directories(${path_to_param_helper}include/)
 
 
-find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS ${path_to_mcmc_simulation_lib}lib)
+find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS ${path_to_mcmc_simulation_lib}/lib)
 message("MCMCSimulationLib = \${MCMCSimulationLib}")
-include_directories(${path_to_mcmc_simulation_lib}include/)
+include_directories(${path_to_mcmc_simulation_lib}/include/)
 
 set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
 

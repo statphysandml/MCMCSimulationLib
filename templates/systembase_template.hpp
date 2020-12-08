@@ -6,7 +6,7 @@
 #define MCMCSIMULATIONLIB_SYSTEMBASE_TEMPLATE_CUSTOM_MEASURES_HPP
 
 
-#include "../include/mcmc_simulation/header.hpp"
+#include "mcmc_simulation/header.hpp"
 
 
 class SystemBaseTemplate;

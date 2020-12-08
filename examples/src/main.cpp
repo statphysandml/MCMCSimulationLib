@@ -2,6 +2,8 @@
 // Created by lukas on 04.12.20.
 //
 
+#include "../include/config.h"
+
 #include "mcmc_simulation/header.hpp"
 
 #include "execution/modes/expectation_value.hpp"
@@ -13,8 +15,6 @@
 
 // For systembases with the possible usage of predefined common measures
 #include "../../templates/systembase_measures_template.hpp"
-
-#include "../include/config.h"
 
 typedef SystemBaseMeasuresTemplateParameters SystemBaseParams;
 

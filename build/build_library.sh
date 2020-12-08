@@ -2,7 +2,7 @@
 
 # Submodules
 path_to_param_helper="./external_submodules/ParamHelper/"
-path_to_mcmc_simulation_lib="./"
+path_to_mcmc_simulation_lib="."
 
 source config.sh
 
