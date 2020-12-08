@@ -1,0 +1,3 @@
+[submodule "external_submodules/ParamHelper"]
+	path = external_submodules/ParamHelper
+	url = git@github.com:statphysandml/ParamHelper.git
