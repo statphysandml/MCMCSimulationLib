@@ -85,9 +85,10 @@ ExpectationValueParams execution_parameters(
 // Setting up simulation parameters
 std::string target_name = "IsingModelSimulation";
 std::string rel_data_path = "/data/" + target_name + "/";
-auto simulation_params = mcmc::simulation::SimulationParameters< IsingModelParameters, ExpectationValueParams >::generate_simulation(
-    system_params, execution_parameters, rel_data_path,
-    "systembase_params", "beta", 0.1, 0.7, 6);
+auto simulation_params = mcmc::simulation::SimulationParameters<
+    IsingModelParameters, ExpectationValueParams>::generate_simulation(
+        system_params, execution_parameters, rel_data_path, "systembase_params", "beta", 0.1, 0.7, 6
+);
 
 
 // Setting up and running the actual simulation
