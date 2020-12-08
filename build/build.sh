@@ -7,5 +7,3 @@ bash build_submodules.sh
 # Copy config_tempalte rm to config.sh and adapt paths
 
 bash build_library.sh
-
-cd ../
