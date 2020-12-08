@@ -51,10 +51,10 @@ cd bash_script
 bash build_examples.sh
 ```
 
-Template project
+Template Project
 ----------------
 
-A new project that demonstrates the basic functionalities of the libary based on a template class for a model or theory can be generated in an arbitrary directory with
+A new project that demonstrates the basic functionalities of the library based on a template class for a model or theory can be generated in an arbitrary directory with
 ```bash
 cd build
 bash build_project.sh
