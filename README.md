@@ -74,8 +74,8 @@ In this example, the mean value and other observalbes are computed for the Ising
 // Setting up system parameters (beta, J, h, dimensions)
 IsingModelParameters system_params(0.4, 1.0, 0.0, {4, 4});
 
-/* Setting up execution parameters (number of equilibrium steps, number of measurements, correlation time,
-* measures, optional measures that are computed in python) */
+/* Setting up execution parameters (number of equilibrium steps, number of measurements,
+* correlation time, measures, optional measures that are computed in python) */
 typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
 ExpectationValueParams execution_parameters(
     100, 10000, 100, {"AbsMean", "SecondMoment", "Mean"}, {}
@@ -92,7 +92,9 @@ auto simulation_params = mcmc::simulation::SimulationParameters<
 
 
 // Setting up and running the actual simulation
-mcmc::simulation::Simulation< IsingModelParameters, ExpectationValueParams > simulation(simulation_params);
+mcmc::simulation::Simulation< IsingModelParameters, ExpectationValueParams > simulation(
+    simulation_params
+);
 simulation.run();
 ```
 
@@ -232,7 +234,8 @@ private:
                 (n+imsp.dim_mul[d])%(imsp.dim_mul[d]*imsp.dimensions[d]);
         else
             return n-n%(imsp.dim_mul[d]*imsp.dimensions[d])+
-                (n-imsp.dim_mul[d]+imsp.dim_mul[d]*imsp.dimensions[d])% (imsp.dim_mul[d]*imsp.dimensions[d]);
+                (n-imsp.dim_mul[d]+imsp.dim_mul[d]*imsp.dimensions[d]) %
+(imsp.dim_mul[d]*imsp.dimensions[d]);
     }
 };
 ```
