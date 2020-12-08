@@ -8,7 +8,7 @@ if test -z $project_name; then
 	exit 1
 fi
 
-project_path="../"
+project_path="../examples/"
 
 if test -d "$project_path/include"; then
 	echo "Main project already build. Only the cmake lists file is rebuild."
@@ -29,3 +29,20 @@ else
 
 	source "${path_to_lattice_model_implementations}bash_scripts/build_structure.sh"
 fi
+
+
+#!/bin/bash
+
+project_name="MCMCSimulationLibExamples"
+project_path="../examples/"
+
+mkdir -p "$project_path/cmake"
+mkdir -p "$project_path/debug"
+mkdir -p "$project_path/release"
+mkdir -p "$project_path/jupyter_notebooks"
+
+# Generate CMakeLists.txt file
+source "${path_to_lattice_model_implementations}bash_scripts/write_cmake_lists_file_main_project.sh"
+
+# Generate config_h_in file
+source "${path_to_lattice_model_implementations}bash_scripts/write_config_h_in_file.sh"

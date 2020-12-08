@@ -71,7 +71,9 @@ namespace mcmc {
             os << "#PBS -l vmem=2gb\n"; // 15gb
             os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
+#ifdef PYTHON
             os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
+#endif
             os << "cd " << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "release/" << "\n";
             // os << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  path_parameters.mode_type << " " << path_parameters.files_dir << std::endl;
             os << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "release/" << Executer::executable_name
