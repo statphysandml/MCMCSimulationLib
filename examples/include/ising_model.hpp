@@ -11,10 +11,10 @@
 
 class IsingModel;
 
-class IsingModelParameters : public mcmc::simulation::SystemBaseMeasuresParameters {
+class IsingModelParameters : public mcmc::simulation::SystemBaseParameters {
 public:
     explicit IsingModelParameters(const json params):
-            SystemBaseMeasuresParameters(params),
+            SystemBaseParameters(params),
             beta(get_entry<double>("beta", 0.4)),
             J(get_entry<double>("J", 1.0)),
             h(get_entry<double>("h", 0.0)),
@@ -61,7 +61,7 @@ private:
 };
 
 
-class IsingModel : public mcmc::simulation::SystemBaseMeasures<IsingModel>
+class IsingModel : public mcmc::simulation::SystemBase<IsingModel>
 {
 public:
     explicit IsingModel(const IsingModelParameters &imsp_) :
@@ -160,7 +160,7 @@ void ising_model_simulation() {
             }); */
 
 
-    // Setting up execution parameters - "measures" can only be defined here if SystemBaseMeasuresTemplateParameters is used
+    // Setting up execution parameters - "measures" can only be defined here if SystemBaseTemplateParameters is used
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
     ExpectationValueParams execution_parameters(100, 10000, 100, {"AbsMean", "SecondMoment", "Mean"}, {});
 

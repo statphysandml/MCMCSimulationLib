@@ -5,14 +5,14 @@
 #ifndef MCMCSIMULATIONLIB_STORING_AND_LOADING_HPP
 #define MCMCSIMULATIONLIB_STORING_AND_LOADING_HPP
 
-#include "../../include/mcmc_simulation/header.hpp"
-#include "../../include/execution/modes/correlation_time.hpp"
-
-// For systembases with custom measures
-#include "../../templates/systembase_template.hpp"
+#include "mcmc_simulation/header.hpp"
+#include "execution/modes/correlation_time.hpp"
 
 // For systembases with the possible usage of predefined common measures
-#include "../../templates/systembase_measures_template.hpp"
+#include "../../templates/systembase_template.hpp"
+
+// For systembases with custom measures
+#include "../../templates/plain_systembase_template.hpp"
 
 /* Save simulating parameters and load simulation from file - Execution mode: CorrelationTime */
 

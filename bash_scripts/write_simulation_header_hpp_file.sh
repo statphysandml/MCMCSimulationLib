@@ -9,11 +9,11 @@ cat >"${include_path}/simulation_header.hpp" <<EOL
 
 #include "execution/executer.hpp"
 
-// For systembases with custom measures
+// For systembases with the possible usage of predefined common measures
 #include "systembase_template.hpp"
 
-// For systembases with the possible usage of predefined common measures
-#include "systembase_measures_template.hpp"
+// For systembases with custom measures
+#include "plain_systembase_template.hpp"
 
 namespace from_file_simulation {
     typedef SystemBaseTemplateParameters SystemBaseParams;

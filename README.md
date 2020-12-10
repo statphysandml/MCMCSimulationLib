@@ -102,14 +102,14 @@ If a running_parameter is defined in the generate_simulation() function, the sim
 
 ### Implementation of the Ising Model
 
-The library uses a the ParamHelper library to track all of the used parameter of the simluation. Therefore, the Ising Model is implemented by two classes. One class called IsingModelParameters which contains all parameters and one class called IsingModel that implements all functionalities. The two classes inherit from SystemBaseMeasuresParameters and SystemBaseMeasure which define functions that need to be implemented for a specific theory.
+The library uses a the ParamHelper library to track all of the used parameter of the simluation. Therefore, the Ising Model is implemented by two classes. One class called IsingModelParameters which contains all parameters and one class called IsingModel that implements all functionalities. The two classes inherit from SystemBaseParameters and SystemBaseMeasure which define functions that need to be implemented for a specific theory.
 
 class IsingModelParameters:
 ```c++
-class IsingModelParameters : public mcmc::simulation::SystemBaseMeasuresParameters {
+class IsingModelParameters : public mcmc::simulation::SystemBaseParameters {
 public:
     explicit IsingModelParameters(const json params):
-            SystemBaseMeasuresParameters(params),
+            SystemBaseParameters(params),
             beta(get_entry<double>("beta", 0.4)),
             J(get_entry<double>("J", 1.0)),
             h(get_entry<double>("h", 0.0)),
@@ -150,7 +150,7 @@ private:
 
 class IsingModel:
 ```c++
-class IsingModel : public mcmc::simulation::SystemBaseMeasures<IsingModel>
+class IsingModel : public mcmc::simulation::SystemBase<IsingModel>
 {
 public:
     explicit IsingModel(const IsingModelParameters &imsp_) :

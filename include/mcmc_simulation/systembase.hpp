@@ -1,22 +1,30 @@
-#ifndef SYSTEMBASE_HPP
-#define SYSTEMBASE_HPP
+//
+// Created by lukas on 04.12.20.
+//
+
+#ifndef MCMCSIMULATIONLIB_SYSTEMBASE_MEASURES_HPP
+#define MCMCSIMULATIONLIB_SYSTEMBASE_MEASURES_HPP
 
 #include <vector>
 
 #include "param_helper/params.hpp"
+#include "measure_policy.hpp"
 
 namespace mcmc {
     namespace simulation {
 
         class SystemBaseParameters : public param_helper::params::Parameters {
         public:
-            using Parameters::Parameters;
+            SystemBaseParameters(const json params_) : Parameters(params_),
+                measures(get_entry<json>("measures", {"Mean"}))
+            {}
 
-            // Default parameter name for system parameters
+            // Optional - Default parameter name for system parameters
             static const std::string name() {
                 return "systembase_params";
             }
 
+            // Optional
             virtual void write_to_file(const std::string &root_dir) {
                 Parameters::write_to_file(root_dir, name());
             }
@@ -37,9 +45,12 @@ namespace mcmc {
             // Enables execution modes to temporarily use their own measures -> only works with systembase_measures
             void update_measures(const json& measures_)
             {
-                std::cout << "Usage of measures in execution mode so far only valid for systembase_measures base class" << std::endl;
-                std::exit(EXIT_FAILURE);
+                measures = measures_;
+                params["measures"] = measures_;
             }
+
+        protected:
+            json measures;
         };
 
         template<typename Derived>
@@ -61,11 +72,11 @@ namespace mcmc {
                 return systembase().get_measure_names();
             }
 
-            const auto size() const {
+            auto size() const {
                 return systembase().get_size();
             }
 
-            const auto operator[](int i) const {
+            auto operator[](int i) const {
                 return systembase().at(i);
             }
 
@@ -73,7 +84,7 @@ namespace mcmc {
                 return systembase().at(i);
             }
 
-            const auto operator()() const {
+            auto operator()() const {
                 return systembase().get_system_representation();
             }
 
@@ -81,7 +92,40 @@ namespace mcmc {
                 return systembase().get_system_representation();
             }
 
+            // Predefined measure method
+
+            virtual std::vector<std::string> perform_measure() {
+                std::vector<std::string> results;
+                for (auto const &element: measures) {
+                    results.push_back(element->measure(systembase()));
+                }
+                return results;
+            }
+
+            virtual std::vector<std::string> get_measure_names() {
+                std::vector<std::string> measure_names;
+                for (auto const &element: measures) {
+                    measure_names.push_back(element->name());
+                }
+                return measure_names;
+            }
+
+            /* By overiding this function one can also add custom generated measures */
+            virtual void generate_measures(const json& measure_names)
+            {
+                auto common_defined_measures = generate_systembase_measures(measure_names);
+                this->concat_measures(common_defined_measures);
+            }
+
             //    virtual void save_config(int i) = 0;
+
+        protected:
+            virtual std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > generate_systembase_measures(const json& measure_names);
+
+            void concat_measures(std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> &measures_);
+
+            // Stores all measure objects - these objects need to created by the derived class by calling generate_measures in void initialize()
+            std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> measures;
 
         private:
             Derived &systembase() {
@@ -92,7 +136,42 @@ namespace mcmc {
                 return *static_cast<const Derived *>(this);
             }
         };
+
+        template<typename Derived>
+        std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > SystemBase<Derived>::generate_systembase_measures(const json& measure_names)
+        {
+            std::cout << "ge" << measure_names << std::endl;
+
+            std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> measures_{};
+            for (auto &measure_name :  measure_names) {
+                if (measure_name == "Mean")
+                    measures_.push_back(std::make_unique<common_measures::MeasureMeanPolicy<Derived>>());
+                if (measure_name == "MeanImag")
+                    measures_.push_back(std::make_unique<common_measures::MeasureMeanImagPolicy<Derived>>());
+                else if (measure_name == "AbsMean")
+                    measures_.push_back(std::make_unique<common_measures::MeasureAbsMeanPolicy<Derived>>());
+                else if (measure_name == "Abs")
+                    measures_.push_back(std::make_unique<common_measures::MeasureAbsPolicy<Derived>>());
+                else if (measure_name == "Std")
+                    measures_.push_back(std::make_unique<common_measures::MeasureStdPolicy<Derived>>());
+                else if (measure_name == "SecondMoment")
+                    measures_.push_back(std::make_unique<common_measures::MeasureSecondMomentPolicy<Derived>>());
+                else if (measure_name == "FourthMoment")
+                    measures_.push_back(std::make_unique<common_measures::MeasureFourthMomentPolicy<Derived>>());
+                else if (measure_name == "Config")
+                    measures_.push_back(std::make_unique<common_measures::MeasureConfigPolicy<Derived>>());
+                else if (measure_name == "RealConfig")
+                    measures_.push_back(std::make_unique<common_measures::MeasureRealConfigPolicy<Derived>>());
+            }
+            return measures_;
+        }
+
+        template<typename Derived>
+        void SystemBase<Derived>::concat_measures(
+                std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> &measures_) {
+            std::move(begin(measures_), end(measures_), std::inserter(measures, end(measures)));
+        }
     }
 }
 
-#endif
+#endif //MCMCSIMULATIONLIB_SYSTEMBASE_MEASURES_HPP

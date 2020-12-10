@@ -1,9 +1,9 @@
 //
-// Created by lukas on 03.12.20.
+// Created by lukas on 04.12.20.
 //
 
-#ifndef MCMCSIMULATIONLIB_SYSTEMBASE_TEMPLATE_CUSTOM_MEASURES_HPP
-#define MCMCSIMULATIONLIB_SYSTEMBASE_TEMPLATE_CUSTOM_MEASURES_HPP
+#ifndef MCMCSIMULATIONLIB_SYSTEMBASE_MEASURE_TEMPLATE_HPP
+#define MCMCSIMULATIONLIB_SYSTEMBASE_MEASURE_TEMPLATE_HPP
 
 
 #include "mcmc_simulation/header.hpp"
@@ -73,22 +73,6 @@ public:
         return lattice;
     }
 
-    // Optional - For standard measurements, the already implemented method can be used
-    std::vector<std::string> perform_measure()
-    {
-        std::vector<std::string> results;
-        results.push_back(std::to_string(0.0));
-        return results;
-    }
-
-    // Optional - For standard measurements, the already implemented method can be used
-    std::vector<std::string> get_measure_names()
-    {
-        std::vector<std::string> measure_names;
-        measure_names.emplace_back("default_measure");
-        return measure_names;
-    }
-
 
 private:
     // Can be replaced by any other representation
@@ -97,5 +81,4 @@ private:
     const SystemBaseTemplateParameters &imsp;
 };
 
-
-#endif //MCMCSIMULATIONLIB_SYSTEMBASE_TEMPLATE_CUSTOM_MEASURES_HPP
+#endif //MCMCSIMULATIONLIB_SYSTEMBASE_MEASURE_TEMPLATE_HPP

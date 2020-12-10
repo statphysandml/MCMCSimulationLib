@@ -3,15 +3,15 @@ cat >"${src_path}/main.cpp" <<EOL
 #define MAIN_CPP
 
 EOL
-if [ "$project_path" = "../" ]; then
+if [ "$project_type" = "project" ]; then
 cat >>"${src_path}/main.cpp" <<EOL
 #include "../include/config.h"
 #include "../include/simulation_header.hpp"
 EOL
 else
 cat >>"${src_path}/main.cpp" <<EOL
-#include "../include/config.h"
-#include "../include/simulation_header.hpp"
+#include "config.h"
+#include "simulation_header.hpp"
 EOL
 fi
 cat >>"${src_path}/main.cpp" <<EOL
@@ -45,11 +45,11 @@ int main(int argc, char **argv) {
 
 void custom_main()
 {
-    // Setting up system parameters - This does also work with SystemBaseMeasureTemplateParameters
+    // Setting up system parameters
     SystemBaseTemplateParameters system_params(json {{"running_parameter", 0.0}});
 
 
-    // Setting up execution parameters - "measures" can only be defined here if SystemBaseMeasuresTemplateParameters is used
+    // Setting up execution parameters - "measures" can only be defined here if SystemBaseTemplateParameters is used
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
     ExpectationValueParams execution_parameters(100, 10000, 100, {}, {});
 

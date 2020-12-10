@@ -10,13 +10,14 @@
 #include "execution/modes/correlation_time.hpp"
 #include "execution/executer.hpp"
 
-// For systembases with custom measures
+// For systembases with the possible usage of predefined common measures
 #include "../../templates/systembase_template.hpp"
 
-// For systembases with the possible usage of predefined common measures
-#include "../../templates/systembase_measures_template.hpp"
+// For systembases with custom measures
+#include "../../templates/plain_systembase_template.hpp"
 
-typedef SystemBaseMeasuresTemplateParameters SystemBaseParams;
+
+typedef SystemBaseTemplateParameters SystemBaseParams;
 
 void custom_main();
 
@@ -86,14 +87,4 @@ void custom_main() {
             mcmc::execution::Executer::local, // mcmc::execution::Executer::local can be used to test the code first locally
             true); // In this case, the bash script can be started with: qsub ... or nice -n 17 bash ...
     */
-
-    // ToDo: Generate additional template for simulation with measurements
-
-    // ToDo: Generate example with Ising model
-
-    // ToDo: Add example with custom execution mode
-
-    // ToDo: General ToDo:
-    //  - Adapt lattice to not depend on rel_config anymore
-    //  - Think about adding functions for setting certain parameter paths explicitly -> or a constructor
 }

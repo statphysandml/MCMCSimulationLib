@@ -5,10 +5,8 @@
 #include "param_helper/params.hpp"
 #include "param_helper/json.hpp"
 
-#include "systembase.hpp"
-
 using json = nlohmann::json;
-//#include "systembase.hpp"
+
 
 namespace mcmc {
     namespace simulation {

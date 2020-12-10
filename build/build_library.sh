@@ -9,7 +9,6 @@ source config.sh
 # Generate generate_cmake_lists_txt_file
 source generate_cmake_lists_txt_file.sh
 
-
 # Generate config_h_in file in ../include/
 include_path="../include/execution/"
 source generate_config_h_in_file.sh

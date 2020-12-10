@@ -44,13 +44,13 @@ if(NOT CLUSTER_MODE)
 endif()
 
 EOL
-if [ "$project_path" = "../" ]; then
+if [ "$project_type" = "project" ]; then
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 configure_file(./../include/config.h.in ./../include/config.h @ONLY)
 EOL
 else
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
-configure_file(./../include/config.h.in ./../include/config.h @ONLY)
+configure_file(./../config.h.in ./../config.h @ONLY)
 EOL
 fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
@@ -78,13 +78,13 @@ endif()
 add_executable(
     ${project_name}
 EOL
-if [ "$project_path" = "../" ]; then
+if [ "$project_type" = "project" ]; then
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
     ./../src/main.cpp
 EOL
 else
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
-    ./../src/main.cpp
+    ./../main.cpp
 EOL
 fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
