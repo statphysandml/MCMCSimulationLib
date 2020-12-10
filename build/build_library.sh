@@ -4,7 +4,7 @@
 path_to_param_helper="./external_submodules/ParamHelper/"
 path_to_mcmc_simulation_lib="."
 
-source config.sh
+source "${path_to_config}/config.sh"
 
 # Generate generate_cmake_lists_txt_file
 source generate_cmake_lists_txt_file.sh
