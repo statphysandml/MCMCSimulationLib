@@ -179,9 +179,6 @@ void ising_model_simulation() {
 
     simulation_params.write_to_file("/configs/" + target_name + "/");
     mcmc::execution::execute<IsingModelParameters>(mcmc::execution::ExpectationValueParameters::name(), target_name);
-
-
-    std::cout << mcmc::execution::Executer::get_python_scripts_path() << std::endl;
 }
 
 
