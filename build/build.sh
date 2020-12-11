@@ -13,4 +13,4 @@ fi
 bash build_submodules.sh
 
 # Build library
-bash build_library.sh
+source build_library.sh
