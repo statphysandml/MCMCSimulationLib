@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MCMC Simulation lib
-parent_dir="$(dirname -- "$(readlink -f -- "build_project.sh")")"
+parent_dir="$(dirname -- "$(readlink -f -- "build_examples.sh")")"
 path_to_mcmc_simulation_lib="$(dirname "$parent_dir")"
 
 path_to_base_lib=${path_to_mcmc_simulation_lib}

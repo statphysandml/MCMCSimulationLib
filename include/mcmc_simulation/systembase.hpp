@@ -140,8 +140,6 @@ namespace mcmc {
         template<typename Derived>
         std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > SystemBase<Derived>::generate_systembase_measures(const json& measure_names)
         {
-            std::cout << "ge" << measure_names << std::endl;
-
             std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> measures_{};
             for (auto &measure_name :  measure_names) {
                 if (measure_name == "Mean")

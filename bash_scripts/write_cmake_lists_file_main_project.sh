@@ -59,7 +59,6 @@ find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib
 message("ParamHelper = \${ParamHelper}")
 include_directories(${path_to_param_helper}include/)
 
-
 find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS ${path_to_mcmc_simulation_lib}/lib)
 message("MCMCSimulationLib = \${MCMCSimulationLib}")
 include_directories(${path_to_mcmc_simulation_lib}/include/)
@@ -90,6 +89,7 @@ fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 )
 
+target_compile_definitions(${project_name} PUBLIC -D PYTHON)
 target_link_libraries(${project_name} \${MCMCSimulationLib} ${target_link_libraries_appendix})
 
 # Go to build directory and call

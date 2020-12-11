@@ -59,6 +59,7 @@ add_library(mcmcsimulationlib STATIC
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
 include_directories(${path_to_param_helper}include/)
+target_compile_definitions(mcmcsimulationlib PUBLIC -D PYTHON)
 target_link_libraries(mcmcsimulationlib ${target_link_libraries_appendix})
 
 
