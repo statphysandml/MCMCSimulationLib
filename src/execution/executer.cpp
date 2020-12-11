@@ -19,6 +19,7 @@ namespace mcmc {
             PyRun_SimpleString(("import sys; sys.path.append('" + Executer::get_python_scripts_path() + "')").c_str());
             PyRun_SimpleString(("sys.path.append('" + Executer::get_python_scripts_path() + "/util/')").c_str());
             PyRun_SimpleString(("sys.path.append('" + Executer::get_python_scripts_path() + "/modes/')").c_str());
+            PyRun_SimpleString("print(sys.path)");
             /* PyRun_SimpleString("sys.path.append( os.path.dirname(os.getcwd()) + '/python_scripts/')");
             PyRun_SimpleString("sys.path.append( os.path.dirname(os.getcwd()) + '/python_scripts/plotting_environment/')");
             PyRun_SimpleString("print('Running python in ' + os.path.dirname(os.getcwd()) + '/python_scripts/')"); */
