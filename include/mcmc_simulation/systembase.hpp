@@ -19,7 +19,6 @@ namespace mcmc {
                 measures(get_entry<json>("measures", {"Mean"}))
             {}
 
-            // Optional - Default parameter name for system parameters
             static const std::string name() {
                 return "systembase_params";
             }

@@ -12,7 +12,6 @@ namespace mcmc {
         public:
             using Parameters::Parameters;
 
-            // Default parameter name for system parameters
             static const std::string name() {
                 return "systembase_params";
             }
