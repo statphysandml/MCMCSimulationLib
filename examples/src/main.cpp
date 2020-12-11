@@ -24,12 +24,12 @@ void custom_main();
 int main(int argc, char **argv) {
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
 
+    // Initialization
+    // mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV, PYTHON_SCRIPTS_PATH);
+
 #ifdef PYTHON
     mcmc::execution::initialize_python();
 #endif
-
-    // Initialization
-    mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV, PYTHON_SCRIPTS_PATH);
 
     // A function of one of the first three if conditions is only called when an actual simulation takes place
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)

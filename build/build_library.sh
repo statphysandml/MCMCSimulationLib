@@ -1,8 +1,10 @@
 #!/bin/bash
 
+parent_dir="$(dirname -- "$(readlink -f -- "build_project.sh")")"
+path_to_mcmc_simulation_lib="$(dirname "$parent_dir")"
+
 # Submodules
-path_to_param_helper="./external_submodules/ParamHelper/"
-path_to_mcmc_simulation_lib="."
+path_to_param_helper="${path_to_mcmc_simulation_lib}/external_submodules/ParamHelper/"
 
 source "${path_to_config}/config.sh"
 

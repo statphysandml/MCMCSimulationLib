@@ -173,10 +173,15 @@ void ising_model_simulation() {
             system_params, execution_parameters, rel_data_path,
             "systembase_params", "beta", 0.1, 0.7, 6);
 
-
     // Setting up and running the actual simulation
-    mcmc::simulation::Simulation< IsingModelParameters, ExpectationValueParams > simulation(simulation_params);
-    simulation.run();
+    /* mcmc::simulation::Simulation< IsingModelParameters, ExpectationValueParams > simulation(simulation_params);
+    simulation.run(); */
+
+    simulation_params.write_to_file("/configs/" + target_name + "/");
+    mcmc::execution::execute<IsingModelParameters>(mcmc::execution::ExpectationValueParameters::name(), target_name);
+
+
+    std::cout << mcmc::execution::Executer::get_python_scripts_path() << std::endl;
 }
 
 

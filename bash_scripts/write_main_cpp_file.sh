@@ -22,7 +22,7 @@ void custom_main();
 
 int main(int argc, char **argv) {
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
-    mcmc::execution::initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV);
+    // mcmc::execution::initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV);
 
 #ifdef PYTHON
     mcmc::execution::initialize_python();
