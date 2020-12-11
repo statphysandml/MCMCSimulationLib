@@ -10,14 +10,12 @@ if [ -v path_to_python3 ]; then
 target_link_libraries_appendix="${target_link_libraries_appendix} \${PYTHON_LIBRARIES}"
 cat >>../CMakeLists.txt <<EOL
 # Python
-set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
-set(PYTHON_EXECUTABLE "${path_to_python3}bin/python${python_version}m")
-set(Python3_ROOT_DIR "$path_to_python3")
-include_directories("${path_to_python3}include/python${python_version}m")
-# find_package(PythonInterp 3 REQUIRED) # Not working at the university
-find_package(PythonLibs 3 REQUIRED)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython3.7m.so")
+set(PYTHON_EXECUTABLE "${path_to_python3}bin/python3.7m")
+set(Python3_ROOT_DIR "${path_to_python3}")
+set(PYTHON_INCLUDE_DIRS "${path_to_python3}include/python3.7m")
 include_directories(\${PYTHON_INCLUDE_DIRS})
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message("Python executable = \${PYTHON_EXECUTABLE}")
 
 set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
