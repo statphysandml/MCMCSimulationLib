@@ -40,7 +40,7 @@ namespace mcmc {
         template<typename SB>
         struct MeasureAbsPolicy : public MeasurePolicy<SB> {
             std::string measure(const SB &system) override {
-                auto sum = decltype(system[0]){0};
+                auto sum = decltype(std::fabs(system[0])){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += std::fabs(system[i]);
                 return std::to_string(sum * 1.0 / system.size());
@@ -69,7 +69,7 @@ namespace mcmc {
         struct MeasureSecondMomentPolicy : public MeasurePolicy<SB> {
             auto compute_measure(const SB &system)
             {
-                auto sum = decltype(system[0]){0};
+                auto sum = decltype(system[0] * system[0]){0};
                 for(uint i = 0; i < system.size(); i++)
                     sum += system[i] * system[i];
                 return sum * 1.0 / system.size();
@@ -88,7 +88,7 @@ namespace mcmc {
         struct MeasureFourthMomentPolicy : public MeasurePolicy<SB> {
             auto compute_measure(const SB &system)
             {
-                auto sum = decltype(system[0]){0};
+                auto sum = decltype((system[0] * system[0]) * (system[0] * system[0])){0};
                 for(uint i = 0; i < system.size(); i++)
                     sum += (system[i] * system[i]) * (system[i] * system[i]);
                 return sum * 1.0 / system.size();
