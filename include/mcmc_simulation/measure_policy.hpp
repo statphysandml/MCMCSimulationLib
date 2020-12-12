@@ -121,9 +121,9 @@ namespace mcmc {
         template<typename SB>
         struct MeasureConfigPolicy : public MeasurePolicy<SB> {
             std::string measure(const SB &system) override {
-                std::string config;
-                for (uint i = 0; i < system.size(); i++) {
-                    config += std::to_string(system[i]);
+                std::string config = std::to_string(system[0]);
+                for (uint i = 1; i < system.size(); i++) {
+                    config += ", " + std::to_string(system[i]);
                 }
                 return config;
             }
