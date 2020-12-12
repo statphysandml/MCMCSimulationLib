@@ -90,7 +90,7 @@ namespace mcmc {
             {
                 auto sum = decltype(system[0]){0};
                 for(uint i = 0; i < system.size(); i++)
-                    sum += system[i] * system[i] * system[i] * system[i];
+                    sum += (system[i] * system[i]) * (system[i] * system[i]);
                 return sum * 1.0 / system.size();
             }
 
