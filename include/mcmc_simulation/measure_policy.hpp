@@ -57,7 +57,7 @@ namespace mcmc {
                 auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += system[i];
-                return std::to_string(abs(sum * 1.0 / system.size()));
+                return std::to_string(std::fabs(sum * 1.0 / system.size()));
             }
 
             std::string name() {
