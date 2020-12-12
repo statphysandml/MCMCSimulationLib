@@ -143,22 +143,18 @@ namespace mcmc {
             for (auto &measure_name :  measure_names) {
                 if (measure_name == "Mean")
                     measures_.push_back(std::make_unique<common_measures::MeasureMeanPolicy<Derived>>());
-                if (measure_name == "MeanImag")
-                    measures_.push_back(std::make_unique<common_measures::MeasureMeanImagPolicy<Derived>>());
                 else if (measure_name == "AbsMean")
                     measures_.push_back(std::make_unique<common_measures::MeasureAbsMeanPolicy<Derived>>());
                 else if (measure_name == "Abs")
                     measures_.push_back(std::make_unique<common_measures::MeasureAbsPolicy<Derived>>());
-                else if (measure_name == "Std")
-                    measures_.push_back(std::make_unique<common_measures::MeasureStdPolicy<Derived>>());
+                else if (measure_name == "Variance")
+                    measures_.push_back(std::make_unique<common_measures::MeasureVariancePolicy<Derived>>());
                 else if (measure_name == "SecondMoment")
                     measures_.push_back(std::make_unique<common_measures::MeasureSecondMomentPolicy<Derived>>());
                 else if (measure_name == "FourthMoment")
                     measures_.push_back(std::make_unique<common_measures::MeasureFourthMomentPolicy<Derived>>());
                 else if (measure_name == "Config")
                     measures_.push_back(std::make_unique<common_measures::MeasureConfigPolicy<Derived>>());
-                else if (measure_name == "RealConfig")
-                    measures_.push_back(std::make_unique<common_measures::MeasureRealConfigPolicy<Derived>>());
             }
             return measures_;
         }

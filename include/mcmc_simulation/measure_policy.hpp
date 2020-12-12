@@ -8,57 +8,6 @@
 
 namespace mcmc {
     namespace common_measures {
-
-        // Type policies
-
-        template<typename T>
-        struct TypePolicy {
-        public:
-            static double realv(const T state) {
-                return state;
-            }
-
-            static double imagv(const T state) {
-                return state;
-            }
-
-            static std::string conf(const T state) {
-                return std::to_string(state) + " ";
-            }
-        };
-
-        template<>
-        struct TypePolicy<std::complex<double> > {
-        public:
-            static double realv(const std::complex<double> state) {
-                return state.real();
-            }
-
-            static double imagv(const std::complex<double> state) {
-                return state.imag();
-            }
-
-            static std::string conf(const std::complex<double> state) {
-                return std::to_string(state.real()) + " " + std::to_string(state.imag()) + " ";
-            }
-        };
-
-        template<>
-        struct TypePolicy<const std::complex<double> > {
-        public:
-            static double realv(const std::complex<double> state) {
-                return state.real();
-            }
-
-            static double imagv(const std::complex<double> state) {
-                return state.imag();
-            }
-
-            static std::string conf(const std::complex<double> state) {
-                return std::to_string(state.real()) + " " + std::to_string(state.imag()) + " ";
-            }
-        };
-
         // Measure policies
 
         // Measure policy base class
@@ -71,11 +20,16 @@ namespace mcmc {
 
         template<typename SB>
         struct MeasureMeanPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
+            auto compute_measure(const SB &system)
+            {
                 auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += system[i];
-                return std::to_string(TypePolicy<decltype(sum)>::realv(sum) * 1.0 / system.size());
+                return sum * 1.0 / system.size();
+            }
+
+            std::string measure(const SB &system) override {
+                return std::to_string(compute_measure(system));
             }
 
             std::string name() {
@@ -84,23 +38,9 @@ namespace mcmc {
         };
 
         template<typename SB>
-        struct MeasureMeanImagPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
-                auto sum = decltype(system[0]){0};
-                for (uint i = 0; i < system.size(); i++)
-                    sum += system[i];
-                return std::to_string(TypePolicy<decltype(sum)>::imagv(sum) * 1.0 / system.size());
-            }
-
-            std::string name() {
-                return "MeanImag";
-            }
-        };
-
-        template<typename SB>
         struct MeasureAbsPolicy : public MeasurePolicy<SB> {
             std::string measure(const SB &system) override {
-                double sum = 0.0;
+                auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += std::fabs(system[i]);
                 return std::to_string(sum * 1.0 / system.size());
@@ -117,7 +57,7 @@ namespace mcmc {
                 auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += system[i];
-                return std::to_string(abs(TypePolicy<decltype(sum)>::realv(sum)) * 1.0 / system.size());
+                return std::to_string(abs(sum * 1.0 / system.size()));
             }
 
             std::string name() {
@@ -126,26 +66,17 @@ namespace mcmc {
         };
 
         template<typename SB>
-        struct MeasureStdPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
-                auto sum = decltype(system[0]){0};
-                //sum += 1;
-                //std::cout << a << " " << sum << std::endl;
-                return std::to_string(TypePolicy<decltype(sum)>::realv(system[0]));
-            }
-
-            std::string name() {
-                return "Std";
-            }
-        };
-
-        template<typename SB>
         struct MeasureSecondMomentPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
-                double sum = decltype(system[0]){0};
+            auto compute_measure(const SB &system)
+            {
+                auto sum = decltype(system[0]){0};
                 for(uint i = 0; i < system.size(); i++)
-                    sum += pow(system[i], 2.0);
-                return std::to_string(sum * 1.0 / system.size());
+                    sum += system[i] * system[i];
+                return sum * 1.0 / system.size();
+            }
+
+            std::string measure(const SB &system) override {
+                return std::to_string(compute_measure(system));
             }
 
             std::string name() {
@@ -155,11 +86,16 @@ namespace mcmc {
 
         template<typename SB>
         struct MeasureFourthMomentPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
-                double sum = decltype(system[0]){0};
+            auto compute_measure(const SB &system)
+            {
+                auto sum = decltype(system[0]){0};
                 for(uint i = 0; i < system.size(); i++)
-                    sum += pow(system[i], 4.0);
-                return std::to_string(sum * 1.0 / system.size());
+                    sum += system[i] * system[i] * system[i] * system[i];
+                return sum * 1.0 / system.size();
+            }
+
+            std::string measure(const SB &system) override {
+                return std::to_string(compute_measure(system));
             }
 
             std::string name() {
@@ -168,31 +104,32 @@ namespace mcmc {
         };
 
         template<typename SB>
+        struct MeasureVariancePolicy : public MeasurePolicy<SB> {
+            std::string measure(const SB &system) override {
+                MeasureMeanPolicy<SB> measure_mean;
+                auto mean = measure_mean.compute_measure(system);
+                MeasureSecondMomentPolicy<SB> measure_second_moment;
+                auto second_moment = measure_second_moment.compute_measure(system);
+                return std::to_string(second_moment -  mean * mean);
+            }
+
+            std::string name() {
+                return "Variance";
+            }
+        };
+
+        template<typename SB>
         struct MeasureConfigPolicy : public MeasurePolicy<SB> {
             std::string measure(const SB &system) override {
                 std::string config;
                 for (uint i = 0; i < system.size(); i++) {
-                    config += TypePolicy<decltype(system[i])>::conf(system[i]);
+                    config += std::to_string(system[i]);
                 }
                 return config;
             }
 
             std::string name() {
                 return "Config";
-            }
-        };
-
-        template<typename SB>
-        struct MeasureRealConfigPolicy : public MeasurePolicy<SB> {
-            std::string measure(const SB &system) override {
-                std::string config = "";
-                for (uint i = 0; i < system.size(); i++)
-                    config += std::to_string(TypePolicy<decltype(system[i])>::realv(system[i])) + " ";
-                return config.substr(0, config.size() - 1);
-            }
-
-            std::string name() {
-                return "RealConfig";
             }
         };
     }
