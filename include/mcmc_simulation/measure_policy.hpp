@@ -25,7 +25,7 @@ namespace mcmc {
                 auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += system[i];
-                return sum * 1.0 / double(system.size());
+                return sum * (1.0 / double(system.size()));
             }
 
             std::string measure(const SB &system) override {
@@ -43,7 +43,7 @@ namespace mcmc {
                 auto sum = decltype(std::fabs(system[0])){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += std::fabs(system[i]);
-                return std::to_string(sum * 1.0 / double(system.size()));
+                return std::to_string(sum * (1.0 / double(system.size())));
             }
 
             std::string name() {
@@ -57,7 +57,7 @@ namespace mcmc {
                 auto sum = decltype(system[0]){0};
                 for (uint i = 0; i < system.size(); i++)
                     sum += system[i];
-                return std::to_string(std::fabs(sum * 1.0 / double(system.size())));
+                return std::to_string(std::fabs(sum * (1.0 / double(system.size()))));
             }
 
             std::string name() {
@@ -72,7 +72,7 @@ namespace mcmc {
                 auto sum = decltype(system[0] * system[0]){0};
                 for(uint i = 0; i < system.size(); i++)
                     sum += system[i] * system[i];
-                return sum * 1.0 / double(system.size());
+                return sum * (1.0 / double(system.size()));
             }
 
             std::string measure(const SB &system) override {
@@ -91,7 +91,7 @@ namespace mcmc {
                 auto sum = decltype((system[0] * system[0]) * (system[0] * system[0])){0};
                 for(uint i = 0; i < system.size(); i++)
                     sum += (system[i] * system[i]) * (system[i] * system[i]);
-                return sum * 1.0 / double(system.size());
+                return sum * (1.0 / double(system.size()));
             }
 
             std::string measure(const SB &system) override {
