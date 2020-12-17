@@ -54,9 +54,11 @@ int main(int argc, char **argv) {
 #include "../include/ising_model.hpp"
 
 void custom_main() {
-    simple_simulation();
+    /* simple_simulation();
     save_and_load();
-    ising_model_simulation();
+    ising_model_simulation(); */
+    ising_model_simulation_with_correlation_time();
+
     /* // Setting up system parameters - This does also work with SystemBaseMeasureTemplateParameters
     SystemBaseParams system_params(json {{"running_parameter", 0.0}});
 

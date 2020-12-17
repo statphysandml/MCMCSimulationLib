@@ -21,7 +21,7 @@ void save_and_load() {
     SystemBaseTemplateParameters system_params(json {{"running_parameter", 0.0}});
 
 
-    // Setting up execution parameters
+    // Setting up correlation time parameters
     typedef mcmc::execution::CorrelationTimeParameters CorrelationTimeParams;
     CorrelationTimeParams correlation_time_execution_parameters(10, 100, 100);
 

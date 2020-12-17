@@ -26,7 +26,7 @@ namespace mcmc {
 
                 measures = get_entry<json>("measures", {});
                 post_measures = get_entry<json>("post_measures", {});
-                n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 50);
+                n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 0);
             }
 
             ExpectationValueParameters(
@@ -35,7 +35,7 @@ namespace mcmc {
                     uint start_measuring_,
                     json measures_ = {},
                     json post_measures_ = {},
-                    uint n_means_bootstrap_ = 50
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"measure_interval",       measure_interval_},
                          {"number_of_measurements", number_of_measurements_},
@@ -50,7 +50,7 @@ namespace mcmc {
                     uint start_measuring_,
                     json measures_ = {},
                     json post_measures_ = {},
-                    uint n_means_bootstrap_ = 50
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
                          {"measure_interval",                  0},
@@ -67,7 +67,7 @@ namespace mcmc {
                     uint start_measuring_,
                     json measures_ = {},
                     json post_measures_ = {},
-                    uint n_means_bootstrap_ = 50
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"equilibriate_rel_results_path",     equilibriate_rel_results_path_},
                          {"correlation_time_rel_results_path", correlation_time_rel_results_path_},

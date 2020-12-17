@@ -11,9 +11,6 @@
 #include "../../mcmc_simulation/markov_chain.hpp"
 
 
-// ToDo: You have to distinguish between hot and cold start somewhere, for example in the sim run file?
-// or maybe add start_condition to mc parameters. It might also be reasonable to distinguish between appending data to the file and writing to the file
-
 using json = nlohmann::json;
 
 namespace mcmc {
