@@ -62,7 +62,7 @@ cd bash_scripts
 bash build_examples.sh
 ```
 
-The examples contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, a detailed example for the simulation of the Ising model is given. The examples/python_scripts/examples directory shows possible ways to use the MCMCEvaluationLib. An thorough evaluation of the simulation results is shown in the ... jupyter notebook. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplotlib library.
+The examples contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, a detailed example for the simulation of the Ising model is given. The examples/python_scripts/examples directory shows possible ways to use the MCMCEvaluationLib. An thorough evaluation of the simulation results is shown in a jupyter notebook that can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/python_scripts/examples/ising_model_cheat_sheet.ipynb. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplottools library (https://github.com/statphysandml/pystatplottools).
 
 Template Project
 ----------------
