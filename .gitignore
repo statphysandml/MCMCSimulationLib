@@ -1,6 +1,7 @@
 .idea/
 lib/
 build/config.sh
+bash_scripts/project_config.sh
 CMakeLists.txt
 __pycache__/
 
