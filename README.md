@@ -58,7 +58,7 @@ Examples
 
 Examples can be generated with
 ```bash
-cd bash_script
+cd bash_scripts
 bash build_examples.sh
 ```
 
@@ -69,7 +69,7 @@ Template Project
 
 A new project that demonstrates the basic functionalities of the library based on a template class for a model or theory can be generated in an arbitrary directory with
 ```bash
-cd build
+cd bash_scripts
 bash build_project.sh
 ```
 A project can be used as a template for your own simulation.
