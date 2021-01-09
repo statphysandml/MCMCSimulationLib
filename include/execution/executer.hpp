@@ -30,16 +30,13 @@ namespace mcmc {
     namespace execution {
 
 #ifdef PYTHON
-        void initialize_python();
+        void initialize_python(const std::string python_modules_path_);
 
         void finalize_python();
 #endif
 
         void initialize_executer_params(const std::string executable_name_,
-                                        const std::string cluster_mode_,
-                                        const std::string conda_activate_path_="",
-                                        const std::string virtual_env_="",
-                                        const std::string python_scripts_path_="");
+                                        const std::string cluster_mode_);
 
         struct Executer {
             // Managing execution modes
@@ -72,9 +69,12 @@ namespace mcmc {
             };
 
             // Additional static parameters for running (executer_params)
-            static std::string python_scripts_path;
+            // Project dependent variables
+            static std::string python_modules_path;
             static std::string executable_name;
             static std::string cluster_mode;
+
+            // Global parameters
             static std::string conda_activate_path;
             static std::string virtual_env;
 
@@ -95,7 +95,7 @@ namespace mcmc {
             static void prep_default_execution(const mcmc::util::PathParameters path_parameters);
 
             template<typename SBP>
-            void main(/*SBP &simparams*/) {
+            void main() {
                 ExecutionMode mode;
                 // json config_file;
                 bool in_preparation;
@@ -107,17 +107,8 @@ namespace mcmc {
                     std::cout << "Mode = " << path_parameters.mode_type
                               << " will be executed based on provided json file"
                               << std::endl;
-                    // config_file = param_helper::fs::read_parameter_file(path_parameters.get_rel_config_path() + "/", path_parameters.mode_type + "_params", path_parameters.rel_path);
                     mode = mode_resolver.at(path_parameters.mode_type);
                     in_preparation = false;
-                    // Can probably be shifted to somewhere else
-                    /* if(config_file["mode_type"].get<std::string>() != path_parameters.mode_type)
-                    {
-                        std::cout << "\nERROR: Mode in config file " << config_file["mode_type"].get<std::string>()
-                                  << "_params and mode in execution command " << path_parameters.mode_type
-                                  << " do not coincide" << std::endl;
-                        std::exit(EXIT_FAILURE);
-                    } */
                 } else {
                     std::cout << "A default " << path_parameters.mode_type
                               << "_params.json file will be generated in configs/"
@@ -140,19 +131,22 @@ namespace mcmc {
 
                             #ifdef PYTHON
 
-                            FILE *file;
+                            prepare_python_execution();
+                            PyRun_SimpleString(("from mcmctools.modes.expectation_value import expectation_value; expectation_value('" + path_parameters.files_dir + "')").c_str());
+                            finalize_python_execution();
+
+                            /* FILE *file;
                             auto args = prepare_python_script("expectation_value");
                             PySys_SetArgv(args.first, args.second);
-                            file = fopen((Executer::get_python_scripts_path() + "/modes/expectation_value.py").c_str(),
-                                         "r");
+                            PyRun_SimpleString(("print('File', " + Executer::get_python_modules_path() + "/mcmctools/modes/expectation_value.py)").c_str());
+                            file = fopen((Executer::get_python_modules_path() + "/mcmctools/modes/expectation_value.py").c_str(),"r");
                             PyRun_SimpleFile(file, "expectation_value.py");
                             fclose(file);
                             auto cwd = param_helper::fs::prfs::project_root();
                             PyRun_SimpleString(
-                                    ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+                                    ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str()); */
 
                             #endif
-                            // PyRun_SimpleString("os.chdir('cu_work_dir')");
                         }
                         break;
                     }
@@ -167,18 +161,9 @@ namespace mcmc {
 
                             #ifdef PYTHON
 
-                            FILE *file;
-                            auto args = prepare_python_script("correlation_time");
-                            PySys_SetArgv(args.first, args.second);
-                            file = fopen((Executer::get_python_scripts_path() + "/modes/correlation_time.py").c_str(),
-                                         "r");
-                            PyRun_SimpleFile(file, "correlation_time.py");
-                            fclose(file);
-                            auto cwd = param_helper::fs::prfs::project_root();
-                            PyRun_SimpleString(
-                                    ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
-
-                            // PyRun_SimpleString("os.chdir('cu_work_dir')");
+                            prepare_python_execution();
+                            PyRun_SimpleString(("from mcmctools.modes.correlation_time import correlation_time; correlation_time('" + path_parameters.files_dir + "')").c_str());
+                            finalize_python_execution();
 
                             #endif
                         }
@@ -195,17 +180,9 @@ namespace mcmc {
 
                             #ifdef PYTHON
 
-                            FILE *file;
-                            auto args = prepare_python_script("equilibriate");
-                            PySys_SetArgv(args.first, args.second);
-                            file = fopen((Executer::get_python_scripts_path() + "/modes/equilibriate.py").c_str(), "r");
-                            PyRun_SimpleFile(file, "equilibriate.py");
-                            fclose(file);
-                            auto cwd = param_helper::fs::prfs::project_root();
-                            PyRun_SimpleString(
-                                    ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
-
-                            // PyRun_SimpleString("os.chdir('cu_work_dir')");
+                            prepare_python_execution();
+                            PyRun_SimpleString(("from mcmctools.modes.equilibriate import equilibriate; equilibriate('" + path_parameters.files_dir + "')").c_str());
+                            finalize_python_execution();
 
                             #endif
                         }
@@ -218,17 +195,9 @@ namespace mcmc {
 
                             #ifdef PYTHON
 
-                            FILE *file;
-                            auto args = prepare_python_script("plot_site_distribution");
-                            PySys_SetArgv(args.first, args.second);
-                            file = fopen(
-                                    (Executer::get_python_scripts_path() + "/modes/plot_site_distribution.py").c_str(),
-                                    "r");
-                            PyRun_SimpleFile(file, "plot_site_distribution.py");
-                            fclose(file);
-                            auto cwd = param_helper::fs::prfs::project_root();
-                            PyRun_SimpleString(
-                                    ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+                            prepare_python_execution();
+                            PyRun_SimpleString(("from mcmctools.modes.plot_site_distribution import plot_site_distribution; plot_site_distribution('" + path_parameters.files_dir + "')").c_str());
+                            finalize_python_execution();
 
                             #endif
                         }
@@ -276,13 +245,25 @@ namespace mcmc {
                 return std::pair<int, wchar_t **>{argc, _argv};
             }
 
-            static std::string get_python_scripts_path() {
-                return Executer::python_scripts_path;
+            void prepare_python_execution() {
+                PyRun_SimpleString(
+                        ("import os; os.chdir('" + param_helper::fs::prfs::project_root() + path_parameters.sim_root_dir + "')").c_str());
             }
 
-            static void set_python_scripts_path(const std::string python_scripts_path_) {
-                Executer::python_scripts_path = python_scripts_path_;
-                std::cout << "Setting python scripts path to " << python_scripts_path_ << std::endl;
+            void finalize_python_execution() {
+                auto cwd = param_helper::fs::prfs::project_root();
+                PyRun_SimpleString(
+                        ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+
+            };
+
+            static std::string get_python_modules_path() {
+                return Executer::python_modules_path;
+            }
+
+            static void set_python_modules_path(const std::string python_modules_path_) {
+                Executer::python_modules_path = python_modules_path_;
+                std::cout << "Setting python scripts path to " << python_modules_path_ << std::endl;
             }
 
             static void set_conda_activate_path(const std::string conda_activate_path_) {

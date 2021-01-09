@@ -13,12 +13,46 @@ else
   src_path="$project_path"
 fi
 
-# Will be generated later by the C++ program - doesn't work so far
+# Should be generated later by the C++ program - doesn't work so far
 mkdir -p "$project_path/configs"
 mkdir -p "$project_path/data"
 mkdir -p "$project_path/cpu_cluster_runs"
 
-source "${path_to_base_lib}/build/config.sh"
+
+if test -f "${path_to_base_lib}/build/config.sh"; then
+  source "${path_to_base_lib}/build/config.sh"
+fi
+
+if test -f "${path_to_base_lib}/bash_scripts/project_config.sh"; then
+  source "${path_to_base_lib}/bash_scripts/project_config.sh"
+fi
+
+
+# Set unset variables to default values
+
+if [ -z ${cluster_mode+x} ]; then
+  cluster_mode="local"
+fi
+
+if [ -z ${python_modules_path+x} ]; then
+  if [ "$project_type" = "project" ]; then
+    python_modules_path="./python_scripts/"
+  else
+    python_modules_path="./../../python_scripts/"
+  fi
+fi
+
+echo "Python modules path: ${python_modules_path}"
+
+# Convert to absolute path
+current_path=$PWD
+cd $project_path
+if [ "$project_type" = "project" ]; then
+# Generate python_scripts folder for project
+    mkdir -p "$python_modules_path"
+fi
+python_modules_path="$(cd "$python_modules_path" && pwd -P)"
+cd $current_path
 
 if test -f "$src_path/main.cpp"; then
 	echo "Main project already build. Only the cmake lists file is rebuild."
@@ -31,10 +65,10 @@ if test -f "$src_path/main.cpp"; then
 else
 
 	if [ "$project_type" = "project" ]; then
-	  # Generate folders for main project
+	  # Generate further folders for main project
     mkdir "$include_path"
     mkdir "$src_path"
-    mkdir "$project_path/jupyter_notebooks"
+    mkdir -p "$project_path/python_scripts"
   fi
 
   # Generate config_h_in file

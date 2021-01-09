@@ -77,20 +77,24 @@ namespace mcmc {
                     system_base->initialize(starting_mode);
                     if (z == 0) {
                         std::vector<std::string> measure_names = system_base->measure_names();
-                        for (auto const &element: measure_names) {
-                            os << element << "\t";
-                        }
-                        os << std::endl;
+                        if(measure_names.size() > 0)
+                            os << measure_names[0];
+                        for (uint i = 1; i < measure_names.size(); i++)
+                            os << "\t" << measure_names[i];
+                        if(measure_names.size() > 0)
+                            os << std::endl;
                     }
 
                     system_base->update(mp.start_measuring);
 
                     for (uint i = 0; i < mp.number_of_measurements; i++) {
                         std::vector<std::string> measures = system_base->measure();
-                        for (auto const &element: measures) {
-                            os << element << "\t";
-                        }
-                        os << "\n";
+                        if(measures.size() > 0)
+                            os << measures[0];
+                        for (uint i = 1; i < measures.size(); i++)
+                            os << "\t" << measures[i];
+                        if(measures.size() > 0)
+                            os << "\n";
 
                         if (i % 1000 == 0) {
                             std::cout << "########## i:" << i << /*"\n" << system_base <<*/ "\n";

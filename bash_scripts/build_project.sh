@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# For an entire project
+
 # MCMC Simulation lib
 parent_dir="$(dirname -- "$(readlink -f -- "build_project.sh")")"
 path_to_mcmc_simulation_lib="$(dirname "$parent_dir")"

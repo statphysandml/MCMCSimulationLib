@@ -1,40 +1,46 @@
 MCMCSimulationLib
 =================
 
-MCMCSimulationLib is a C++ library that simplifies setting up a Markov Chain Monte Carlo algorithms. The library provides a framework to perform standard computations as a computation of expectation values or a determination of the autocorrelation time. A base class provides an interface for an easy implementation of new theories and models.
+MCMCSimulationLib is a C++ library that simplifies setting up a Markov Chain Monte Carlo algorithms. The library provides a framework to perform standard computations like a computation of expectation values or a determination of the autocorrelation time. Certain base classes enable an easy implementation of new theories and models.
 
-An additional feature of the library is that all simulations are automatically saved and can reused for the same simulation at a later point. Due to this, the library can be used to manage and start computations on a cluster pretty easy.
+An additional feature of the library is that all hyperparameters of a simulation can be saved and reused for the same simulation at a later point. Due to this, the library can be used to manage and start computations on a cluster pretty easy.
 
-Certain python modules are also part of the library. The python modules allow a more convenient evaluation of the numerical results.
+The computation of numerical results is implemented in Python. The respective library can be found here: https://github.com/statphysandml/MCMCEvaluationLib.
 
 In short, the library takes care of all the annoying parts of a Markov Chain Monte Carlo algorithm and leaves you with the interesting task of the actual considered problem.
 
 Build
 -----
 
-Certain configuration parameters need to be defined for an execution of the C++ program. They are defined in the "config.sh" file in the "build" directoy. The file config_template.sh contains a example for the definition of the parameters:
+Certain configuration parameters need to be defined for an execution of the C++ program. They need to be defined in a "config.sh" file in the "build" directory and in a "project_config.sh" file in the "bash_scripts" directory. The "config.sh" file contains all important information for the integration of Python into the program. So far, the library can only be used with a virtual environment. The "config_template.sh" file is a template where all necessary parameters are defined:
 ```bash
-cluster_mode="local" # local/on_cluster
-
 path_to_python3="~/.miniconda3/envs/virtual_env/" # (optional)
 path_to_conda_activate="~/.miniconda3/bin/activate" # (optional)
 virtual_env="virtual_env" # (optional)
 python_version="3.7" # (optional)
+```
+The parameters need to be adapted to the virtual environment of the underlying system. Using the library without any Python components is possible by leaving the "config.sh" file empty.
+
+The file "project_config.sh" defines project-dependent parameters. They are used when a new project is generated with the "build_project.sh" file. There also exists a template file ("project_config_template.sh") which contains all necessary parameters:
+```bash
+cluster_mode="local"
+# (optional - default=local) local/on_cluster - Can be adapted temporarily by adding -DCLUSTER_MODE=".." to the cmake command
+# - "local" = for testing - does not actually start the code on the cluster but locally and performs all the necessary preparation
+# - "on_cluster" = for the actual execution on a cluster
+python_modules_path="~/MCMCSimulationLib/examples/python_scripts" # (for a possible execution code of custom written functions and modules. The directory is added to sys.path by the program)
+# (optional - default="./python_scripts" for projects and "./../python_scripts/" for simulations.) (the path is defined relative to the project root path)
 ```
 
 The first parameter "cluster_mode" indicates whether the algorithms are started on the cluster (on_cluster) or locally (local).
 
 #### cluster_mode = local
 
-There is nothing that needs to be done. The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine.
+The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine.
 
 #### cluster_mode = on_cluster
 
-The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file src/execution/execution.cpp and need to be adapted in dependence on your cluster.
+The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file src/execution/execution.cpp and need to be adapted according to the used cluster.
 
-#### python parameters
-
-The library can be used with or without the python modules. If one wants to make use of the python modules, the C++ program needs to know which virtual environment your are using. If you do not define any of the optional parameters (by deleting these lines). The library leaves out the functionalities that depend on python.
 
 Having a config.sh file in the build directory, the library can be build with
 ```bash
@@ -45,11 +51,13 @@ bash build.sh
 Examples
 --------
 
-The examples can be generated with
+Examples can be generated with
 ```bash
 cd bash_script
 bash build_examples.sh
 ```
+
+The examples contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, a detailed example for the simulation of the Ising model is given. The examples/python_scripts/examples directory shows possible ways to use the MCMCEvaluationLib. An thorough evaluation of the simulation results is shown in the ... jupyter notebook. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplotlib library.
 
 Template Project
 ----------------
@@ -59,7 +67,7 @@ A new project that demonstrates the basic functionalities of the library based o
 cd build
 bash build_project.sh
 ```
-The template class can be adapted to your actual considered problem.
+A project can be used as a template for your own simulation.
 
 Usage
 -----
@@ -240,7 +248,7 @@ private:
 };
 ```
 
-The entire examples can be found in examples/ising_model.hpp.
+The entire examples can be found in examples/ising_model.hpp. A thorough evaluation of the numerical results is implemented here: 
 
 
 

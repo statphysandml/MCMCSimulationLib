@@ -18,5 +18,7 @@ fi
 
 project_path="$project_base_dir/$project_name"
 mkdir -p "$project_path/"
+project_path="$(cd "$project_path" && pwd -P)"
+echo "Absolute Project path: ${project_path}"
 
 project_type="project"

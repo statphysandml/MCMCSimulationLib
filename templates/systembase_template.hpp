@@ -20,15 +20,6 @@ public:
 
     std::unique_ptr<SystemBaseTemplate> generate() { return std::make_unique<SystemBaseTemplate>(*this); }
 
-    /* static const std::string name() // Optional
-    {
-        return "ising_model_system_params";
-    }
-
-    void write_to_file(const std::string& root_dir) { // Optional - Needs to be defined if name() function is defined
-        Parameters::write_to_file(root_dir, name());
-    } */
-
 private:
     friend class SystemBaseTemplate;
 
@@ -40,13 +31,18 @@ class SystemBaseTemplate : public mcmc::simulation::SystemBase<SystemBaseTemplat
 {
 public:
     explicit SystemBaseTemplate(const SystemBaseTemplateParameters &imsp_) : imsp(imsp_)
-    {}
+    {
+        lattice = std::vector<double> (10, 0.0);
+    }
 
     void update_step(uint measure_interval=1)
     {}
 
     void initialize(std::string starting_mode)
-    {}
+    {
+        // Necessary
+        generate_measures(imsp.measures);
+    }
 
     auto get_size() const
     {

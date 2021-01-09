@@ -6,7 +6,9 @@ path_to_mcmc_simulation_lib="$(dirname "$parent_dir")"
 # Submodules
 path_to_param_helper="${path_to_mcmc_simulation_lib}/external_submodules/ParamHelper/"
 
-source "${path_to_config}/config.sh"
+if test -f "${path_to_config}/config.sh"; then
+  source "${path_to_config}/config.sh"
+fi
 
 # Generate generate_cmake_lists_txt_file
 source generate_cmake_lists_txt_file.sh

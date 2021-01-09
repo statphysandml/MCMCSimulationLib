@@ -17,8 +17,13 @@ set(PYTHON_INCLUDE_DIRS "${path_to_python3}include/python3.7m")
 include_directories(\${PYTHON_INCLUDE_DIRS})
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message("Python executable = \${PYTHON_EXECUTABLE}")
-
-set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
+EOL
+if [ -v python_modules_path ]; then
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
+set(PYTHON_SCRIPTS_PATH "${python_modules_path}")
+EOL
+fi
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
 option(PYTHON "Enable Python" ON)
 
@@ -38,7 +43,7 @@ fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
 if(NOT CLUSTER_MODE)
-    set(CLUSTER_MODE "${cluster_mode}") # else local
+    set(CLUSTER_MODE "${cluster_mode}")
 endif()
 
 EOL
@@ -87,7 +92,9 @@ fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 )
 
-target_compile_definitions(${project_name} PUBLIC -D PYTHON)
+if (PYTHON)
+  target_compile_definitions(${project_name} PUBLIC -D PYTHON)
+endif()
 target_link_libraries(${project_name} \${MCMCSimulationLib} ${target_link_libraries_appendix})
 
 # Go to build directory and call

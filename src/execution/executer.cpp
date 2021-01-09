@@ -6,20 +6,26 @@
 namespace mcmc {
     namespace execution {
 
+        // Project dependent parameters
         std::string Executer::executable_name = "None";
-        std::string Executer::cluster_mode = CLUSTER_MODE;
+        std::string Executer::cluster_mode = "local";
 
 #ifdef PYTHON
+        // Global parameters
         std::string Executer::conda_activate_path = CONDA_ACTIVATE_PATH;
         std::string Executer::virtual_env = VIRTUAL_ENV;
-        std::string Executer::python_scripts_path = PYTHON_SCRIPTS_PATH;
 
-        void initialize_python() {
+        // Project dependent parameter
+        std::string Executer::python_modules_path = "";
+
+        void initialize_python(const std::string python_modules_path_) {
             Py_Initialize();
-            PyRun_SimpleString(("import sys; sys.path.append('" + Executer::get_python_scripts_path() + "')").c_str());
-            PyRun_SimpleString(("sys.path.append('" + Executer::get_python_scripts_path() + "/util/')").c_str());
-            PyRun_SimpleString(("sys.path.append('" + Executer::get_python_scripts_path() + "/modes/')").c_str());
-            PyRun_SimpleString("print('Python system pass:',  sys.path)");
+            if(python_modules_path_ != "")
+            {
+                Executer::set_python_modules_path(python_modules_path_);
+                PyRun_SimpleString(("import sys; sys.path.append('" + Executer::get_python_modules_path() + "')").c_str());
+            }
+            PyRun_SimpleString("import sys; print('Python system path:',  sys.path)");
         }
 
         void finalize_python() {
@@ -35,17 +41,9 @@ namespace mcmc {
         };
 
         void initialize_executer_params(const std::string executable_name_,
-                                        const std::string cluster_mode_,
-                                        const std::string conda_activate_path_,
-                                        const std::string virtual_env_,
-                                        const std::string python_scripts_path_) {
+                                        const std::string cluster_mode_) {
             Executer::set_executable_name(executable_name_);
             Executer::set_cluster_mode(cluster_mode_);
-#ifdef PYTHON
-            Executer::set_conda_activate_path(conda_activate_path_);
-            Executer::set_virtual_env(virtual_env_);
-            Executer::set_python_scripts_path(python_scripts_path_);
-#endif
         }
 
         // Preparing and executing code on the cpu cluster

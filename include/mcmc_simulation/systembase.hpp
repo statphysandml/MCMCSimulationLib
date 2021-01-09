@@ -19,6 +19,7 @@ namespace mcmc {
                 measures(get_entry<json>("measures", {"Mean"}))
             {}
 
+            // At the moment it is not allowed to overwrite the following two functions - not working
             static const std::string name() {
                 return "systembase_params";
             }

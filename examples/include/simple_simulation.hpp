@@ -25,7 +25,7 @@ void simple_simulation() {
 
     // Setting up execution parameters - "measures" can only be defined here if SystemBaseMeasuresTemplateParameters is used
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
-    ExpectationValueParams execution_parameters(100, 10000, 100, {}, {});
+    ExpectationValueParams execution_parameters(100, 10000, 100, {"Mean"}, {});
 
 
     // Setting up simulation parameters

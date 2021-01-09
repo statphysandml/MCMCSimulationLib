@@ -20,15 +20,6 @@ public:
 
     std::unique_ptr<PlainSystemBaseTemplate> generate() { return std::make_unique<PlainSystemBaseTemplate>(*this); }
 
-    /* static const std::string name() // Optional
-    {
-        return "ising_model_system_params";
-    }
-
-    void write_to_file(const std::string& root_dir) { // Optional - Needs to be defined if name() function is defined
-        Parameters::write_to_file(root_dir, name());
-    } */
-
 private:
     friend class PlainSystemBaseTemplate;
 

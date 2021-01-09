@@ -24,14 +24,14 @@ void custom_main();
 int main(int argc, char **argv) {
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
 
-    // Initialization
-    // mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV, PYTHON_SCRIPTS_PATH);
+    // Initialization - Only needed for GPU and CPU runs
+    mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
 
 #ifdef PYTHON
-    mcmc::execution::initialize_python();
+    mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    // A function of one of the first three if conditions is only called when an actual simulation takes place
+    // The function of the first if-condition is only called when an actual simulation takes place based on arguments
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
     if(argc > 1)
     {
@@ -46,7 +46,6 @@ int main(int argc, char **argv) {
     mcmc::execution::finalize_python();
 #endif
     return 0;
-
 }
 
 #include "../include/simple_simulation.hpp"
@@ -54,10 +53,10 @@ int main(int argc, char **argv) {
 #include "../include/ising_model.hpp"
 
 void custom_main() {
-    /* simple_simulation();
-    save_and_load();
-    ising_model_simulation(); */
-    ising_model_simulation_with_correlation_time();
+    simple_simulation();
+    /* save_and_load();
+    ising_model_simulation();
+    ising_model_simulation_with_correlation_time(); */
 
     /* // Setting up system parameters - This does also work with SystemBaseMeasureTemplateParameters
     SystemBaseParams system_params(json {{"running_parameter", 0.0}});

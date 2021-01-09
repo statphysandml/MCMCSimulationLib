@@ -27,7 +27,7 @@ void save_and_load() {
 
 
     // Setting up simulation parameters
-    std::string target_name = "StoringAndLoading";
+    std::string target_name = "SaveAndLoad";
     std::string rel_data_path = "/data/" + target_name + "/";
     auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseTemplateParameters , CorrelationTimeParams >::generate_simulation(
             system_params, correlation_time_execution_parameters, rel_data_path,

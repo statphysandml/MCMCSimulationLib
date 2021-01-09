@@ -22,13 +22,15 @@ void custom_main();
 
 int main(int argc, char **argv) {
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
-    // mcmc::execution::initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV);
+
+    // Initialization - Only needed for GPU and CPU runs
+    mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
 
 #ifdef PYTHON
-    mcmc::execution::initialize_python();
+    mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    // A function of one of the first three if conditions is only called when an actual simulation takes place
+    // The function of the first if-condition is only called when an actual simulation takes place based on arguments
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
     if(argc > 1)
     {
@@ -41,6 +43,7 @@ int main(int argc, char **argv) {
 #ifdef PYTHON
     mcmc::execution::finalize_python();
 #endif
+    return 0;
 }
 
 void custom_main()
@@ -51,7 +54,7 @@ void custom_main()
 
     // Setting up execution parameters - "measures" can only be defined here if SystemBaseTemplateParameters is used
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
-    ExpectationValueParams execution_parameters(100, 10000, 100, {}, {});
+    ExpectationValueParams execution_parameters(100, 10000, 100, {"Mean"}, {});
 
 
     // Setting up simulation parameters
@@ -69,6 +72,6 @@ void custom_main()
     // Store the simulation parameters
     std::string rel_sim_params_path = "/configs/" + target_name + "/";
     simulation_params.write_to_file(rel_sim_params_path);
-    std::cout << "\nYou can rerun the simulation by rerunning with './$project_name expectation_value SimpleSimulation" << std::endl;
+    std::cout << "\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation" << std::endl;
 }
 EOL

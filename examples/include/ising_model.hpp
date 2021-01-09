@@ -39,14 +39,15 @@ public:
 
     std::unique_ptr<IsingModel> generate() { return std::make_unique<IsingModel>(*this); }
 
+    // At the moment it is not allowed to overwrite these functions - not working
     /* static const std::string name() // Optional
     {
-        return "ising_model_system_params";
+        return "ising_model";
     }
 
     void write_to_file(const std::string& root_dir) { // Optional - Needs to be defined if name() function is defined
         Parameters::write_to_file(root_dir, name());
-    } */
+    }*/
 
 private:
     friend class IsingModel;
@@ -162,7 +163,7 @@ void ising_model_simulation() {
 
     // Setting up execution parameters - "measures" can only be defined here if SystemBaseTemplateParameters is used
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
-    ExpectationValueParams execution_parameters(100, 10000, 100, {"AbsMean", "SecondMoment", "Mean", "Config"}, {});
+    ExpectationValueParams execution_parameters(100, 10000, 100, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
 
 
     // Setting up simulation parameters
@@ -207,8 +208,8 @@ void ising_model_simulation_with_correlation_time() {
     // The correlation time parameters are stored also automatically since they are part of simulation parameters
     simulation_params_correlation_time.write_to_file(rel_config_path);
 
-    // Running the simulation
-    // mcmc::execution::execute<IsingModelParameters>(mcmc::execution::CorrelationTimeParameters::name(), target_name);
+    // Run the simulation
+    mcmc::execution::execute<IsingModelParameters>(mcmc::execution::CorrelationTimeParameters::name(), target_name);
 
     //]
 
@@ -226,7 +227,7 @@ void ising_model_simulation_with_correlation_time() {
     // Store simulation parameters
     simulation_params_expectation_value.write_to_file("/configs/" + target_name + "/");
 
-    // Running the simulation
+    // Run the simulation
     mcmc::execution::execute<IsingModelParameters>(mcmc::execution::ExpectationValueParameters::name(), target_name);
 
     //]
