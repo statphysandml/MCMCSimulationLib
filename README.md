@@ -1,7 +1,7 @@
 MCMCSimulationLib
 =================
 
-MCMCSimulationLib is a C++ library that simplifies setting up a Markov Chain Monte Carlo algorithms. The library provides a framework to perform standard computations like a computation of expectation values or a determination of the autocorrelation time. Certain base classes enable an easy implementation of new theories and models.
+MCMCSimulationLib is a C++ library that simplifies setting up a Markov Chain Monte Carlo algorithms. The library provides a generic framework to perform simulations for standard tasks like a computation of expectation values or a determination of the autocorrelation time. Certain base classes enable an easy implementation of new theories and models.
 
 An additional feature of the library is that all hyperparameters of a simulation can be saved and reused for the same simulation at a later point. Due to this, the library can be used to manage and start computations on a cluster pretty easy.
 
