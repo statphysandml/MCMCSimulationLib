@@ -13,7 +13,7 @@ namespace mcmc {
         struct PathParameters {
             PathParameters(const std::string mode_type_,
                            const std::string files_dir_,
-                           const std::string sim_root_dir_ = "/./",
+                           const std::string sim_root_dir_ = "./",
                            const bool rel_path_ = true) :
                     mode_type(mode_type_), files_dir(files_dir_), sim_root_dir(sim_root_dir_), rel_path(rel_path_) {
                 written_to_file = false;
@@ -41,7 +41,7 @@ namespace mcmc {
 
             const std::string mode_type;
             const std::string files_dir;
-            const std::string sim_root_dir; // ToDo: Currently not used! -> might be set per default on param_helper::fs::prfs::project_root() and optionally on some other dir where a configs and a data directory are generated
+            const std::string sim_root_dir;
             const bool rel_path;
             bool written_to_file;
         };

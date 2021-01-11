@@ -303,7 +303,7 @@ namespace mcmc {
         void run_from_file(int argc, char **argv) {
             std::string mode_type = std::string(argv[1]);
             std::string files_dir = std::string(argv[2]);
-            std::string sim_root_dir = "/./";
+            std::string sim_root_dir = "./";
             bool rel_path = true;
             if (argc > 3)
                 sim_root_dir = std::string(argv[3]);
@@ -336,7 +336,7 @@ namespace mcmc {
         }
 
         template<typename SBP>
-        void execute(const std::string mode_type, const std::string files_dir, const std::string sim_root_dir = "/./",
+        void execute(const std::string mode_type, const std::string files_dir, const std::string sim_root_dir = "./",
                      const bool rel_path = true, const Executer::RunningMode running_mode = Executer::local,
                      const bool execute_code = true,
                      const std::vector<std::string> additional_args = {}) {
