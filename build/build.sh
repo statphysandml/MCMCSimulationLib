@@ -1,5 +1,5 @@
 # Config path
-if [ -z ${path_to_config+x} ]; then
+if [ -z ${path_to_config+x} ]; then # Enables using the config files from a different path
   path_to_config="$(dirname -- "$(readlink -f -- "build.sh")")"
 fi
 
