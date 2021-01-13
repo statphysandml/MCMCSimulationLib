@@ -9,6 +9,7 @@ __pycache__/
 include/execution/config.h.in
 include/execution/config.h
 examples/*
+!examples/bash_scripts/
 !examples/include/
 examples/include/*
 !examples/include/ising_model.hpp
