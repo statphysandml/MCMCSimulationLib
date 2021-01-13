@@ -253,7 +253,7 @@ private:
 };
 ```
 
-The entire examples can be found in examples/ising_model.hpp. A thorough evaluation of the numerical results is implemented here: 
+The entire examples can be found in examples/ising_model.hpp. A thorough evaluation of the numerical results is implemented here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/python_scripts/examples/ising_model_cheat_sheet.ipynb.
 
 
 
