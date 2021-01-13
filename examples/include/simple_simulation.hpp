@@ -35,7 +35,6 @@ void simple_simulation() {
             system_params, execution_parameters, rel_data_path,
             "systembase_params", "running_parameter", 0.0, 1.0, 5);
 
-
     // Setting up and running the actual simulation
     mcmc::simulation::Simulation< SystemBaseTemplateParameters, ExpectationValueParams > simulation(simulation_params);
     simulation.run();

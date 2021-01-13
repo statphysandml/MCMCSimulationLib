@@ -60,7 +60,7 @@ namespace mcmc {
                 std::cout << "Execute Markov Chain with " << mp.number_of_measurements
                           << " measures with measure interval " <<
                           mp.measure_interval << ".\nStart measuring after " << mp.start_measuring
-                          << " sweeps.\n -- Total number of total sweeps "
+                          << " sweeps.\n -- Total number of sweeps "
                           << long(mp.number_of_measurements) * long(mp.measure_interval) + long(mp.start_measuring)
                           << " -- " << std::endl;
 

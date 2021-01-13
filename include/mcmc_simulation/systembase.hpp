@@ -16,7 +16,7 @@ namespace mcmc {
         class SystemBaseParameters : public param_helper::params::Parameters {
         public:
             SystemBaseParameters(const json params_) : Parameters(params_),
-                measures(get_entry<json>("measures", {"Mean"}))
+                                                       measures(get_entry<json>("measures", {"Mean"}))
             {}
 
             // At the moment it is not allowed to overwrite the following two functions - not working
@@ -47,6 +47,11 @@ namespace mcmc {
             {
                 measures = measures_;
                 params["measures"] = measures_;
+            }
+
+            const json get_measures() const
+            {
+                return measures;
             }
 
         protected:

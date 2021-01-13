@@ -26,12 +26,12 @@ namespace mcmc
         public:
             // Constructor for loading from params
             explicit SimulationParameters(const json params_) : Parameters(params_), mode(EP::name()),
-                rel_data_path(get_entry<std::string>("rel_data_path")), // The remaining parameters are all optional
-                running_parameter_kind(get_entry<std::string>("running_parameter_kind", "None")),
-                running_parameter(get_entry<std::string>("running_parameter", "None")),
-                rp_minimum(get_entry<double>("rp_minimum", 0)),
-                rp_maximum(get_entry<double>("rp_maximum", 0)),
-                rp_number(get_entry<int>("rp_number", 0))
+                                                                rel_data_path(get_entry<std::string>("rel_data_path")), // The remaining parameters are all optional
+                                                                running_parameter_kind(get_entry<std::string>("running_parameter_kind", "None")),
+                                                                running_parameter(get_entry<std::string>("running_parameter", "None")),
+                                                                rp_minimum(get_entry<double>("rp_minimum", 0)),
+                                                                rp_maximum(get_entry<double>("rp_maximum", 0)),
+                                                                rp_number(get_entry<int>("rp_number", 0))
             {
                 // *** DIRECTORIES ***
                 // Create folder in data directory if not present
@@ -50,7 +50,7 @@ namespace mcmc
                 if(haskey("execution_params")) {
                     execution_params = std::make_unique<EP>(get_entry<json>("execution_params"));
                 }
-                // Load execution parameters from file
+                    // Load execution parameters from file
                 else {
                     std::cout << "Load execution parameters from file based on given mode" << std::endl;
                     std::string execution_params_path = get_entry<std::string>("execution_params_path");
@@ -285,9 +285,9 @@ namespace mcmc
                     single_run(mp.mode);
                 else
                 {
-                    for (double rp = mp.rp_minimum; rp <= mp.rp_maximum; rp += (mp.rp_maximum - mp.rp_minimum) / mp.rp_number) {
-                        single_run(mp.mode + "_" + mp.running_parameter + "=" + std::to_string(rp), rp);
-                    }
+                    double rp_interval = (mp.rp_maximum - mp.rp_minimum) / (mp.rp_number - 1);
+                    for( int i = 0; i < mp.rp_number; i++)
+                        single_run(mp.mode + "_" + mp.running_parameter + "=" + std::to_string(mp.rp_minimum + i * rp_interval), mp.rp_minimum + i * rp_interval);
                 }
             }
 

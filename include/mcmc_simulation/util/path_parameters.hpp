@@ -20,13 +20,13 @@ namespace mcmc {
             }
 
             std::string get_rel_config_path() const {
-                std::cout << "Create directory " << files_dir << " in configs/ for config files" << std::endl;
+                std::cout << "Create directory " << files_dir << " in configs/ for config files if not existing" << std::endl;
                 param_helper::fs::generate_directory_if_not_present(sim_root_dir + "/configs/" + files_dir, rel_path);
                 return "/configs/" + files_dir + "/";
             }
 
             std::string get_rel_data_path() const {
-                std::cout << "Create " << files_dir << " directory in data/ for config files" << std::endl;
+                std::cout << "Create " << files_dir << " directory in data/ for config files if not existing" << std::endl;
                 param_helper::fs::generate_directory_if_not_present(sim_root_dir + +"/data/" + files_dir, rel_path);
                 return "/data/" + files_dir + "/";
             }
