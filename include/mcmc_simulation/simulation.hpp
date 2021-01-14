@@ -285,7 +285,11 @@ namespace mcmc
                     single_run(mp.mode);
                 else
                 {
-                    double rp_interval = (mp.rp_maximum - mp.rp_minimum) / (mp.rp_number - 1);
+                    double rp_interval;
+                    if(mp.rp_number == 1)
+                        rp_interval = mp.rp_minimum;
+                    else
+                        rp_interval = (mp.rp_maximum - mp.rp_minimum) / (mp.rp_number - 1);
                     for( int i = 0; i < mp.rp_number; i++)
                         single_run(mp.mode + "_" + mp.running_parameter + "=" + std::to_string(mp.rp_minimum + i * rp_interval), mp.rp_minimum + i * rp_interval);
                 }
