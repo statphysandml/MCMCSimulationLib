@@ -4,7 +4,7 @@
 
 # MCMC Simulation lib
 if [ -z ${path_to_mcmc_simulation_lib+x} ]; then
-  echo "Build simulation without a project currently not working because of a potentially wrong python_scripts path. But simulations can be generated with the bash script in the project_path/bash_scripts/ directory."
+  echo "Building a simulation without a project is currently not working because of a potentially wrong python_scripts path. But simulations can be generated with the bash script in the project_path/bash_scripts/ directory."
   exit
   parent_dir="$(dirname -- "$(readlink -f -- "build_simulation.sh")")"
   path_to_mcmc_simulation_lib="$(dirname "$parent_dir")"

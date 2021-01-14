@@ -11,3 +11,5 @@ cd ../release
 
 cmake ../cmake/. -DCMAKE_BUILD_TYPE=Release -DCLUSTER_MODE=$cluster_mode
 make -j9
+
+cd ../

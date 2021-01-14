@@ -46,6 +46,10 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+/* A simple simulation - On the example of the Execution mode: ExpectationValue
+ * Further, the different ways to execute code are explained.
+ */
+
 void custom_main()
 {
 
@@ -84,12 +88,13 @@ void custom_main()
     // b)
     // With the help of the executer. In this case, the expectation values are also computed in python if you have
     // python integrated - According to the ExpectationValue Mode
+    std::cout << "\n\nSecond run of the simulation\n\n" << std::endl;
     mcmc::execution::execute< SystemBaseTemplateParameters > (ExpectationValueParams::name(), target_name);
 
     // c)
     // By running:
-    //     ./SimpleSimulation expectation_value SimpleSimulation
-    std::cout << "\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation" << std::endl;
+    //     ./$project_name expectation_value SimpleSimulation
+    std::cout << "\n\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation\n\n" << std::endl;
     // in the terminal. This only works if and only if you keep the respective if-function in the main function AND the
     // provided systembase template parameter coincides with the one in your config files. With the command exactly
     // the same as in b) will happen, with the exception that the systembase template parameter is passed in the main
@@ -97,16 +102,19 @@ void custom_main()
 
     // d)
     // By changing further parameters of the execute command, you can submit a job to run the code on a cluster
-    // (execute_code=true) or only prepare the respective bash script (execute_code=false). On the cluster,
-    // the simulation is executed based on the code in c). Accordingly it is again important that the restrictions
-    // in c) hold. This behaviour can be changed by changing the main function. To have higher flexibility, the execute
-    // function has a vector of strings as a last argument. This allows passing additional parameters via the bash script
-    // to the main function of the project/simulation (of this file) when the code is actually executed on the cluster.
-    //
+    // (execute_code=true) or only prepare the respective bash script in the cpu_cluster_runs/ directory of the
+    // project (execute_code=false). On the cluster, the simulation is executed based on the code in c). Accordingly it is again
+    // important that the restrictions to the correct system base parameters in c) hold. This behaviour can be changed by
+    // changing the main function. To have higher flexibility, the execute function has a vector of strings as a last argument. This
+    // allows passing additional parameters via the bash script to the main function of the project/simulation (of this file) when
+    // the code is actually executed on the cluster.
     std::string sim_root_dir = "./";
     bool rel_path = true;
-    bool execute_code = false;  // Change to true to submit the job to the cluster.
-    std::vector<std::string> additional_args = {}
+    bool execute_code = true;  // Change to only generate the necessary bash_script for the exeuction on a cluster is generated
+    // in the cpu_cluster_runs/ directory. In dependence of the cluster_mode variable, the execute function either submits the job
+    // to the cluster or executes the code locally on your machine. The (terminal) ouput of the simulation is in both cases copied
+    // to the cpu_cluster_runs/ directory.
+    std::vector<std::string> additional_args = {};
     mcmc::execution::execute< SystemBaseTemplateParameters > (
             ExpectationValueParams::name(), target_name, sim_root_dir, rel_path,
             mcmc::execution::Executer::on_cpu_cluster, execute_code, additional_args);
@@ -115,4 +123,5 @@ void custom_main()
     // can switch between a "testing" mode, where the job is executed locally ("local") and an actual submission to
     // the cluster ("on_cluster").
 }
+
 EOL

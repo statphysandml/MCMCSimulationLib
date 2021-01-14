@@ -10,14 +10,8 @@
 #include "execution/modes/correlation_time.hpp"
 #include "execution/executer.hpp"
 
-// For systembases with the possible usage of predefined common measures
-#include "../../templates/systembase_template.hpp"
+#include "../include/ising_model.hpp"
 
-// For systembases with custom measures
-#include "../../templates/plain_systembase_template.hpp"
-
-
-typedef SystemBaseTemplateParameters SystemBaseParams;
 
 void custom_main();
 
@@ -35,7 +29,7 @@ int main(int argc, char **argv) {
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
     if(argc > 1)
     {
-        mcmc::execution::run_from_file<SystemBaseParams>(argc, argv);
+        mcmc::execution::run_from_file<IsingModelParameters>(argc, argv);
     }
     else
         // Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
@@ -48,44 +42,79 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-#include "../include/simple_simulation.hpp"
-#include "../include/save_and_load.hpp"
-#include "../include/ising_model.hpp"
-
 void custom_main() {
-    simple_simulation();
-    /* save_and_load();
-    ising_model_simulation();
-    ising_model_simulation_with_correlation_time(); */
-
-    /* // Setting up system parameters - This does also work with SystemBaseMeasureTemplateParameters
-    SystemBaseParams system_params(json {{"running_parameter", 0.0}});
-
-
-    // Setting up execution parameters - "measures" can only be defined here if SystemBaseMeasuresTemplateParameters is used
-    typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
-    ExpectationValueParams execution_parameters(100, 10000, 100, {}, {});
-
-
-    // Setting up simulation parameters
-    std::string target_name = "HelloWorldSimulation";
+    
+    // Setting up direction parameters
+    std::string target_name = "IsingModelSimulation";
     std::string rel_data_path = "/data/" + target_name + "/";
-    auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseParams , ExpectationValueParams >::generate_simulation(
+    std::string rel_config_path = "/configs/" + target_name + "/";
+    std::string correlation_time_results_path = "/results/" + target_name + "/";
+
+    // Setting up system parameters
+    IsingModelParameters system_params(0.4, 1.0, 0.0, {4, 4});
+    /* // Alternativ:
+    IsingModelParameters system_params(
+            json {{"beta",  0.4},
+                  {"J", 1.0},
+                  {"h", 0.0},
+                  {"dimensions", std::vector<int> {4, 4}}
+            }); */
+    
+    //[ Correlation time
+
+    // Setting up correlation time parameters - The correlation time will be comptued based on the "Mean" observable
+    // Parameters:
+    // - Minimum sample size for the computation of the correlation time,
+    // - Maximum possible correlation time
+    // - Number of sweeps before configurations for the computation of the correlation time are evaluated
+    // - Observable to evaluate the correlation time
+    typedef mcmc::execution::CorrelationTimeParameters CorrelationTimeParams;
+    CorrelationTimeParams correlation_time_execution_parameters(1000, 400, 1000, {"Mean"});
+    
+    // Setting up the simulation
+    // The simulation will execute six MCMC simulations for inverse temperatures
+    // in the interval between 0.1 and 0.7 in a row.
+    auto simulation_params_correlation_time = mcmc::simulation::SimulationParameters<
+            IsingModelParameters , CorrelationTimeParams>::generate_simulation(
+                    system_params, correlation_time_execution_parameters, rel_data_path,
+                    "systembase_params", "beta", 0.1, 0.7, 6);
+
+    // Store execution and simulation parameters as config files for a possible later simulation.
+    // The correlation time parameters are stored also automatically since they are part of simulation parameters
+    simulation_params_correlation_time.write_to_file(rel_config_path);
+
+    // Run the simulation
+    mcmc::execution::execute<IsingModelParameters>(mcmc::execution::CorrelationTimeParameters::name(), target_name);
+
+    //]
+
+    //[ Expectation Value
+
+    // Setting up execution parameters
+    // Parameters:
+    // - Correlation time - The simulation will use the evaluated correlation times from the previous
+    // computation. Alternatively, this could also be an integer number, if the previous simulation has
+    // not been done.
+    // - Number of measurements
+    // - Number of sweeps before the first measurement
+    // - Observables that are computed within the simulation
+    // - Observables that are computed afterwards in Python
+    // The observables: "AbsMean", "SecondMoment", "Mean"  are computed within C++ during the
+    // simulation. The "Energy" is computed in Python afterwards based on the configurations ("Config") 
+    typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
+    ExpectationValueParams execution_parameters(correlation_time_results_path, 10000, 1000, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
+
+    auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters<
+            IsingModelParameters, ExpectationValueParams>::generate_simulation(
             system_params, execution_parameters, rel_data_path,
-            "systembase_params", "running_parameter", 0.0, 1.0, 5);
+            "systembase_params", "beta", 0.1, 0.7, 6);
 
-    // Store execution and simulation parameters as config files for a possible later simulation - In this case,
-    // the expectation values are stored also automatically since they are part of simulation parameters
-    std::string rel_sim_params_path = "/configs/" + target_name + "/";
-    simulation_params.write_to_file(rel_sim_params_path);
+    // Store simulation parameters
+    simulation_params_expectation_value.write_to_file("/configs/" + target_name + "/");
 
-    // Using execute to execute the code directly
-    mcmc::execution::execute<SystemBaseParams>(
-            ExpectationValueParams::name(), // = "expectation_value"
-            target_name, // = "HelloWorldSimulation"
-            "/./", // default
-            true, // default
-            mcmc::execution::Executer::local, // mcmc::execution::Executer::local can be used to test the code first locally
-            true); // In this case, the bash script can be started with: qsub ... or nice -n 17 bash ...
-    */
+    // Run the simulation
+    mcmc::execution::execute<IsingModelParameters>(mcmc::execution::ExpectationValueParameters::name(), target_name);
+
+    //]
+    
 }

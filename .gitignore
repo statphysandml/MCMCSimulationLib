@@ -15,6 +15,7 @@ examples/include/*
 !examples/include/ising_model.hpp
 !examples/include/save_and_load.hpp
 !examples/include/simple_simulation.hpp
+!examples/jupyter_notebooks/
 !examples/src/
 examples/src/*
 !examples/src/main.cpp

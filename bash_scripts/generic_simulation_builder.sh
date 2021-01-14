@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# Simulation name
-read -p "Enter simulation name: " project_name
-
+# If condition enables building simulations from other bash scripts as long as project_name is defined
+if test -z $project_name; then
+    # Simulation name
+    read -p "Enter simulation name: " project_name
+fi
+    
 if test -z $project_name; then
 	echo "Simluation name cannot be empty."
 	exit 1
