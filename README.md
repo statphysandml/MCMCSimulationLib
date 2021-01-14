@@ -86,7 +86,13 @@ A new project that demonstrates the basic functionalities of the library based o
 cd bash_scripts
 bash build_project.sh
 ```
-A project can be used as a template for your own simulation. The main.cpp contains detailed instructions on different ways to execute the simulation.
+A project can be used as a template for your own simulation. The main.cpp contains detailed instructions on different ways to execute the simulation. The project itself has a directory bash_scripts/ with an additional build_simulation.sh bash script. This can be used to generate a template simulation for a further executable which uses code of your project. These smaller simulation projects are very useful since they enable the generation of exeuctables for several different simulations of your projects. This enables a rerunning of a simulation at a later point and simplifies running code on a cluster. For example, one might use the following workflow:
+
+- Write all important code in the include/ and the src/ directory of your project.
+- Generate a new simulation with the build_simulation.sh file.
+- Adapt the main.cpp file in your simulation for an execution of a MCMC simulation.
+- Transfer the code to your cluster and rerun build_simulation.sh. Enter the name of your simulation. The bash script recognizes that the simulation already exists and just adapts the CMakeLists.txt file accordingy to the settings in your project_config.sh file.
+- Execute the code with the mcmc::exeuction::execute<>() function to submit the simulation to the cluster.
 
 Usage
 -----
@@ -107,7 +113,6 @@ typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
 ExpectationValueParams execution_parameters(
     100, 10000, 100, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}
 );
-
 
 // Setting up simulation parameters
 std::string target_name = "IsingModelSimulation";
