@@ -77,7 +77,7 @@ void custom_main() {
     auto simulation_params_correlation_time = mcmc::simulation::SimulationParameters<
             IsingModelParameters , CorrelationTimeParams>::generate_simulation(
                     system_params, correlation_time_execution_parameters, rel_data_path,
-                    "systembase_params", "beta", 0.1, 0.7, 6);
+                    "systembase_params", "beta", 0.1, 0.7, 7);
 
     // Store execution and simulation parameters as config files for a possible later simulation.
     // The correlation time parameters are stored also automatically since they are part of simulation parameters
@@ -107,7 +107,7 @@ void custom_main() {
     auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters<
             IsingModelParameters, ExpectationValueParams>::generate_simulation(
             system_params, execution_parameters, rel_data_path,
-            "systembase_params", "beta", 0.1, 0.7, 6);
+            "systembase_params", "beta", 0.1, 0.7, 7);
 
     // Store simulation parameters
     simulation_params_expectation_value.write_to_file("/configs/" + target_name + "/");

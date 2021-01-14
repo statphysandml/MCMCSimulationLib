@@ -24,7 +24,6 @@
 #include "modes/expectation_value.hpp"
 #include "modes/correlation_time.hpp"
 #include "modes/equilibriate.hpp"
-#include "modes/plot_site_distribution.hpp"
 
 namespace mcmc {
     namespace execution {
@@ -55,8 +54,6 @@ namespace mcmc {
                         return "correlation_time";
                     case equilibriate:
                         return "equilibriate";
-                    case plot_site_distribution:
-                        return "plot_site_distribution";
                     default:
                         return "mode_not_known";
                 }
@@ -188,21 +185,6 @@ namespace mcmc {
                         }
                         break;
                     };
-                    case plot_site_distribution: {
-                        if (in_preparation) {
-                            prep_default_execution<PlotSiteDistributionParameters, SBP>(path_parameters);
-                        } else {
-
-                            #ifdef PYTHON
-
-                            prepare_python_execution();
-                            PyRun_SimpleString(("from mcmctools.modes.plot_site_distribution import plot_site_distribution; plot_site_distribution('" + path_parameters.files_dir + "')").c_str());
-                            finalize_python_execution();
-
-                            #endif
-                        }
-                        break;
-                    }
                     default:
                         std::cout << "mode not known..." << std::endl;
                         break;

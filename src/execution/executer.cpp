@@ -36,8 +36,7 @@ namespace mcmc {
         const std::map<std::string, Executer::ExecutionMode> Executer::mode_resolver = {
                 {"expectation_value",      expectation_value},
                 {"correlation_time",       correlation_time},
-                {"equilibriate",           equilibriate},
-                {"plot_site_distribution", plot_site_distribution}
+                {"equilibriate",           equilibriate}
         };
 
         void initialize_executer_params(const std::string executable_name_,
