@@ -12,7 +12,7 @@ In short, the library takes care of all the annoying parts of a Markov Chain Mon
 Build
 -----
 
-Certain configuration parameters need to be defined for an execution of the C++ program. They need to be defined in a "config.sh" file in the "build" directory and in a "project_config.sh" file in the "bash_scripts" directory. The "config.sh" file contains all important information for the integration of Python into the program. So far, the library can only be used with a virtual environment. The "config_template.sh" file is a template where all necessary parameters are defined:
+Certain configuration parameters need to be defined for an execution of the C++ program. They need to be defined in a config.sh file in the build/ directory and in a project_config.sh file in the bash_scripts/ directory. The config.sh file contains all important information for the integration of Python into the program. So far, the library can only be used with a virtual environment. The config_template.sh file is a template where all necessary parameters are defined:
 ```bash
 path_to_python3="~/.miniconda3/envs/virtual_env/" # (optional)
 path_to_conda_activate="~/.miniconda3/bin/activate" # (optional)
@@ -21,14 +21,14 @@ python_version="3.7" # (optional)
 ```
 The parameters need to be adapted to the virtual environment of the underlying system.
 
-Using the library without any Python components is possible by leaving the "config.sh" file empty.
+Using the library without any Python components is possible by leaving the config.sh file empty.
 
 Having a config.sh file in the build directory, the library can be build with
 ```bash
 cd build
 bash build.sh
 ```
-The file "project_config.sh" defines additional project-dependent parameters. They are used when a new project is generated with the "build_project.sh" file. There also exists a template file ("project_config_template.sh") which contains all necessary parameters:
+The file project_config.sh defines additional project-dependent parameters. They are used when a new project is generated with the build_project.sh file. There also exists a template file (project_config_template.sh) which contains all necessary parameters:
 ```bash
 cluster_mode="local"
 # (optional - default=local) local/on_cluster - Can be adapted temporarily by
@@ -91,8 +91,10 @@ A project can be used as a template for your own simulation. The main.cpp contai
 - Write all important code in the include/ and the src/ directory of your project.
 - Generate a new simulation with the build_simulation.sh file.
 - Adapt the main.cpp file in your simulation for an execution of a MCMC simulation.
-- Transfer the code to your cluster and rerun build_simulation.sh. Enter the name of your simulation. The bash script recognizes that the simulation already exists and just adapts the CMakeLists.txt file accordingy to the settings in your project_config.sh file.
+- Transfer the code to your cluster and rerun build_simulation.sh. Enter the name of your simulation. The bash script recognizes that the simulation already exists and just adapts the CMakeLists.txt file according to the settings in your project_config.sh file.
 - Execute the code with the mcmc::exeuction::execute<>() function to submit the simulation to the cluster.
+
+Both, the build_project.sh and the build_simulation.sh bash script recognize if a project or a simulation has been built before. If these scripts are executed with the same input, only the CMakeLists.txt file is adapted according to the settings in the project_config.sh file and with respect to the executables of the local libraries (which can be found in the external_submodules/ directory).
 
 Usage
 -----
