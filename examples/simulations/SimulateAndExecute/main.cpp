@@ -1,20 +1,8 @@
-cat >"${src_path}/main.cpp" <<EOL
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
-EOL
-if [ "$project_type" = "project" ]; then
-cat >>"${src_path}/main.cpp" <<EOL
-#include "../include/config.h"
-#include "../include/simulation_header.hpp"
-EOL
-else
-cat >>"${src_path}/main.cpp" <<EOL
 #include "config.h"
 #include "simulation_header.hpp"
-EOL
-fi
-cat >>"${src_path}/main.cpp" <<EOL
 
 #endif
 
@@ -93,8 +81,8 @@ void custom_main()
 
     // c)
     // By running:
-    //     ./$project_name expectation_value SimpleSimulation
-    std::cout << "\n\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation\n\n" << std::endl;
+    //     ./SimulateAndExecute expectation_value SimpleSimulation
+    std::cout << "\n\nYou can rerun the simulation by running './SimulateAndExecute expectation_value SimpleSimulation\n\n" << std::endl;
     // in the terminal. This only works if and only if you keep the respective if-function in the main function AND the
     // provided systembase template parameter coincides with the one in your config files. With the command exactly
     // the same as in b) will happen, with the exception that the systembase template parameter is passed in the main
@@ -126,4 +114,3 @@ void custom_main()
     //     make -j4
 }
 
-EOL

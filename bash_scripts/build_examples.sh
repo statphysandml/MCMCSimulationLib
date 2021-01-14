@@ -26,9 +26,9 @@ source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_compiling.sh"
 
 project_name="SaveAndLoad"
 project_path="./simulations/SaveAndLoad/"
+mkdir -p $project_path
 project_path="$(cd "$project_path" && pwd -P)"
 project_type="simulation"
-without_templates=true
 
 # Build the project
 source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_main_builder.sh"
@@ -41,9 +41,9 @@ cd ../../
 
 project_name="SimulateAndExecute"
 project_path="./simulations/SimulateAndExecute/"
+mkdir -p $project_path
 project_path="$(cd "$project_path" && pwd -P)"
 project_type="simulation"
-without_templates=true
 
 # Build the project
 source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_main_builder.sh"
