@@ -102,7 +102,7 @@ void custom_main() {
     // The observables: "AbsMean", "SecondMoment", "Mean"  are computed within C++ during the
     // simulation. The "Energy" is computed in Python afterwards based on the configurations ("Config") 
     typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
-    ExpectationValueParams execution_parameters(correlation_time_results_path, 10000, 1000, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
+    ExpectationValueParams execution_parameters(correlation_time_results_path, 20000, 1000, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
 
     auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters<
             IsingModelParameters, ExpectationValueParams>::generate_simulation(
