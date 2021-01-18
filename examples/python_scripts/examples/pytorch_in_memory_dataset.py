@@ -15,7 +15,7 @@ if __name__ == '__main__':
     data_generator_args = {
         # ConfigDataGenerator Args
         "data_type": "target_param",
-        "complex_config": True,
+        "complex_config": False,
         # Args for ConfigurationLoader
         "path": path,
         "total_number_of_data_per_file": 10000,
