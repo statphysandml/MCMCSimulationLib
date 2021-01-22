@@ -73,13 +73,13 @@ cd bash_scripts
 bash build_examples.sh
 ```
 
-The code compiles all examples in the examples/ directory. The directory is structured as follows. The examples/ directory is a so called project. Additional, so-called simulations can be found in the examples/simulations/ directory.
+The code compiles all examples in the examples/ directory. The directory is structured as follows. The examples/ directory is a so called project. Additionally, so-called simulations can be found in the examples/simulations/ directory.
 
-In the project, a simulation of the Ising model is implemented as an example. A so-called systembase class is defined in examples/include/ising_model.hpp. The simulation can be executed by running ./IsingModel in the examples/release/. In the example, the correlation time is computed for several values of the inverse temperature. In the second part, simulations for the computation of expectation values is executed.
+In the project, a simulation of the Ising model is implemented as an example. A systembase class is defined in examples/include/ising_model.hpp. The simulation can be executed by running ./IsingModel in the examples/release/. It is important that your virtual environment is activated before an execution! In the example, the correlation time is computed for several values of the inverse temperature. In the second part, simulations for the computation of expectation values is executed.
 
 Configuration files to the different simulations are located in the examples/config directory. The simulation data is stored together with one single config file for the simulation in examples/data. Plots and numerical results for the correlation time as well as computed expectation values are saved in examples/results. The data evaluation takes place in Python based on code of the MCMCEvaluationLib and the pystatplottools library. A thorough evaluation of the simulation results is shown in a jupyter notebook that can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/jupyter_notebooks/ising_model_cheat_sheet.ipynb. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplottools library (https://github.com/statphysandml/pystatplottools).
 
-Further examples in the examples/simulations/ directory contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, it is explained in detail how a simulation can be executed within the library. The examples/python_scripts/examples directory shows in addition to the ising_model_cheat_sheet.ipynb notebook several ways to use the MCMCEvaluationLib. The library also provides functionalities to load the generated Monte Carlo configurations as a PyTorch dataset. This makes the application of further machine learning tasks on the data pretty easy.
+Further examples in the examples/simulations/ directory contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, it is explained in detail how a simulation can be executed within the library. In addition, the examples/python_scripts/examples directory shows several ways to use the MCMCEvaluationLib. The library also provides functionalities to load the generated Monte Carlo configurations as a PyTorch dataset. This makes the application of further machine learning tasks on the data pretty easy.
 
 Template Project
 ----------------
@@ -97,7 +97,7 @@ A project can be used as a template for your own simulation. The main.cpp contai
 - Transfer the code to your cluster and rerun build_simulation.sh. Enter the name of your simulation. The bash script recognizes that the simulation already exists and just adapts the CMakeLists.txt file according to the settings in your project_config.sh file.
 - Execute the code with the mcmc::exeuction::execute<>() function to submit the simulation to the cluster.
 
-Both, the build_project.sh and the build_simulation.sh bash script recognize if a project or a simulation has been built before. If these scripts are executed with the same input, only the CMakeLists.txt file is adapted according to the settings in the project_config.sh file and with respect to the executables of the local libraries (which can be found in the external_submodules/ directory).
+Both, the build_project.sh and the build_simulation.sh bash script recognize if a project or a simulation has been built before. If these scripts are executed with the same input, only the CMakeLists.txt file is adapted according to the settings in the project_config.sh file and with respect to the executables of the local libraries (which can be found in the external_submodules/ directory). Note that it is sometimes necessary to delete the files in the debug or release that are generated from CMake if parameters, for example, in the config files, have been changed.
 
 Usage
 -----
@@ -285,6 +285,14 @@ The entire examples can be found in the examples/ folder. A thorough evaluation 
 Projects using the MCMCSimulationLib library
 -------------------------------------------------------
 
+- LatticeModelSimulationLib (https://github.com/statphysandml/LatticeModelSimulationLib)
 - LatticeModelImplementations (https://github.com/statphysandml/LatticeModelImplementations)
+
+Support and development
+----------------------
+
+For bug reports/suggestions/complaints please file an issue on GitHub.
+
+Or start a discussion on our mailing list: statphysandml@thphys.uni-heidelberg.de
 
 

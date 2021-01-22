@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
     mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    // The function of the first if-condition is only called when an actual simulation takes place based on arguments
-    // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
+    // The function of the first if-condition is only called when an actual simulation takes place (from cpu/gpu/locally)
+    // (or for the generation of default parameters) based on a program that uses ./Main with arguments
     if(argc > 1)
     {
         mcmc::execution::run_from_file<typename from_file_simulation::SystemBaseParams>(argc, argv);
@@ -47,8 +47,7 @@ int main(int argc, char **argv) {
 }
 
 /* A simple simulation - On the example of the Execution mode: ExpectationValue
- * Further, the different ways to execute code are explained.
- */
+ * Further, the different ways to execute code are explained. */
 
 void custom_main()
 {
@@ -73,8 +72,6 @@ void custom_main()
     mcmc::simulation::Simulation< SystemBaseTemplateParameters, ExpectationValueParams > simulation(simulation_params);
     simulation.run();
 
-    // Alternatively, you can perform the same with executer,
-
     // Store the simulation parameters - Only necessary if one wants to run the simulation again or on a CPU cluster, for example.
     std::string rel_sim_params_path = "/configs/" + target_name + "/";
     simulation_params.write_to_file(rel_sim_params_path);
@@ -83,7 +80,7 @@ void custom_main()
 
     // a)
     // Load the simulation parameters and run the simulation as before
-    // -> See save_and_load for an example.
+    // -> See SaveAndLoad simulation for an example.
 
     // b)
     // With the help of the executer. In this case, the expectation values are also computed in python if you have
@@ -94,7 +91,7 @@ void custom_main()
     // c)
     // By running:
     //     ./$project_name expectation_value SimpleSimulation
-    std::cout << "\n\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation\n\n" << std::endl;
+    std::cout << "\n\nYou can rerun the simulation by running './$project_name expectation_value SimpleSimulation'\n\n" << std::endl;
     // in the terminal. This only works if and only if you keep the respective if-function in the main function AND the
     // provided systembase template parameter coincides with the one in your config files. With the command exactly
     // the same as in b) will happen, with the exception that the systembase template parameter is passed in the main
@@ -110,7 +107,7 @@ void custom_main()
     // the code is actually executed on the cluster.
     std::string sim_root_dir = "./";
     bool rel_path = true;
-    bool execute_code = true;  // Change to falsoe to only generate the necessary bash_script for the exeuction on a cluster.
+    bool execute_code = true;  // Change to false to only generate the necessary bash_script for the execution on a cluster.
     // The bash_script is generated in the cpu_cluster_runs/ directory. In dependence on the cluster_mode variable,
     // the execute function either submits the job to the cluster or executes the code locally on your machine. The (terminal)
     // ouput of the simulation is in both cases copied to the cpu_cluster_runs/ directory.

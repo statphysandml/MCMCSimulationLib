@@ -11,7 +11,7 @@ if __name__ == '__main__':
     configuration_loader_args = {
         "path": "../../data/IsingModelSimulation/",
         "total_number_of_data_per_file": 100,
-        # "identifier": "expectation_value",
+        "identifier": "expectation_value",
         "running_parameter": "beta",
         "chunksize": 21,
         "drop_last": True

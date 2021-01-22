@@ -71,6 +71,6 @@ void custom_main() {
     std::cout << "\nFrom file simulation params: \n" << from_file_simulation_params << std::endl;
 
     // Setting up and running the actual simulation
-    mcmc::simulation::Simulation< SystemBaseTemplateParameters, CorrelationTimeParams > from_file_simulation(simulation_params);
+    mcmc::simulation::Simulation< SystemBaseTemplateParameters, CorrelationTimeParams > from_file_simulation(from_file_simulation_params);
     from_file_simulation.run();
 }

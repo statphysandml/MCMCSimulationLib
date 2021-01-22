@@ -40,12 +40,3 @@ def get_neighbour_index(n, dim, direction, mu, dimensions, dim_mul, elem_per_sit
     else:
         return (n - n % (dim_mul[dim] * dimensions[dim]) +
                 (n - dim_mul[dim] + dim_mul[dim] * dimensions[dim]) % (dim_mul[dim] * dimensions[dim])) * elem_per_site + mu
-
-
-# # Needs to be reintegrated
-# def compute_two_point_correlator(data, key="Config"):
-#     new_measures = []
-#     for i in range(len(data[key].iloc[0])):
-#         data.insert(len(data.columns), "TwoPCDelt" + str(i), data[key].apply(lambda x: np.multiply(x, np.roll(x, i)).sum()))
-#         new_measures.append("TwoPCDelt" + str(i))
-#     return new_measures
