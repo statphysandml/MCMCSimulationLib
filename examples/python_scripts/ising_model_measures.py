@@ -1,6 +1,9 @@
 import numpy as np
 
 
+from mcmctools.utils.lattice import get_neighbour_index
+
+
 def compute_ising_model_measures(data, measure_name, sim_params):
     if measure_name == "Energy":
         return compute_ising_model_energy(data, sim_params)
@@ -30,13 +33,3 @@ def compute_ising_model_energy(data, sim_params):
     data.insert(len(data.columns), "Energy", energies / (n_sites * elem_per_site))
 
     return ["Energy"], data
-
-
-# site, moving dimension, direction, index of site representation
-def get_neighbour_index(n, dim, direction, mu, dimensions, dim_mul, elem_per_site):
-    if direction:
-        return (n - n % (dim_mul[dim] * dimensions[dim]) +
-                (n + dim_mul[dim]) % (dim_mul[dim] * dimensions[dim])) * elem_per_site + mu
-    else:
-        return (n - n % (dim_mul[dim] * dimensions[dim]) +
-                (n - dim_mul[dim] + dim_mul[dim] * dimensions[dim]) % (dim_mul[dim] * dimensions[dim])) * elem_per_site + mu
