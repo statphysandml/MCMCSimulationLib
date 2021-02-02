@@ -66,6 +66,14 @@ make -j4
 
 in the release directory of your project. More details on how to execute a simulation on the cluster can be found in the main.cpp file of the SimulateAndExecute example (https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/simulations/SimulateAndExecute/main.cpp) or in the main.cpp file of a template project (see Template Project).
 
+To keep track of changes in the submodules when pulling updates of the respository, we strongly recommend for an update on your local machine to use
+
+```bash
+git pull --recurse-submodules
+```
+
+otherwise the code might not run properly after an update of the library.
+
 Examples
 --------
 
