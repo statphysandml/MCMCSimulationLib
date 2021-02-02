@@ -69,7 +69,6 @@ public:
         return lattice;
     }
 
-
 private:
     // Can be replaced by any other representation
     std::vector<double> lattice;

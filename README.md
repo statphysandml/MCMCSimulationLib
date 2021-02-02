@@ -9,6 +9,8 @@ The computation of numerical results is implemented in Python. The respective li
 
 In short, the library takes care of all the annoying parts of a Markov Chain Monte Carlo algorithm and leaves to you the implementation of the actual considered problem.
 
+More detailed instructions to get started can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/doc/getting_started.md. The guide should be read in parallel to the instructions, provided here, and to the README.md files of the the linked github respositories.
+
 Build
 -----
 

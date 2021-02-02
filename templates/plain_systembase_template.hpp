@@ -80,7 +80,6 @@ public:
         return measure_names;
     }
 
-
 private:
     // Can be replaced by any other representation
     std::vector<double> lattice;
