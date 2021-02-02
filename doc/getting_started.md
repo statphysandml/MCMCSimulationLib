@@ -80,10 +80,12 @@ cp config_template.sh ./config.sh
 
 Change the config.sh file according to your setup. Replace the brackets and the python version by your setup.
 
+```bash
 path_to_python3="<path_to_conda>/envs/<virtualenv>/" # (optional)
 virtual_env="<virtualenv>" # (optional)
 python_version="3.7" # (optional)
 path_to_conda_activate="<path_to_conda>/envs/<virtualenv>/" # (optional)
+```
 
 Build the library
 
