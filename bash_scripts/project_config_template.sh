@@ -9,6 +9,6 @@ cluster_mode="local"
 # python_modules_path="<path_to_your_python_scripts>/python_scripts"
 
 # (optional - default="./python_scripts/" for projects and "./../../python_scripts/" for
-# simulations.) for a possible execution code of custom written functions and modules.
+# simulations.) for a possible execution of code of custom written functions and modules.
 # The directory "python_modules_path" is added to sys.path by the program.
 # The path needs to be defined relative to the project root path)

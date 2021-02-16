@@ -112,7 +112,7 @@ if __name__ == '__main__':
     path = "../../data/" + mcmc_model
     root = "../../data/" + mcmc_model
 
-    ''' Data generation with storage of a permament file '''
+    ''' Data generation with storage of a permanent file '''
 
     data_generator_args = {
         # ConfigDataGenerator Args
