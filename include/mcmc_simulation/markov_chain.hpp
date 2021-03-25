@@ -91,8 +91,8 @@ namespace mcmc {
                         std::vector<std::string> measures = system_base->measure();
                         if(measures.size() > 0)
                             os << measures[0];
-                        for (uint i = 1; i < measures.size(); i++)
-                            os << "\t" << measures[i];
+                        for (uint j = 1; j < measures.size(); j++)
+                            os << "\t" << measures[j];
                         if(measures.size() > 0)
                             os << "\n";
 
