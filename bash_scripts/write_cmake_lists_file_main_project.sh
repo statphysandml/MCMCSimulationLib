@@ -10,10 +10,10 @@ if [ -v path_to_python3 ]; then
 target_link_libraries_appendix="${target_link_libraries_appendix} \${PYTHON_LIBRARIES}"
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 # Python
-set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython3.7m.so")
-set(PYTHON_EXECUTABLE "${path_to_python3}bin/python3.7m")
+set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
+set(PYTHON_EXECUTABLE "${path_to_python3}bin/python${python_version}m")
 set(Python3_ROOT_DIR "${path_to_python3}")
-set(PYTHON_INCLUDE_DIRS "${path_to_python3}include/python3.7m")
+set(PYTHON_INCLUDE_DIRS "${path_to_python3}include/python${python_version}m")
 include_directories(\${PYTHON_INCLUDE_DIRS})
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message("Python executable = \${PYTHON_EXECUTABLE}")
