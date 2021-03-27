@@ -16,11 +16,11 @@ namespace mcmc {
             json parameter_class_params_ = {};
 
             // From json object - Load class parameters from object -> if a param_class_name + "_params.json" file exists, parameter are always loaded from this file!
-            if (base_parameters haskey(param_class_name)) {
+            if (base_parameters.haskey(param_class_name)) {
                 std::cout << "Load params with name " << param_class_name << " from json object" << std::endl;
                 parameter_class_params_ = base_parameters.template get_entry<json>(param_class_name);
                 parameter_class_params_[param_class_name + "_name"] = ParameterClass::name();
-            } else if (base_parameters haskey(param_class_name + "_path") and
+            } else if (base_parameters.haskey(param_class_name + "_path") and
                        param_helper::fs::check_if_parameter_file_exists(
                                base_parameters.template get_entry<std::string>(param_class_name + "_path"),
                                param_class_name, true)) // -> load json file if possible
