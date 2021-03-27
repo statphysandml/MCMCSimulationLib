@@ -1,6 +1,6 @@
 target_link_libraries_appendix="\${ParamHelper}"
 cat >$project_path/cmake/CMakeLists.txt <<EOL
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 project(${project_name})
 
 set(CMAKE_CXX_STANDARD 14)

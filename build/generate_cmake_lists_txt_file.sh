@@ -1,6 +1,6 @@
 target_link_libraries_appendix="\${ParamHelper}"
 cat >../CMakeLists.txt <<EOL
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 project(MCMCSimulationLib)
 
 set(CMAKE_CXX_STANDARD 14)
