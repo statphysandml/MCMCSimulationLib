@@ -10,16 +10,7 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-
-# Compilation options
-
 # Python virtual environment
-# set(Python3_LIBRARY "~/.miniconda3/envs/flowequation/lib/libpython3.7m.so")
-# set(Python3_INCLUDE_DIR "~/.miniconda3/envs/flowequation/include/python3.7m")
-# set(Python3_EXECUTABLE "~/.miniconda3/envs/flowequation/bin/python3.7m")
-# set(Python3_ROOT_DIR "~/.miniconda3/envs/flowequation/")
-
 set(Python3_FIND_VIRTUALENV "FIRST")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 if(Python3_FOUND)
@@ -62,9 +53,12 @@ endif()
 
 configure_file(./include/execution/config.h.in ../include/execution/config.h @ONLY)
 
+# Compilation options
+
 # compile the external submodule
 add_subdirectory(ext/ParamHelper)
 include_directories(./ext/ParamHelper/include)
+
 
 # compile the library
 add_subdirectory(src)
