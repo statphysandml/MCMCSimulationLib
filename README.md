@@ -11,15 +11,57 @@ In short, the library takes care of all the annoying parts of a Markov Chain Mon
 
 More detailed instructions to get started can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/doc/getting_started.md. The guide should be read in parallel to the instructions, provided here, and to the README.md files of the the linked github respositories.
 
+# Welcome to MCMCSimulationLib
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/statphysandml/MCMCSimulationLib/CI)](https://github.com/statphysandml/MCMCSimulationLib/actions?query=workflow%3ACI)
+[![PyPI Release](https://img.shields.io/pypi/v/MCMCSimulationLib.svg)](https://pypi.org/project/MCMCSimulationLib)
+[![Documentation Status](https://readthedocs.org/projects/MCMCSimulationLib/badge/)](https://MCMCSimulationLib.readthedocs.io/)
+[![codecov](https://codecov.io/gh/statphysandml/MCMCSimulationLib/branch/main/graph/badge.svg)](https://codecov.io/gh/statphysandml/MCMCSimulationLib)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=statphysandml_MCMCSimulationLib&metric=alert_status)](https://sonarcloud.io/dashboard?id=statphysandml_MCMCSimulationLib)
+
+# Prerequisites
+
+Building MCMCSimulationLib requires the following software installed:
+
+* A C++14-compliant compiler
+* CMake `>= 3.15`
+* Doxygen (optional, documentation building is skipped if missing)* Python `>= 3.6` for building Python bindings
+
+# Building MCMCSimulationLib
+
+The following sequence of commands builds MCMCSimulationLib.
+It assumes that your current working directory is the top-level directory
+of the freshly cloned repository:
+
+```
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
+```
+
+The build process can be customized with the following CMake variables,
+which can be set by adding `-D<var>={ON, OFF}` to the `cmake` call:
+
+* `BUILD_TESTING`: Enable building of the test suite (default: `ON`)
+* `BUILD_DOCS`: Enable building the documentation (default: `ON`)
+* `BUILD_PYTHON`: Enable building the Python bindings (default: `ON`)
+
+# Documentation
+
+MCMCSimulationLib provides a Sphinx-based documentation, that can
+be browsed [online at readthedocs.org](https://MCMCSimulationLib.readthedocs.io).
+
 Build
 -----
 
 Certain configuration parameters need to be defined for an execution of the C++ program. They need to be defined in a config.sh file in the build/ directory and in a project_config.sh file in the bash_scripts/ directory. The config.sh file contains all important information for the integration of Python into the program. So far, the library can only be used with a virtual environment. The config_template.sh file is a template where all necessary parameters are defined:
 ```bash
-path_to_python3="~/.miniconda3/envs/virtual_env/" # (optional)
-path_to_conda_activate="~/.miniconda3/bin/activate" # (optional)
-virtual_env="virtual_env" # (optional)
-python_version="3.7" # (optional)
+_path_to_python3="~/.miniconda3/envs/_virtual_env/" # (optional)
+_path_to_conda_activate="~/.miniconda3/bin/activate" # (optional)
+_virtual_env="_virtual_env" # (optional)
+_python_version="3.7" # (optional)
 ```
 The parameters need to be adapted to the virtual environment of the underlying system.
 

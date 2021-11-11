@@ -10,11 +10,13 @@ namespace mcmc {
         std::string Executer::executable_name = "None";
         std::string Executer::cluster_mode = "local";
 
-#ifdef PYTHON
+#ifdef RUN_WITH_VITUAL_ENV
         // Global parameters
         std::string Executer::conda_activate_path = CONDA_ACTIVATE_PATH;
         std::string Executer::virtual_env = VIRTUAL_ENV;
+#endif
 
+#ifdef PYTHON
         // Project dependent parameter
         std::string Executer::python_modules_path = "";
 
@@ -66,7 +68,7 @@ namespace mcmc {
             os << "#PBS -l vmem=2gb\n"; // 15gb
             os << "#PBS -l walltime=72:00:00\n" << std::endl;
 
-#ifdef PYTHON
+#ifdef RUN_WITH_VITUAL_ENV
             os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
 #endif
             os << "cd " << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "release/" << "\n";

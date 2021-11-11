@@ -247,7 +247,8 @@ namespace mcmc {
                 Executer::python_modules_path = python_modules_path_;
                 std::cout << "Setting python scripts path to " << python_modules_path_ << std::endl;
             }
-
+#endif
+#ifdef RUN_WITH_VIRTUAL_ENV
             static void set_conda_activate_path(const std::string conda_activate_path_) {
                 Executer::conda_activate_path = conda_activate_path_;
                 std::cout << "Setting conda activate path to " << Executer::conda_activate_path << std::endl;
@@ -257,7 +258,6 @@ namespace mcmc {
                 Executer::virtual_env = virtual_env_;
                 std::cout << "Setting virtual_env to " << Executer::virtual_env << std::endl;
             }
-
 #endif
 
             static std::string get_executable_name() {

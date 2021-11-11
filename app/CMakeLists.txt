@@ -1,0 +1,2 @@
+add_executable(MCMCSimulationLib_examples MCMCSimulationLib_app.cpp)
+target_link_libraries(MCMCSimulationLib_examples PRIVATE mcmcsimulationlib)

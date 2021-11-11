@@ -1,0 +1,3 @@
+pybind11_add_module(MCMCSimulationLib_python MCMCSimulationLib_python.cpp)
+target_link_libraries(MCMCSimulationLib_python PUBLIC MCMCSimulationLib)
+set_target_properties(MCMCSimulationLib_python PROPERTIES OUTPUT_NAME MCMCSimulationLib)

@@ -1,0 +1,7 @@
+#ifndef CONFIG_H_IN
+#define CONFIG_H_IN
+
+#cmakedefine VIRTUAL_ENV "@VIRTUAL_ENV@"
+#cmakedefine CONDA_ACTIVATE_PATH "@CONDA_ACTIVATE_PATH@"
+
+#endif // CONFIG_H_IN
