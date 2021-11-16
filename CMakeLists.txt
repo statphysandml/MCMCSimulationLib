@@ -10,27 +10,11 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Python virtual environment
-set(Python3_FIND_VIRTUALENV "FIRST")
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-if(Python3_FOUND)
-  option(PYTHON "Enable Python" ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-  include_directories(${Python3_INCLUDE_DIRS})
-  # find_package(PythonLibs REQUIRED)
-  message("Python executable = ${Python3_EXECUTABLE}")
-  message("Python include dirs = ${Python3_INCLUDE_DIRS}")
-  message("Python libraries = ${Python3_LIBRARIES}")
-
-  if(DEFINED VIRTUAL_ENV AND DEFINED CONDA_ACTIVATE_PATH)
-      option(RUN_WITH_VIRTUAL_ENV "Enable que-script generation with virtual environment" ON)
-  else()
-      option(RUN_WITH_VIRTUAL_ENV "Disable que-script generation with virtual environment" OFF)
-  endif()
-else()
-  # Use library without the integration of python code
-  option(PYTHON "Disable Python" OFF)
-endif()
+# Compilation options
+set(BUILD_PYTHON ON CACHE BOOL "Enable building of Python bindings")
+set(BUILD_DOCS ON CACHE BOOL "Enable building of documentation")
 
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
@@ -59,6 +43,35 @@ configure_file(./include/execution/config.h.in ../include/execution/config.h @ON
 add_subdirectory(ext/ParamHelper)
 include_directories(./ext/ParamHelper/include)
 
+message("BUILD PYthon ${BUILD_PYTHON}")
+if(BUILD_PYTHON)
+    # Add Python bindings
+    add_subdirectory(ext/pybind11)
+
+    # Python virtual environment
+    add_subdirectory(python)
+else()
+    # Add Python bindings for correct binding of pybind11 without usage of pybind11_modules
+    add_subdirectory(ext/pybind11)
+    set(target_link_libraries_python_appendix "pybind11::embed")
+    # Or without pybind11:
+    # set(Python3_FIND_VIRTUALENV "FIRST")
+    # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+    # include_directories(${Python3_INCLUDE_DIRS})
+    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
+endif()
+
+if(Python3_FOUND)
+    option(PYTHON "Enable Python" ON)
+    if(DEFINED VIRTUAL_ENV AND DEFINED CONDA_ACTIVATE_PATH)
+        option(RUN_WITH_VIRTUAL_ENV "Enable que-script generation with virtual environment" ON)
+    else()
+        option(RUN_WITH_VIRTUAL_ENV "Disable que-script generation with virtual environment" OFF)
+    endif()
+else()
+    # Use library without the integration of python code
+    option(PYTHON "Disable Python" OFF)
+endif()
 
 # compile the library
 add_subdirectory(src)
@@ -75,6 +88,10 @@ if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
+if(BUILD_DOCS)
+    # Add the documentation
+    add_subdirectory(doc)
+endif()
 
 
 # Add an alias target for use if this project is included as a subproject in another project
@@ -83,16 +100,16 @@ add_library(mcmcsimulationlib::mcmcsimulationlib ALIAS mcmcsimulationlib)
 # Install targets and configuration
 install(
   TARGETS mcmcsimulationlib
-  EXPORT MCMCSimulationLib-config
+  EXPORT mcmcsimulationlib-config
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 install(
-  EXPORT MCMCSimulationLib-config
-  NAMESPACE MCMCSimulationLib::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MCMCSimulationLib
+  EXPORT mcmcsimulationlib-config
+  NAMESPACE mcmcsimulationlib::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mcmcsimulationlib
 )
 
 install(

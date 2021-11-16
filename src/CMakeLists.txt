@@ -8,8 +8,8 @@ add_library(mcmcsimulationlib STATIC
 
 if (PYTHON)
   target_compile_definitions(mcmcsimulationlib PUBLIC -D PYTHON)
+  target_link_libraries(mcmcsimulationlib PRIVATE ${target_link_libraries_python_appendix})
 endif()
-target_link_libraries(mcmcsimulationlib ${ParamHelper} ${PYTHON_LIBRARIES})
 
 target_include_directories(mcmcsimulationlib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/>

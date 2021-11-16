@@ -19,9 +19,9 @@ import subprocess
 
 # -- Project information -----------------------------------------------------
 
-project = '{{ cookiecutter._project_slug }}'
-copyright = '2020, {{ cookiecutter._full_name }}'
-author = '{{ cookiecutter._full_name }}'
+project = 'MCMCSimulationLib'
+copyright = '2020, Lukas Kades'
+author = 'Lukas Kades'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
@@ -59,18 +59,18 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = []
 
 # Breathe Configuration: Breathe is the bridge between the information extracted
-# from the C++ sources by _doxygen and Sphinx.
+# from the C++ sources by Doxygen and Sphinx.
 breathe_projects = {}
-breathe_default_project = "{{ cookiecutter._project_slug }}"
+breathe_default_project = "MCMCSimulationLib"
 
 # Check if we're running on Read the Docs' servers
-read_the_docs_build = os.environ.get('_readthedocs', None) == 'True'
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 # Implement build logic on RTD servers
 if read_the_docs_build:
     cwd = os.getcwd()
     os.makedirs("build-cmake", exist_ok=True)
     builddir = os.path.join(cwd, "build-cmake")
-    subprocess.check_call("cmake -DBUILD_DOCS=ON -DBUILD_TESTING=OFF {% if cookiecutter._python_bindings == 'Yes' %}-DBUILD_PYTHON=OFF{% endif %} ../..".split(), cwd=builddir)
-    subprocess.check_call("cmake --build . --target _doxygen".split(), cwd=builddir)
-    breathe_projects["{{ cookiecutter._project_slug }}"] = os.path.join(builddir, "doc", "xml")
+    subprocess.check_call("cmake -DBUILD_DOCS=ON -DBUILD_TESTING=OFF -DBUILD_PYTHON=OFF ../..".split(), cwd=builddir)
+    subprocess.check_call("cmake --build . --target doxygen".split(), cwd=builddir)
+    breathe_projects["MCMCSimulationLib"] = os.path.join(builddir, "doc", "xml")
