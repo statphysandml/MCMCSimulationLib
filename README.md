@@ -44,9 +44,15 @@ cmake --build .
 The build process can be customized with the following CMake variables,
 which can be set by adding `-D<var>={ON, OFF}` to the `cmake` call:
 
+cmake -DCMAKE_BUILD_TYPE=Release -DVIRTUAL_ENV="flowequation" -DCONDA_ACTIVATE_PATH="~/miniconda3/bin/activate" -DRUN_WITH_PYTHON_BACKEND=ON ..
+
+
 * `BUILD_TESTING`: Enable building of the test suite (default: `ON`)
 * `BUILD_DOCS`: Enable building the documentation (default: `ON`)
-* `BUILD_PYTHON`: Enable building the Python bindings (default: `ON`)
+* `BUILD_PYTHON_BINDINGS`: Enable building the Python bindings (default: `ON`)
+* `RUN_WITH_PYTHON_BACKEND`
+* `VIRTUAL_ENV`
+* `CONDA_ACTIVATE_PATH`
 
 # Documentation
 

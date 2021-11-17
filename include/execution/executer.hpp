@@ -5,7 +5,7 @@
 #ifndef MAIN_EXECUTER_HPP
 #define MAIN_EXECUTER_HPP
 
-#ifdef PYTHON
+#ifdef RUN_WITH_PYTHON_BACKEND
 #include <Python.h>
 #endif
 
@@ -28,7 +28,7 @@
 namespace mcmc {
     namespace execution {
 
-#ifdef PYTHON
+#ifdef RUN_WITH_PYTHON_BACKEND
         void initialize_python(const std::string python_modules_path_);
 
         void finalize_python();
@@ -126,7 +126,7 @@ namespace mcmc {
                             mcmc::simulation::Simulation <SBP, ExpectationValueParameters> sim(simparams);
                             sim.run();
 
-                            #ifdef PYTHON
+                            #ifdef RUN_WITH_PYTHON_BACKEND
 
                             prepare_python_execution();
                             PyRun_SimpleString(("from mcmctools.modes.expectation_value import expectation_value; expectation_value('" + path_parameters.files_dir + "')").c_str());
@@ -156,7 +156,7 @@ namespace mcmc {
                             mcmc::simulation::Simulation <SBP, CorrelationTimeParameters> sim(simparams);
                             sim.run();
 
-                            #ifdef PYTHON
+                            #ifdef RUN_WITH_PYTHON_BACKEND
 
                             prepare_python_execution();
                             PyRun_SimpleString(("from mcmctools.modes.correlation_time import correlation_time; correlation_time('" + path_parameters.files_dir + "')").c_str());
@@ -175,7 +175,7 @@ namespace mcmc {
                             mcmc::simulation::Simulation <SBP, EquilibriateParameters> sim(simparams);
                             sim.run();
 
-                            #ifdef PYTHON
+                            #ifdef RUN_WITH_PYTHON_BACKEND
 
                             prepare_python_execution();
                             PyRun_SimpleString(("from mcmctools.modes.equilibriate import equilibriate; equilibriate('" + path_parameters.files_dir + "')").c_str());
@@ -202,7 +202,7 @@ namespace mcmc {
                 }
             }
 
-#ifdef PYTHON
+#ifdef RUN_WITH_PYTHON_BACKEND
             std::pair<int, wchar_t **> prepare_python_script(std::string python_file) {
                 int argc = 2;
                 const char *argv[2];
@@ -228,14 +228,14 @@ namespace mcmc {
             }
 
             void prepare_python_execution() {
+                path_cache = param_helper::fs::prfs::path_to_executable();
                 PyRun_SimpleString(
                         ("import os; os.chdir('" + param_helper::fs::prfs::project_root() + path_parameters.sim_root_dir + "')").c_str());
             }
 
             void finalize_python_execution() {
-                auto cwd = param_helper::fs::prfs::project_root();
                 PyRun_SimpleString(
-                        ("import os; os.chdir('" + cwd.substr(0, cwd.size() - 3) + "/cmake/')").c_str());
+                        ("import os; os.chdir('" + path_cache + "')").c_str());
 
             };
 
@@ -279,6 +279,10 @@ namespace mcmc {
             }
 
             const mcmc::util::PathParameters path_parameters;
+
+#ifdef RUN_WITH_PYTHON_BACKEND
+        std::string path_cache;
+#endif
         };
 
         template<typename SBP>

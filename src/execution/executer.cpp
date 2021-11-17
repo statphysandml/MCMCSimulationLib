@@ -16,7 +16,7 @@ namespace mcmc {
         std::string Executer::virtual_env = VIRTUAL_ENV;
 #endif
 
-#ifdef PYTHON
+#ifdef RUN_WITH_PYTHON_BACKEND
         // Project dependent parameter
         std::string Executer::python_modules_path = "";
 

@@ -6,8 +6,8 @@ add_library(mcmcsimulationlib STATIC
   mcmc_simulation/sampler/uniform_sampler.cpp
   execution/executer.cpp)
 
-if (PYTHON)
-  target_compile_definitions(mcmcsimulationlib PUBLIC -D PYTHON)
+if (RUN_WITH_PYTHON_BACKEND)
+  target_compile_definitions(mcmcsimulationlib PUBLIC RUN_WITH_PYTHON_BACKEND)
   target_link_libraries(mcmcsimulationlib PRIVATE ${target_link_libraries_python_appendix})
 endif()
 

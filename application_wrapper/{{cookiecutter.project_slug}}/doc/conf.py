@@ -19,9 +19,9 @@ import subprocess
 
 # -- Project information -----------------------------------------------------
 
-project = 'MCMCSimulationLib'
-copyright = '2020, Lukas Kades'
-author = 'Lukas Kades'
+project = '{{ cookiecutter.project_slug }}'
+copyright = '2020, {{ cookiecutter.full_name }}'
+author = '{{ cookiecutter.full_name }}'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
@@ -61,7 +61,7 @@ html_static_path = []
 # Breathe Configuration: Breathe is the bridge between the information extracted
 # from the C++ sources by Doxygen and Sphinx.
 breathe_projects = {}
-breathe_default_project = "MCMCSimulationLib"
+breathe_default_project = "{{ cookiecutter.project_slug }}"
 
 # Check if we're running on Read the Docs' servers
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
@@ -71,6 +71,6 @@ if read_the_docs_build:
     cwd = os.getcwd()
     os.makedirs("build-cmake", exist_ok=True)
     builddir = os.path.join(cwd, "build-cmake")
-    subprocess.check_call("cmake -DBUILD_DOCS=ON -DBUILD_TESTING=OFF -DBUILD_PYTHON_BINDINGS=OFF ../..".split(), cwd=builddir)
+    subprocess.check_call("cmake -DBUILD_DOCS=ON -DBUILD_TESTING=OFF {% if cookiecutter.python_bindings == 'Yes' %}-DBUILD_PYTHON_BINDINGS=OFF{% endif %} ../..".split(), cwd=builddir)
     subprocess.check_call("cmake --build . --target doxygen".split(), cwd=builddir)
-    breathe_projects["MCMCSimulationLib"] = os.path.join(builddir, "doc", "xml")
+    breathe_projects["{{ cookiecutter.project_slug }}"] = os.path.join(builddir, "doc", "xml")

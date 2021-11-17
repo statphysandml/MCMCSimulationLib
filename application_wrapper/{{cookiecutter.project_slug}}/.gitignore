@@ -30,7 +30,7 @@
 *.exe
 *.out
 *.app
-{% if cookiecutter._python_bindings %}
+{% if cookiecutter.python_bindings %}
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -169,61 +169,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# Customized
-
-.idea/
-.ipynb_checkpoints/
-.vscode/
-lib/
-build/config.sh
-bash_scripts/project_config.sh
-__pycache__/
-
-include/execution/config.h
-
-examples/*
-
-!examples/IsingModel/
-examples/IsingModel/build
-examples/IsingModel/configs/*
-!examples/IsingModel/configs/.keep
-examples/IsingModel/cpu_cluster_runs/*
-!examples/IsingModel/cpu_cluster_runs/.keep
-examples/IsingModel/data/*
-!examples/IsingModel/data/.keep
-examples/IsingModel/ext/*
-!examples/IsingModel/ext/.keep
-examples/IsingModel/include/ising_model/config.h
-examples/IsingModel/results/*
-!examples/IsingModel/results/.keep
-
-!examples/SavingAndLoading/
-examples/SavingAndLoading/build
-examples/SavingAndLoading/configs/*
-!examples/SavingAndLoading/configs/.keep
-examples/SavingAndLoading/cpu_cluster_runs/*
-!examples/SavingAndLoading/cpu_cluster_runs/.keep
-examples/SavingAndLoading/data/*
-!examples/SavingAndLoading/data/.keep
-examples/SavingAndLoading/ext/*
-!examples/SavingAndLoading/ext/.keep
-examples/SavingAndLoading/include/saving_and_loading/config.h
-examples/SavingAndLoading/results/*
-!examples/SavingAndLoading/results/.keep
-
-
-!examples/SimulationAndExecution/
-examples/SimulationAndExecution/build
-examples/SimulationAndExecution/configs/*
-!examples/SimulationAndExecution/configs/.keep
-examples/SimulationAndExecution/cpu_cluster_runs/*
-!examples/SimulationAndExecution/cpu_cluster_runs/.keep
-examples/SimulationAndExecution/data/*
-!examples/SimulationAndExecution/data/.keep
-examples/SimulationAndExecution/ext/*
-!examples/SimulationAndExecution/ext/.keep
-examples/SimulationAndExecution/include/simulation_and_execution/config.h
-examples/SimulationAndExecution/results/*
-!examples/SimulationAndExecution/results/.keep
-
+{% endif %}

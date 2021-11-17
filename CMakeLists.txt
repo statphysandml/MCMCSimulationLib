@@ -13,8 +13,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Compilation options
-set(BUILD_PYTHON ON CACHE BOOL "Enable building of Python bindings")
+set(BUILD_PYTHON_BINDINGS ON CACHE BOOL "Enable building of Python bindings")
+set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expectation values, etc.")
 set(BUILD_DOCS ON CACHE BOOL "Enable building of documentation")
+
+# Additional compliation options to be able to activate the environment before the actual simulation in a generated bash script.
+# These are only required for runs with a queue-script. (used by include/execution/config.h.in)
+set(VIRTUAL_ENV "None" CACHE STRING "Name of the virtual environment")
+set(CONDA_ACTIVATE_PATH "None" CACHE STRING "Path to conda activate path-to-conda-activate/bin/activate")
 
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
@@ -43,42 +49,43 @@ configure_file(./include/execution/config.h.in ../include/execution/config.h @ON
 add_subdirectory(ext/ParamHelper)
 include_directories(./ext/ParamHelper/include)
 
-message("BUILD PYthon ${BUILD_PYTHON}")
-if(BUILD_PYTHON)
+if(BUILD_PYTHON_BINDINGS)
+    message("Integrate python for python_bindings")
     # Add Python bindings
     add_subdirectory(ext/pybind11)
 
     # Python virtual environment
     add_subdirectory(python)
-else()
+elseif(RUN_WITH_PYTHON_BACKEND)
+    message("Load pybind11 module")
     # Add Python bindings for correct binding of pybind11 without usage of pybind11_modules
     add_subdirectory(ext/pybind11)
-    set(target_link_libraries_python_appendix "pybind11::embed")
     # Or without pybind11:
     # set(Python3_FIND_VIRTUALENV "FIRST")
     # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
     # include_directories(${Python3_INCLUDE_DIRS})
-    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
 endif()
 
-if(Python3_FOUND)
-    option(PYTHON "Enable Python" ON)
-    if(DEFINED VIRTUAL_ENV AND DEFINED CONDA_ACTIVATE_PATH)
-        option(RUN_WITH_VIRTUAL_ENV "Enable que-script generation with virtual environment" ON)
+if(RUN_WITH_PYTHON_BACKEND)
+    set(target_link_libraries_python_appendix "pybind11::embed")
+    # Or without pybind11:
+    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
+    message("Running with python backend enabled.")
+    if(NOT VIRTUAL_ENV EQUAL "None" AND NOT CONDA_ACTIVATE_PATH EQUAL "None")
+        message("Enable queue-script generation with virtual environment")
+        option(RUN_WITH_VIRTUAL_ENV "Enable queue-script generation with virtual environment" ON)
     else()
-        option(RUN_WITH_VIRTUAL_ENV "Disable que-script generation with virtual environment" OFF)
+        message("Disable queue-script generation with virtual environment")
+        option(RUN_WITH_VIRTUAL_ENV "Disable queue-script generation with virtual environment" OFF)
     endif()
 else()
     # Use library without the integration of python code
-    option(PYTHON "Disable Python" OFF)
+    message("Running with python backend disabled.")
 endif()
 
 # compile the library
 add_subdirectory(src)
 
-
-# compile the application
-add_subdirectory(app)
 
 # compile the tests
 include(CTest)
