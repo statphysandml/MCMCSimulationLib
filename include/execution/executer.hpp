@@ -17,7 +17,8 @@
 
 #include "config.h"
 
-#include "param_helper/params.hpp"
+#include <param_helper/params.hpp>
+
 #include "../mcmc_simulation/util/path_parameters.hpp"
 #include "../mcmc_simulation/simulation.hpp"
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "param_helper/params.hpp"
+#include <param_helper/params.hpp>
 
 namespace mcmc {
     namespace simulation {

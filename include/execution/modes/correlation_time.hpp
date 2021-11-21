@@ -5,8 +5,8 @@
 #ifndef MAIN_CORRELATION_TIME_HPP
 #define MAIN_CORRELATION_TIME_HPP
 
-#include "param_helper/params.hpp"
-#include "param_helper/json.hpp"
+#include <param_helper/params.hpp>
+#include <param_helper/json.hpp>
 
 #include "../../mcmc_simulation/markov_chain.hpp"
 

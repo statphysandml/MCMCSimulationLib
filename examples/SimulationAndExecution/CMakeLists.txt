@@ -18,7 +18,7 @@ set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
 set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
 
 # Include libraries
-find_library(ParamHelper NAMES libparamhelper.a PATHS ../../build/ext/ParamHelper)
+find_library(ParamHelper NAMES libparamhelper.a PATHS ./../../build/ext/ParamHelper/src)
 message("ParamHelper = ${ParamHelper}")
 include_directories(../../ext/ParamHelper/include/)
 

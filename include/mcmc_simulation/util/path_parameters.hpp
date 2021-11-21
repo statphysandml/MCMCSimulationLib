@@ -5,7 +5,7 @@
 #ifndef PROGRAM_PATH_PARAMETERS_HPP
 #define PROGRAM_PATH_PARAMETERS_HPP
 
-#include "param_helper/filesystem.hpp"
+#include <param_helper/filesystem.hpp>
 
 namespace mcmc {
     namespace util {

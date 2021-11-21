@@ -25,7 +25,7 @@ set(CONDA_ACTIVATE_PATH "None" CACHE STRING "Path to conda activate path-to-cond
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
-    option(GIT_SUBMODULE "Check submodules during build" ON)
+    option(GIT_SUBMODULE "Check submodules during build" OFF)
     if(GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
@@ -47,7 +47,7 @@ configure_file(./include/execution/config.h.in ../include/execution/config.h @ON
 
 # compile the external submodule
 add_subdirectory(ext/ParamHelper)
-include_directories(./ext/ParamHelper/include)
+include_directories(ext/ParamHelper/include)
 
 if(BUILD_PYTHON_BINDINGS)
     message("Integrate python for python_bindings")
@@ -90,8 +90,8 @@ add_subdirectory(src)
 # compile the tests
 include(CTest)
 if(BUILD_TESTING)
-  add_subdirectory(ext/Catch2)
-  include(./ext/Catch2/contrib/Catch.cmake)
+  # add_subdirectory(ext/ParamHelper/ext/Catch2)
+  include(./ext/ParamHelper/ext/Catch2/contrib/Catch.cmake)
   add_subdirectory(tests)
 endif()
 

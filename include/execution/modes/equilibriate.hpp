@@ -5,8 +5,8 @@
 #ifndef MCMCSIMULATIONLIB_EQUILIBRIATE_HPP
 #define MCMCSIMULATIONLIB_EQUILIBRIATE_HPP
 
-#include "param_helper/params.hpp"
-#include "param_helper/json.hpp"
+#include <param_helper/params.hpp>
+#include <param_helper/json.hpp>
 
 #include "../../mcmc_simulation/markov_chain.hpp"
 

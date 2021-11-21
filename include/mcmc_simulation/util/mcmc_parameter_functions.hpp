@@ -5,7 +5,7 @@
 #ifndef MCMCSIMULATIONLIB_MCMC_PARAMETERS_HPP
 #define MCMCSIMULATIONLIB_MCMC_PARAMETERS_HPP
 
-#include "param_helper/params.hpp"
+#include <param_helper/params.hpp>
 
 namespace mcmc {
     namespace util {

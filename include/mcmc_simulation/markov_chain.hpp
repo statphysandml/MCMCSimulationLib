@@ -2,8 +2,8 @@
 #define MARKOV_CHAIN_HPP
 
 // #include <tiff.h>
-#include "param_helper/params.hpp"
-#include "param_helper/json.hpp"
+#include <param_helper/params.hpp>
+#include <param_helper/json.hpp>
 
 using json = nlohmann::json;
 

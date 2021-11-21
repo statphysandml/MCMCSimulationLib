@@ -8,8 +8,8 @@
 #include "util/mcmc_parameter_functions.hpp"
 #include "markov_chain.hpp"
 
-#include "param_helper/json.hpp"
-#include "param_helper/filesystem.hpp"
+#include <param_helper/json.hpp>
+#include <param_helper/filesystem.hpp>
 
 using json = nlohmann::json;
 

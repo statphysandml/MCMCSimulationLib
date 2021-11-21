@@ -1,3 +1,5 @@
+Change OFF back to On in git search in CMakeLists (In MCMCSimulationLib as well as LatticeModelSimulationLib)
+
 MCMCSimulationLib
 =================
 

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "param_helper/params.hpp"
+#include <param_helper/params.hpp>
 #include "measure_policy.hpp"
 
 namespace mcmc {

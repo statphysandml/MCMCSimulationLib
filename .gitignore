@@ -212,7 +212,6 @@ examples/SavingAndLoading/include/saving_and_loading/config.h
 examples/SavingAndLoading/results/*
 !examples/SavingAndLoading/results/.keep
 
-
 !examples/SimulationAndExecution/
 examples/SimulationAndExecution/build
 examples/SimulationAndExecution/configs/*
