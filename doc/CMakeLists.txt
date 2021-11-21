@@ -18,5 +18,4 @@ add_custom_target(mcmcsimulationlib-sphinx-doc
                   COMMENT "Generating documentation with Sphinx..."
                   )
 
-# Here might be some changes regarding doxygen and mcmcsimulationlib_doxygen necessary
-add_dependencies(mcmcsimulationlib-sphinx-doc doxygen)
+add_dependencies(mcmcsimulationlib-sphinx-doc mcmcsimulationlib_doxygen)
