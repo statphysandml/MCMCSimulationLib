@@ -46,8 +46,8 @@ configure_file(./include/execution/config.h.in ../include/execution/config.h @ON
 # Compilation options
 
 # compile the external submodule
-add_subdirectory(ext/ParamHelper)
 include_directories(ext/ParamHelper/include)
+add_subdirectory(ext/ParamHelper)
 
 if(BUILD_PYTHON_BINDINGS)
     message("Integrate python for python_bindings")
