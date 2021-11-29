@@ -1,5 +1,6 @@
-# Welcome to {{ cookiecutter.project_name }}
+# {{ cookiecutter.project_name }}
 
+The generated project serves as a template project for implementing your own MCMC simulation.
 {# The white-space control of the below template is quite delicate - if you add one, do it exactly like this (mind the -'s) -#}
 {%- set is_github = "github.com" in cookiecutter.remote_url -%}
 {%- set is_gitlab = "gitlab" in cookiecutter.remote_url -%}
@@ -50,7 +51,8 @@
 Building {{ cookiecutter.project_name }} requires the following software installed:
 
 * A C++{{ cookiecutter.cxx_minimum_standard }}-compliant compiler
-* CMake `>= 3.9`
+* CMake `>= 3.15`
+* MCMCSimulationLib
 {%- if cookiecutter.doxygen == "Yes" or cookiecutter.readthedocs == "Yes" %}
 * Doxygen (optional, documentation building is skipped if missing)
 {%- endif %}
@@ -66,8 +68,7 @@ Building {{ cookiecutter.project_name }} requires the following software install
 
 # Building {{ cookiecutter.project_name }}
 
-The following sequence of commands builds {{ cookiecutter.project_name }}.
-It assumes that your current working directory is the top-level directory
+The following sequence of commands builds {{ cookiecutter.project_name }}. If you use a virtual envirnonment, it is important that it is activated for the building process to find the correct python version. The sequence assumes that your current working directory is the top-level directory
 of the freshly cloned repository:
 
 ```
@@ -77,33 +78,8 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 
-The build process can be customized with the following CMake variables,
-which can be set by adding `-D<var>={ON, OFF}` to the `cmake` call:
+The build process can be again customized with the following CMake variables,
+which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 
-{%- if cookiecutter.build_tests == "Yes" %}
-* `BUILD_TESTING`: Enable building of the test suite (default: `ON`)
-{%- endif %}
-{%- if cookiecutter.doxygen == "Yes" or cookiecutter.readthedocs == "Yes" %}
-* `BUILD_DOCS`: Enable building the documentation (default: `ON`)
-{%- endif %}
-{%- if cookiecutter.python_bindings == "Yes" %}
-* `BUILD_PYTHON_BINDINGS`: Enable building the Python bindings (default: `ON`)
-{%- endif %}
-
-# Documentation
-{% if cookiecutter.readthedocs == "Yes" %}
-{{ cookiecutter.project_name }} provides a Sphinx-based documentation, that can
-be browsed [online at readthedocs.org](https://{{ cookiecutter.project_slug }}.readthedocs.io).
-{% elif cookiecutter.doxygen == "Yes" %}
-{{ cookiecutter.project_name }} provides a Doxygen documentation. You can build
-the documentation locally by making sure that `Doxygen` is installed on your system
-and running this command from the top-level build directory:
-
-```
-cmake --build . --target doxygen
-```
-
-The web documentation can then be browsed by opening `doc/html/index.html` in your browser.
-{% else %}
-{{ cookiecutter.project_name }} *should* provide a documentation.
-{% endif -%}
+* `CLUSTER_MODE`: Indicates whether the code is executed on the cluster (`on_cluster`) or locally (`local`) (default: `local`). The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine. The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file src/execution/execution.cpp and need to be adapted according to the used cluster. More details on how to execute a simulation on the cluster can be found in the main.cpp file of the SimulateAndExecute example (https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/SimulateAndExecute//src/main.cpp) or in the main.cpp file of a template project (see Template Project).
+* `PYTHON_SCRIPTS_PATH`: Path to a directory including additional python files for a possible execution of code of custom written functions and modules. (default: `./python_scripts`). The path is appended by the programming to sys.path. It needs to be defined relative to the project root path.

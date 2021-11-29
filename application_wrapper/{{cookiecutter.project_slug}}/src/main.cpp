@@ -1,7 +1,3 @@
-//
-// Created by lukas on 04.12.20.
-//
-
 #include "../include/{{ cookiecutter.project_slug }}/config.h"
 
 #include <mcmc_simulation/header.hpp>

@@ -1,39 +1,44 @@
-Change OFF back to On in git search in CMakeLists (In MCMCSimulationLib as well as LatticeModelSimulationLib)
-
 MCMCSimulationLib
 =================
+
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/statphysandml/MCMCSimulationLib/CI)](https://github.com/statphysandml/MCMCSimulationLib/actions?query=workflow%3ACI)
+[![PyPI Release](https://img.shields.io/pypi/v/MCMCSimulationLib.svg)](https://pypi.org/project/MCMCSimulationLib)
+[![Documentation Status](https://readthedocs.org/projects/MCMCSimulationLib/badge/)](https://MCMCSimulationLib.readthedocs.io/)
+[![codecov](https://codecov.io/gh/statphysandml/MCMCSimulationLib/branch/main/graph/badge.svg)](https://codecov.io/gh/statphysandml/MCMCSimulationLib)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=statphysandml_MCMCSimulationLib&metric=alert_status)](https://sonarcloud.io/dashboard?id=statphysandml_MCMCSimulationLib) -->
 
 MCMCSimulationLib is a C++ library that simplifies setting up a Markov Chain Monte Carlo algorithms. The library provides a generic framework to perform simulations for standard tasks like a computation of expectation values or a determination of the autocorrelation time. Certain base classes enable an easy implementation of new theories and models.
 
 An additional feature of the library is that all hyperparameters of a simulation can be saved and reused for the same simulation at a later point. Due to this, the library can be used to manage and start computations on a cluster pretty easy.
 
-The computation of numerical results is implemented in Python. The respective library can be found here: https://github.com/statphysandml/MCMCEvaluationLib. Besides an evaluation of the data, it is possible to load all configurations as a PyTorch dataset.
+The computation of numerical results is implemented in Python. Besides an evaluation of the data, it is possible to load all configurations as a PyTorch dataset.
 
 In short, the library takes care of all the annoying parts of a Markov Chain Monte Carlo algorithm and leaves to you the implementation of the actual considered problem.
 
 More detailed instructions to get started can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/doc/getting_started.md. The guide should be read in parallel to the instructions, provided here, and to the README.md files of the the linked github respositories.
 
-# Welcome to MCMCSimulationLib
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/statphysandml/MCMCSimulationLib/CI)](https://github.com/statphysandml/MCMCSimulationLib/actions?query=workflow%3ACI)
-[![PyPI Release](https://img.shields.io/pypi/v/MCMCSimulationLib.svg)](https://pypi.org/project/MCMCSimulationLib)
-[![Documentation Status](https://readthedocs.org/projects/MCMCSimulationLib/badge/)](https://MCMCSimulationLib.readthedocs.io/)
-[![codecov](https://codecov.io/gh/statphysandml/MCMCSimulationLib/branch/main/graph/badge.svg)](https://codecov.io/gh/statphysandml/MCMCSimulationLib)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=statphysandml_MCMCSimulationLib&metric=alert_status)](https://sonarcloud.io/dashboard?id=statphysandml_MCMCSimulationLib)
-
-# Prerequisites
+Prerequisites
+-------------
 
 Building MCMCSimulationLib requires the following software installed:
 
 * A C++14-compliant compiler
 * CMake `>= 3.15`
-* Doxygen (optional, documentation building is skipped if missing)* Python `>= 3.6` for building Python bindings
+* Cookiecutter, e.g. by doing pip install cookiecutter, for auto-generating new projects
+* Doxygen (optional, documentation building is skipped if missing) (not present, yet)
+* Python `>= 3.6` for building Python bindings and for running the evaluation scripts of the library (will follow)
 
-# Building MCMCSimulationLib
+as well as the following python dependencies for a successful usage of the evaluation of numerical results:
 
-The following sequence of commands builds MCMCSimulationLib.
-It assumes that your current working directory is the top-level directory
+* [MCMCEvaluationLib](https://github.com/statphysandml/MCMCEvaluationLib)
+* [pystatsplottools](https://github.com/statphysandml/pystatplottools)
+
+
+Building MCMCSimulationLib
+--------------------------
+
+The following sequence of commands builds MCMCSimulationLib. If you use a virtual envirnonment, it is important that it is activated for the building process to find the correct python version. The sequence assumes that your current working directory is the top-level directory
 of the freshly cloned repository:
 
 ```
@@ -44,133 +49,83 @@ cmake --build .
 ```
 
 The build process can be customized with the following CMake variables,
-which can be set by adding `-D<var>={ON, OFF}` to the `cmake` call:
+which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 
-cmake -DCMAKE_BUILD_TYPE=Release -DVIRTUAL_ENV="flowequation" -DCONDA_ACTIVATE_PATH="~/miniconda3/bin/activate" -DRUN_WITH_PYTHON_BACKEND=ON ..
-
-
+* `RUN_WITH_PYTHON_BACKEND`: Enable the computation of numerical results in Python (default: `ON`). Some features, like the computation of the correlation time do not work if this is disabled.
 * `BUILD_TESTING`: Enable building of the test suite (default: `ON`)
 * `BUILD_DOCS`: Enable building the documentation (default: `ON`)
-* `BUILD_PYTHON_BINDINGS`: Enable building the Python bindings (default: `ON`)
-* `RUN_WITH_PYTHON_BACKEND`
-* `VIRTUAL_ENV`
-* `CONDA_ACTIVATE_PATH`
+<!-- * `BUILD_PYTHON_BINDINGS`: Enable building the Python bindings (default: `ON`) -->
 
-# Documentation
+The following additional CMake variables are only required if the library is used to submit jobs on a cluster:
+
+* `VIRTUAL_ENV`: Name of the virtual environment to be acivated before execution of the script
+* `CONDA_ACTIVATE_PATH`: Path conda activate (for example: "~/miniconda3/bin/activate"
+
+<!-- # Documentation
 
 MCMCSimulationLib provides a Sphinx-based documentation, that can
-be browsed [online at readthedocs.org](https://MCMCSimulationLib.readthedocs.io).
-
-Build
------
-
-Certain configuration parameters need to be defined for an execution of the C++ program. They need to be defined in a config.sh file in the build/ directory and in a project_config.sh file in the bash_scripts/ directory. The config.sh file contains all important information for the integration of Python into the program. So far, the library can only be used with a virtual environment. The config_template.sh file is a template where all necessary parameters are defined:
-```bash
-_path_to_python3="~/.miniconda3/envs/_virtual_env/" # (optional)
-_path_to_conda_activate="~/.miniconda3/bin/activate" # (optional)
-_virtual_env="_virtual_env" # (optional)
-_python_version="3.7" # (optional)
-```
-The parameters need to be adapted to the virtual environment of the underlying system.
-
-Using the library without any Python components is possible by leaving the config.sh file empty.
-
-Having a config.sh file in the build directory, the library can be build with
-```bash
-cd build
-bash build.sh
-```
-The file project_config.sh defines additional project-dependent parameters. They are used when a new project is generated with the build_project.sh file. There also exists a template file (project_config_template.sh) which contains all necessary parameters:
-```bash
-cluster_mode="local"
-
-# (optional - default=local) local/on_cluster - Can be adapted temporarily by
-# adding -DCLUSTER_MODE=".." to the cmake command
-# - "local" = for testing - does not actually start the code on the cluster but locally
-# and performs all the necessary preparation
-# - "on_cluster" = for the actual execution on a cluster
-
-# python_modules_path="./python_scripts"
-
-# (optional - default="./python_scripts" for projects and "./../python_scripts/" for
-# simulations.) for a possible execution of code of custom written functions and modules.
-# The directory "python_modules_path" is added to sys.path by the program.
-# The path needs to be defined relative to the project root path)
-```
-
-The first parameter "cluster_mode" indicates whether the algorithms are started on the cluster (on_cluster) or locally (local).
-
-#### cluster_mode = local
-
-The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine.
-
-#### cluster_mode = on_cluster
-
-The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file src/execution/execution.cpp and need to be adapted according to the used cluster.
-
-Both options can be updated by building the CMake files of the executable again. You might change the cluster mode, for example, by executing
-```bash
-cmake ../cmake/ -DCMAKE_BUILD_TYPE=Release -DCLUSTER_MODE=on_cluster
-make -j4
-```
-
-in the release directory of your project. More details on how to execute a simulation on the cluster can be found in the main.cpp file of the SimulateAndExecute example (https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/simulations/SimulateAndExecute/main.cpp) or in the main.cpp file of a template project (see Template Project).
-
-To keep track of changes in the submodules when pulling updates of the respository, we strongly recommend for an update on your local machine to use
-
-```bash
-git pull --recurse-submodules
-```
-
-otherwise the code might not run properly after an update of the library.
+be browsed [online at readthedocs.org](https://MCMCSimulationLib.readthedocs.io). -->
 
 Examples
 --------
 
-Examples can be generated with
-```bash
-cd bash_scripts
-bash build_examples.sh
+Examples can be found in the examples/ directory. After a navigation into the top-level directory, the following sequence of commands builds the respective example. Note again that if you use a virtual envirnonment, it is important that it is activate for the building process to find the correct python version.
+
+```
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
 ```
 
-The code compiles all examples in the examples/ directory. The directory is structured as follows. The examples/ directory is a so called project. Additionally, so-called simulations can be found in the examples/simulations/ directory.
+The build process can be again customized with the following CMake variables,
+which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 
-In the project, a simulation of the Ising model is implemented as an example. A systembase class is defined in examples/include/ising_model.hpp. The simulation can be executed by running ./IsingModel in the examples/release/. It is important that your virtual environment is activated before an execution! In the example, the correlation time is computed for several values of the inverse temperature. In the second part, simulations for the computation of expectation values is executed.
+* `CLUSTER_MODE`: Indicates whether the code is executed on the cluster (`on_cluster`) or locally (`local`) (default: `local`). The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine. The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file src/execution/execution.cpp and need to be adapted according to the used cluster. More details on how to execute a simulation on the cluster can be found in the main.cpp file of the SimulateAndExecute example (https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/SimulateAndExecute//src/main.cpp) or in the main.cpp file of a template project (see Template Project).
+* `PYTHON_SCRIPTS_PATH`: Path to a directory including additional python files for a possible execution of code of custom written functions and modules. (default: `./python_scripts`). The path is appended by the programming to sys.path. It needs to be defined relative to the project root path.
 
-Configuration files to the different simulations are located in the examples/config directory. The simulation data is stored together with one single config file for the simulation in examples/data. Plots and numerical results for the correlation time as well as computed expectation values are saved in examples/results. The data evaluation takes place in Python based on code of the MCMCEvaluationLib and the pystatplottools library. A thorough evaluation of the simulation results is shown in a jupyter notebook that can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/jupyter_notebooks/ising_model_cheat_sheet.ipynb. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplottools library (https://github.com/statphysandml/pystatplottools).
+As an example, in the project, a simulation of the Ising model is implemented. The Ising model is defined as a system classin examples/IsingModel/ising_model/include/system.hpp. The simulation can be executed by running ./IsingModel in the examples/build/. It is important that your virtual environment is activated before an execution! In the example, the correlation time is computed for several values of the inverse temperature. In the second part, simulations for the computation of expectation values is executed.
 
-Further examples in the examples/simulations/ directory contain code for a simple simulation and demonstrate how to store and load simulation parameters. Further, it is explained in detail how a simulation can be executed within the library. In addition, the examples/python_scripts/examples directory shows several ways to use the MCMCEvaluationLib. The library also provides functionalities to load the generated Monte Carlo configurations as a PyTorch dataset. This makes the application of further machine learning tasks on the data pretty easy.
+Configuration files to the different simulations are located in the examples/IsingModel/config directory. The simulation data is stored together with one single config file for the simulation in examples/data. Plots and numerical results for the correlation time as well as computed expectation values are saved in examples/results. The data evaluation takes place in Python based on code of the MCMCEvaluationLib and the pystatplottools library. A thorough evaluation of the simulation results is shown in a jupyter notebook that can be found here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/IsingModel/jupyter_notebooks/ising_model_cheat_sheet.ipynb. All important functionalities of the MCMCEvaluationLib are used for the data evaluation. Further plots are generated with the help of the pystatplottools library (https://github.com/statphysandml/pystatplottools).
+
+Further examples in the examples/ directory contain code for a simple simulation and demonstrate how to store and load simulation parameters. Furthermore, it is explained in detail how a simulation can be executed within the library. In addition, the examples/IsingModel/python_scripts/examples directory shows several ways to use the MCMCEvaluationLib. The library also provides functionalities to load the generated Monte Carlo configurations as a PyTorch dataset. This makes the application of further machine learning tasks on the data pretty easy.
 
 Template Project
 ----------------
 
-A new project that demonstrates the basic functionalities of the library based on a template class for a model or theory can be generated in an arbitrary directory with
-```bash
-cd bash_scripts
-bash build_project.sh
+A minimal project for an Ising model simulation can be generated as a starting point/template for your own MCMC simulation by running:
+
+```python
+python generate_application.py [-h] [-o OUTPUT_DIR] [--config-file CONFIG_FILE] [-n PROJECT_NAME]
 ```
-A project can be used as a template for your own simulation. The main.cpp contains detailed instructions on different ways to execute the simulation. The project itself has a directory bash_scripts/ with an additional build_simulation.sh bash script. This can be used to generate a template simulation for a further executable which uses code of your project. These smaller simulation projects are very useful since they enable the generation of exeuctables for several different simulations of your projects. This enables a rerunning of a simulation at a later point and simplifies running code on a cluster. For example, one might use the following workflow:
 
-- Write all important code in the include/ and the src/ directory of your project.
-- Generate a new simulation with the build_simulation.sh file.
-- Adapt the main.cpp file in your simulation for an execution of a MCMC simulation.
-- Transfer the code to your cluster and rerun build_simulation.sh. Enter the name of your simulation. The bash script recognizes that the simulation already exists and just adapts the CMakeLists.txt file according to the settings in your project_config.sh file.
-- Execute the code with the mcmc::exeuction::execute<>() function to submit the simulation to the cluster.
+where the arguments have the following meanings:
 
-Both, the build_project.sh and the build_simulation.sh bash script recognize if a project or a simulation has been built before. If these scripts are executed with the same input, only the CMakeLists.txt file is adapted according to the settings in the project_config.sh file and with respect to the executables of the local libraries (which can be found in the external_submodules/ directory). Note that it is sometimes necessary to delete the files in the debug or release that are generated from CMake if parameters, for example, in the config files, have been changed.
+* -o, --output-dir: Where to output the generated project dir into.
+* --config-file, User configuration file for overwriting default parameters of cookiecutter.json file in the application_wrapper/ directory (default: None)
+* -n, --project_name: The name of the project (default: "my-mcmc-simulation-project")
+
+Instruction for building the project can be found in a respective generated README.md file or in the previous examples section (which works equivalently).
+
+The generated src/main.cpp file contains detailed instructions on different ways to execute the simulation.
 
 Usage
 -----
 
 cmake (CMakeLists.txt) - The CMakeLists.txt files of the example projects and of the template project contain examples for a possible integration of the library with CMake.
 
-A Simple Example - Simulation of an Ising Model
---------
 
-In this example, the mean value and other observalbes are computed for the Ising Model. The Code for the simulation is given by
+A Simple Example - Simulation of an Ising Model
+-----------------------------------------------
+
+The following code samples explain basic usage of the MCMCSimulationLib. The mean value and other observables are computed for the Ising Model.
+
+### Executing a Simulation
+
+The code for the simulation is given by
 ```c++
 // Setting up system parameters (beta, J, h, dimensions)
-IsingModelParameters system_params(0.4, 1.0, 0.0, {4, 4});
+SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});
 
 /* Setting up execution parameters (number of equilibrium steps, number of measurements,
 * correlation time, measures, optional measures that are computed in python) */
@@ -183,7 +138,7 @@ ExpectationValueParams execution_parameters(
 std::string target_name = "IsingModelSimulation";
 std::string rel_data_path = "/data/" + target_name + "/";
 auto simulation_params = mcmc::simulation::SimulationParameters<
-    IsingModelParameters, ExpectationValueParams>::generate_simulation(
+    SystemParameters, ExpectationValueParams>::generate_simulation(
         system_params, execution_parameters, rel_data_path, "systembase_params", "beta", 0.1, 0.7, 6
 );
 
@@ -191,7 +146,7 @@ auto simulation_params = mcmc::simulation::SimulationParameters<
 simulation_params.write_to_file("/configs/" + target_name + "/");
 
 // Run the simulation
-mcmc::execution::execute<IsingModelParameters>(
+mcmc::execution::execute<SystemParameters>(
     mcmc::execution::ExpectationValueParameters::name(), target_name);
 );
 simulation.run();
@@ -201,13 +156,13 @@ If a running_parameter is defined in the generate_simulation() function, the sim
 
 ### Implementation of the Ising Model
 
-The library uses a the ParamHelper library to track all of the used parameter of the simluation. Therefore, the Ising Model is implemented by two classes. One class called IsingModelParameters which contains all parameters and one class called IsingModel that implements all functionalities. The two classes inherit from SystemBaseParameters and SystemBaseMeasure which define functions that need to be implemented for a specific theory.
+The library uses a the ParamHelper library to track all of the used parameter of the simluation. Therefore, the Ising Model is implemented by two classes. One class called SystemParameters which contains all parameters and one class called System that implements all functionalities. The two classes inherit from SystemBaseParameters and SystemBaseMeasure which define functions that need to be implemented for a specific theory.
 
-class IsingModelParameters:
+class SystemParameters:
 ```c++
-class IsingModelParameters : public mcmc::simulation::SystemBaseParameters {
+class SystemParameters : public mcmc::simulation::SystemBaseParameters {
 public:
-    explicit IsingModelParameters(const json params):
+    explicit SystemParameters(const json params):
             SystemBaseParameters(params),
             beta(get_entry<double>("beta", 0.4)),
             J(get_entry<double>("J", 1.0)),
@@ -223,8 +178,8 @@ public:
         }
     }
 
-    IsingModelParameters(double beta_, double J_, double h_, std::vector<int> dimensions_) :
-        IsingModelParameters(json{
+    SystemParameters(double beta_, double J_, double h_, std::vector<int> dimensions_) :
+        SystemParameters(json{
             {"beta", beta_},
             {"J", J_},
             {"h", h_},
@@ -232,10 +187,10 @@ public:
         })
     {}
 
-    std::unique_ptr<IsingModel> generate() { return std::make_unique<IsingModel>(*this); }
+    std::unique_ptr<System> generate() { return std::make_unique<System>(*this); }
 
 private:
-    friend class IsingModel;
+    friend class System;
 
     const double beta;
     const double J;
@@ -247,12 +202,12 @@ private:
 };
 ```
 
-class IsingModel:
+class System:
 ```c++
-class IsingModel : public mcmc::simulation::SystemBase<IsingModel>
+class System : public mcmc::simulation::SystemBase<System>
 {
 public:
-    explicit IsingModel(const IsingModelParameters &imsp_) :
+    explicit System(const SystemParameters &imsp_) :
         imsp(imsp_),
         rand(std::uniform_real_distribution<double> (0,1)),
         rnd_lattice_site(std::uniform_int_distribution<uint>(0, get_size()))
@@ -321,7 +276,7 @@ public:
 private:
     std::vector<int> lattice;
 
-    const IsingModelParameters &imsp;
+    const SystemParameters &imsp;
 
     std::uniform_real_distribution<double> rand;
     std::uniform_int_distribution<uint> rnd_lattice_site;
@@ -339,7 +294,19 @@ private:
 };
 ```
 
-The entire examples can be found in the examples/ folder. A thorough evaluation of the numerical results is implemented here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/jupyter_notebooks/ising_model_cheat_sheet.ipynb.
+The entire example can be found in the examples/IsingModel directory. A thorough evaluation of the numerical results is implemented here: https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/jupyter_notebooks/ising_model_cheat_sheet.ipynb.
+
+
+Further comments
+----------------
+
+To keep track of changes in the submodules when pulling updates of the respository, we strongly recommend for an update on your local machine to use
+
+```bash
+git pull --recurse-submodules
+```
+
+otherwise the code might not run properly after an update of the library.
 
 
 Projects using the MCMCSimulationLib library
@@ -348,8 +315,11 @@ Projects using the MCMCSimulationLib library
 - LatticeModelSimulationLib (https://github.com/statphysandml/LatticeModelSimulationLib)
 - LatticeModelImplementations (https://github.com/statphysandml/LatticeModelImplementations)
 
+
 Support and Development
 ----------------------
+
+The project was generated with the help of the [cookiecutter-cpp-project](https://github.com/ssciwr/cookiecutter-cpp-project) of the [Scientific Software Center, IWR, Heidelberg University](https://ssc.iwr.uni-heidelberg.de/).
 
 For bug reports/suggestions/complaints please file an issue on GitHub.
 

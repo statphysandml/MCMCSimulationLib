@@ -76,6 +76,7 @@ conditional_remove("{{ cookiecutter.github_actions_ci }}" == "No", ".github")
 conditional_remove("{{ cookiecutter.integrate_git }}" == "No",".gitignore")
 # conditional_remove(os.stat("TODO.md").st_size == 0, "TODO.md")
 conditional_remove(True, "TODO.md") # Remove always
+conditional_remove(True, "FILESTRUCTURE.md") # Remove always
 
 
 {% if cookiecutter.integrate_git == "Yes" %}
