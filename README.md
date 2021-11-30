@@ -59,7 +59,7 @@ which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 The following additional CMake variables are only required if the library is used to submit jobs on a cluster:
 
 * `VIRTUAL_ENV`: Name of the virtual environment to be acivated before execution of the script
-* `CONDA_ACTIVATE_PATH`: Path conda activate (for example: "~/miniconda3/bin/activate"
+* `CONDA_ACTIVATE_PATH`: Path conda activate (for example: "~/miniconda3/bin/activate")
 
 <!-- # Documentation
 
