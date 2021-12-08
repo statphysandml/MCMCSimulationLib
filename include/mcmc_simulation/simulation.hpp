@@ -52,7 +52,7 @@ namespace mcmc
                 }
                     // Load execution parameters from file
                 else {
-                    std::cout << "Load execution parameters from file based on given mode" << std::endl;
+                    // std::cout << "Load execution parameters from file based on given mode" << std::endl;
                     std::string execution_params_path = get_entry<std::string>("execution_params_path");
                     execution_params = std::make_unique<EP>(
                             param_helper::fs::read_parameter_file(execution_params_path, mode + "_params"));
@@ -60,7 +60,7 @@ namespace mcmc
 
                 // *** MEASURES ***
                 // Temporarily replace measures if wanted
-                auto &execution_params_measures = execution_params->get_measures();
+                auto execution_params_measures = execution_params->get_measures();
                 if(!execution_params_measures.empty())
                     systembase_params->update_measures(execution_params_measures);
 
@@ -74,7 +74,7 @@ namespace mcmc
                     auto running_parameter_kind_path_found = param_helper::params::construct_parameter_path(expanded_parameters.get_json(), running_parameter_kind, running_parameter_path);
                     if(!running_parameter_kind_path_found)
                     {
-                        std::cout << "Running parameter kind not found" << std::endl;
+                        std::cerr << "Running parameter kind not found" << std::endl;
                         std::exit(EXIT_FAILURE);
                     }
                     running_parameter_path.push_back(running_parameter);
@@ -93,7 +93,7 @@ namespace mcmc
                     const std::string& running_parameter_="None",
                     const double& rp_minimum_=0,
                     const double& rp_maximum_=0,
-                    const double& rp_number_=0
+                    const int& rp_number_=0
             )
             {
                 return SimulationParameters(
@@ -173,7 +173,7 @@ namespace mcmc
             {
                 if(!param_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SBP::name(), true))
                 {
-                    std::cout << "Systembase parameters have not been found" << std::endl;
+                    std::cerr << "Systembase parameters have not been found" << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
 
@@ -206,7 +206,7 @@ namespace mcmc
                 // Create folder in config directory if not present
                 if(!param_helper::fs::direxists(param_helper::fs::prfs::project_root() + rel_config_path))
                 {
-                    std::cout << "Create config directory" << std::endl;
+                    // std::cout << "Create config directory" << std::endl;
                     param_helper::fs::generate_directory_if_not_present(rel_config_path);
                 }
 
@@ -248,26 +248,31 @@ namespace mcmc
                 systembase_params = std::make_unique<SBP>(new_system_params[systembase_params->name()]);
             }
 
+            const json get_measures() const
+            {
+                return systembase_params->get_measures();
+            }
+
             static const std::string name()
             {
                 return "sim_params";
             }
+
+            double rp_minimum;
+            double rp_maximum;
+            int rp_number;
+            std::string running_parameter;
+            std::string rel_data_path;
+
+            std::unique_ptr<SBP> systembase_params; // -> do these really have to be pointer?
+            std::unique_ptr<EP> execution_params;
 
         private:
             template <typename, typename>
             friend class Simulation;
 
             std::string mode;
-            std::string rel_data_path;
             std::string running_parameter_kind;
-            std::string running_parameter;
-            double rp_minimum;
-            double rp_maximum;
-            int rp_number;
-
-            std::unique_ptr<SBP> systembase_params; // -> do these really have to be pointer?
-            std::unique_ptr<EP> execution_params;
-
             std::vector<std::string> running_parameter_path;
 
             std::unique_ptr<MarkovChainParameters> markovchain_params;

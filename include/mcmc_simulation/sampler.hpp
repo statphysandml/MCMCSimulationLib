@@ -17,14 +17,14 @@ namespace mcmc {
             template<typename T>
             T random_state() {
                 //        return self().random_state();
-                std::cout << "Function random state needs to be implemented" << std::endl;
+                std::cerr << "Function random state needs to be implemented" << std::endl;
                 std::exit(EXIT_FAILURE);
             }
 
             template<typename T>
             T propose_state(T site) {
                 //        return self().propose_state();
-                std::cout << "Function propose state needs to be implemented" << std::endl;
+                std::cerr << "Function propose state needs to be implemented" << std::endl;
                 std::exit(EXIT_FAILURE);
             }
 

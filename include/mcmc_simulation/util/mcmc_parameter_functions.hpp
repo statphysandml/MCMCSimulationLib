@@ -33,7 +33,7 @@ namespace mcmc {
                                                                                param_class_name);
                 // Verify integrity
                 if (parameter_class_params_[param_class_name + "_name"] != ParameterClass::name()) {
-                    std::cout << "Parameter class name: '" << parameter_class_params_[param_class_name + "_name"]
+                    std::cerr << "Parameter class name: '" << parameter_class_params_[param_class_name + "_name"]
                               << "' in config file and actual parameter class name: '" << ParameterClass::name()
                               << "' do not coincide" << std::endl;
                     std::exit(EXIT_FAILURE);

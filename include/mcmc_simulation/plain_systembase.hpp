@@ -29,14 +29,14 @@ namespace mcmc {
             // Implement this function with your respective "SystemClass" as "std::unique_ptr<SystemClass> generate() { return std::make_unique<SystemClass>(*this); }"
             template<typename System>
             std::unique_ptr<System> generate() {
-                std::cout << "This function needs to be defined for your associate system class." << std::endl;
+                std::cerr << "This function needs to be defined for your associate system class." << std::endl;
                 std::exit(EXIT_FAILURE);
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
             void update_measures(const json& measures_)
             {
-                std::cout << "Usage of measures in execution mode so far only valid for systembase base class" << std::endl;
+                std::cerr << "Usage of measures in execution mode so far only valid for systembase base class" << std::endl;
                 std::exit(EXIT_FAILURE);
             }
         };

@@ -73,10 +73,10 @@ namespace mcmc {
                 for (uint z = 0; z < mp.repetitions; z++) {
                     //if(z%100 == 0)
                     //    std::cout << z*1.0/sim.rep << " " << std::flush;
-                    auto system_base = sbp.generate(); // Smart pointer
-                    system_base->initialize(starting_mode);
+                    auto systembase = sbp.generate(); // Smart pointer
+                    systembase->init(starting_mode);
                     if (z == 0) {
-                        std::vector<std::string> measure_names = system_base->measure_names();
+                        std::vector<std::string> measure_names = systembase->measure_names();
                         if(measure_names.size() > 0)
                             os << measure_names[0];
                         for (uint i = 1; i < measure_names.size(); i++)
@@ -85,10 +85,10 @@ namespace mcmc {
                             os << std::endl;
                     }
 
-                    system_base->update(mp.start_measuring);
+                    systembase->update(mp.start_measuring);
 
                     for (uint i = 0; i < mp.number_of_measurements; i++) {
-                        std::vector<std::string> measures = system_base->measure();
+                        std::vector<std::string> measures = systembase->measure();
                         if(measures.size() > 0)
                             os << measures[0];
                         for (uint j = 1; j < measures.size(); j++)
@@ -97,9 +97,9 @@ namespace mcmc {
                             os << "\n";
 
                         if (i % 1000 == 0) {
-                            std::cout << "########## i:" << i << /*"\n" << system_base <<*/ "\n";
+                            std::cout << "########## i:" << i << /*"\n" << systembase <<*/ "\n";
                         }
-                        system_base->update(mp.measure_interval);
+                        systembase->update(mp.measure_interval);
                     }
                     std::cout << std::endl;
 

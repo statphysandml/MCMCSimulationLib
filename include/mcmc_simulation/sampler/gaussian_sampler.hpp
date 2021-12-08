@@ -28,6 +28,11 @@ namespace mcmc {
             }
 
             template<typename T>
+            T cold_state() {
+                return T(0);
+            }
+
+            template<typename T>
             T propose_state(T site) {
                 return site + std::sqrt(2 * eps) * normal(mcmc::util::gen);
             }

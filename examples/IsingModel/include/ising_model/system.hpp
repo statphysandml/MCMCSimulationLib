@@ -84,11 +84,14 @@ public:
     void initialize(std::string starting_mode)
     {
         generate_measures(imsp.measures);
-
+        
         std::uniform_int_distribution<uint> uniint(0, 1);
-        lattice = std::vector<int> (get_size(), 0);
-        for(auto &site : lattice)
-            site = 2 * uniint(mcmc::util::gen) - 1;
+        lattice = std::vector<int> (get_size(), 1.0);
+        if(starting_mode == "hot")
+        {
+            for(auto &site : lattice)
+                site = 2 * uniint(mcmc::util::gen) - 1;
+        }
     }
 
     uint16_t get_size() const
