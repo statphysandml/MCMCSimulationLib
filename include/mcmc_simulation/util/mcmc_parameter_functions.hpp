@@ -17,7 +17,7 @@ namespace mcmc {
 
             // From json object - Load class parameters from object -> if a param_class_name + "_params.json" file exists, parameter are always loaded from this file!
             if (base_parameters.haskey(param_class_name)) {
-                std::cout << "Load params with name " << param_class_name << " from json object" << std::endl;
+                std::cout << " -- " << param_class_name << " loaded from json object" << " --" << std::endl;
                 parameter_class_params_ = base_parameters.template get_entry<json>(param_class_name);
                 parameter_class_params_[param_class_name + "_name"] = ParameterClass::name();
             } else if (base_parameters.haskey(param_class_name + "_path") and
@@ -27,21 +27,21 @@ namespace mcmc {
             {
                 std::string parameter_class_params_path = base_parameters.template get_entry<std::string>(
                         param_class_name + "_path");
-                std::cout << "Load params with name " << param_class_name << " from file from "
-                          << parameter_class_params_path << std::endl;
+                std::cout << " -- " << param_class_name << " loaded from file from "
+                          << parameter_class_params_path << " --" << std::endl;
                 parameter_class_params_ = param_helper::fs::read_parameter_file(parameter_class_params_path,
                                                                                param_class_name);
                 // Verify integrity
                 if (parameter_class_params_[param_class_name + "_name"] != ParameterClass::name()) {
                     std::cerr << "Parameter class name: '" << parameter_class_params_[param_class_name + "_name"]
                               << "' in config file and actual parameter class name: '" << ParameterClass::name()
-                              << "' do not coincide" << std::endl;
+                              << "' do not coincide." << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
             }
                 // Default - No parameter_class_params found in file and no parameter_class_params found in config params
             else {
-                std::cout << "Generate default parameter_class params" << std::endl;
+                std::cout << " -- Generate default parameter_class params -- " << std::endl;
                 parameter_class_params_ = {{param_class_name +
                                             "_name", ParameterClass::name()}};  // Generate default parameter_class params
             }

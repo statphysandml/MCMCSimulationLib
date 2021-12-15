@@ -24,8 +24,13 @@ namespace mcmc {
                 number_of_measurements = get_entry<uint>("number_of_measurements", 1000);
                 start_measuring = get_entry<uint>("start_measuring", 0);
 
-                measures = get_entry<json>("measures", {});
-                post_measures = get_entry<json>("post_measures", {});
+                measures = get_entry<std::vector<std::string>>("measures");
+                if(measures.empty())
+                {
+                    std::cerr << "Measures cannot be empty" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+                post_measures = get_entry<std::vector<std::string>>("post_measures", {});
                 n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 0);
             }
 
@@ -33,7 +38,7 @@ namespace mcmc {
                     uint measure_interval_,
                     uint number_of_measurements_,
                     uint start_measuring_,
-                    std::vector<std::string> measures_ = {},
+                    std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
@@ -48,7 +53,7 @@ namespace mcmc {
                     std::string correlation_time_rel_results_path_,
                     uint number_of_measurements_,
                     uint start_measuring_,
-                    std::vector<std::string> measures_ = {},
+                    std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
@@ -64,8 +69,8 @@ namespace mcmc {
                     uint measure_interval_,
                     uint number_of_measurements_,
                     std::string equilibrium_time_rel_results_path_,
-                    json measures_ = {},
-                    json post_measures_ = {},
+                    std::vector<std::string> measures_,
+                    std::vector<std::string> post_measures_ = {},
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"measure_interval",                  measure_interval_},
@@ -80,8 +85,8 @@ namespace mcmc {
                     std::string correlation_time_rel_results_path_,
                     uint number_of_measurements_,
                     std::string equilibrium_time_rel_results_path_,
-                    json measures_ = {},
-                    json post_measures_ = {},
+                    std::vector<std::string> measures_,
+                    std::vector<std::string> post_measures_ = {},
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
@@ -106,6 +111,31 @@ namespace mcmc {
                 return "expectation_value";
             }
 
+            void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
+                const std::string running_parameter="None", const double rp_minimum=0.0,
+                const double rp_maximum=0.0, const int rp_number=0, const json simparams_json={})
+            {
+                #ifdef RUN_WITH_PYTHON_BACKEND
+                py::exec("from mcmctools.modes.expectation_value import expectation_value");
+                py::exec("from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func");
+                py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
+                py::exec(("expectation_value(\
+                    measures=" + param_helper::params::merge_list_like<std::string>(measures, post_measures).dump() + ",\
+                    running_parameter='" + running_parameter + "',\
+                    rp_keys=retrieve_rp_keys(running_parameter='" + running_parameter + "',\
+                        rp_minimum=" + std::to_string(rp_minimum) + ",\
+                        rp_maximum=" + std::to_string(rp_maximum) + ",\
+                        rp_number=" + std::to_string(rp_number) + "),\
+                    rel_data_dir='" + rel_data_dir + "',\
+                    number_of_measurements=" + std::to_string(number_of_measurements) + ",\
+                    n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
+                    rel_results_dir='" + rel_results_dir + "',\
+                    sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
+                    custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',\
+                    custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
+                #endif
+            }
+
             std::unique_ptr<mcmc::simulation::MarkovChainParameters>
             generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
                 uint correlation_time = measure_interval; // default
@@ -117,11 +147,10 @@ namespace mcmc {
                         rp_key = "default";
                     else
                         rp_key = std::to_string(rp);
-                    std::cout << "Looking for correlation time for rp=" << rp << " in correlation_time.json"
+                    std::cout << " -- Looking for correlation time for rp=" << rp << " in correlation_time_results.json --"
                               << std::endl;
                     correlation_time = param_helper::params::entry_by_key<uint>(
                             correlation_time_results["CorrelationTime"], rp_key);
-                    std::cout << "Found correlation time: " << correlation_time << std::endl;
                 }
                 
                 uint equililbrium_time = start_measuring;
@@ -133,7 +162,7 @@ namespace mcmc {
                         rp_key = "default";
                     else
                         rp_key = std::to_string(rp);
-                    std::cout << "Looking for equilibrium time for rp=" << rp << " in equilibrium_results.json"
+                    std::cout << " -- Looking for equilibrium time for rp=" << rp << " in equilibrium_time_results.json --"
                               << std::endl;
                     equililbrium_time = param_helper::params::entry_by_key<uint>(
                             equilibrium_time_results["EquilibriumTime"], rp_key);
@@ -147,7 +176,7 @@ namespace mcmc {
                         "hot");
             }
 
-            json get_measures() {
+            std::vector<std::string> get_measures() {
                 return measures;
             }
 
@@ -158,8 +187,8 @@ namespace mcmc {
             uint measure_interval;
             uint number_of_measurements;
             uint start_measuring;
-            json measures;
-            json post_measures;
+            std::vector<std::string> measures;
+            std::vector<std::string> post_measures;
             uint n_means_bootstrap;
         };
 

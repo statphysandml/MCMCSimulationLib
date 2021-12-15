@@ -37,7 +37,7 @@ namespace mcmc
                 // Create folder in data directory if not present
                 if(!param_helper::fs::direxists(param_helper::fs::prfs::project_root() + rel_data_path))
                 {
-                    std::cout << "Create data directory" << std::endl;
+                    // std::cout << "Create data directory" << std::endl;
                     param_helper::fs::generate_directory_if_not_present(rel_data_path);
                 }
 
@@ -59,10 +59,11 @@ namespace mcmc
                 }
 
                 // *** MEASURES ***
-                // Temporarily replace measures if wanted
+                // Set systembase measures
+                if(!systembase_params->get_measures().empty())
+                    std::cout << " -- Note that due to the usage of execution parameters, measures set by systembase parameters are ignored -- " << std::endl;
                 auto execution_params_measures = execution_params->get_measures();
-                if(!execution_params_measures.empty())
-                    systembase_params->update_measures(execution_params_measures);
+                systembase_params->update_measures(execution_params_measures);
 
                 // *** RUNNING PARAMETER ***
                 if(running_parameter != "None")
@@ -248,7 +249,7 @@ namespace mcmc
                 systembase_params = std::make_unique<SBP>(new_system_params[systembase_params->name()]);
             }
 
-            const json get_measures() const
+            const std::vector<std::string> get_measures() const
             {
                 return systembase_params->get_measures();
             }
@@ -286,6 +287,8 @@ namespace mcmc
             {}
 
             void run() {
+                std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
+
                 if(mp.running_parameter == "None")
                     single_run(mp.mode);
                 else
@@ -308,6 +311,15 @@ namespace mcmc
                 param_helper::fs::Fileos os (param_helper::fs::prfs::project_root() + mp.rel_data_path + "/" + filename  + ".dat");
                 MarkovChain<SBP> mc(*mp.markovchain_params, *mp.systembase_params, os.get());
                 mc.run();
+            }
+
+            void evaluate(std::string rel_results_dir, std::string sim_root_dir)
+            {
+                std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
+
+                mp.execution_params->evaluate(mp.rel_data_path, rel_results_dir, sim_root_dir, mp.running_parameter,
+                    mp.rp_minimum, mp.rp_maximum, mp.rp_number, mp.build_expanded_raw_parameters().get_json()
+                );
             }
 
         private:

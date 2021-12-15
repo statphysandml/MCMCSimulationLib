@@ -9,6 +9,7 @@ namespace mcmc {
         // Project dependent parameters
         std::string Executer::executable_name = "None";
         std::string Executer::cluster_mode = "local";
+        bool Executer::is_python_initialized = false;
 
 #ifdef RUN_WITH_VITUAL_ENV
         // Global parameters
@@ -20,8 +21,11 @@ namespace mcmc {
         // Project dependent parameter
         std::string Executer::python_modules_path = "";
 
-        void initialize_python(const std::string python_modules_path_) {
-            py::initialize_interpreter();
+        void initialize_python(const std::string python_modules_path_, const bool fma_develop, const bool executing_from_python) {
+            if(Executer::is_python_initialized)
+                return;
+            if(!executing_from_python)
+                py::initialize_interpreter();
             if(python_modules_path_ != "")
             {
                 Executer::set_python_modules_path(python_modules_path_);
@@ -30,11 +34,16 @@ namespace mcmc {
             // py::exec("import sys; print('Python system path:',  sys.path)");
             
             py::exec("from pystatplottools.pdf_env.loading_figure_mode import loading_figure_mode");
-            py::exec("fma, plt = loading_figure_mode(develop=False)");
+            if(fma_develop)
+                py::exec("fma, plt = loading_figure_mode(develop=True)");
+            else
+                py::exec("fma, plt = loading_figure_mode(develop=False)");
+            Executer::is_python_initialized = true;
         }
 
         void finalize_python() {
             py::finalize_interpreter();
+            Executer::is_python_initialized = false;
         }
 #endif
 
@@ -52,7 +61,7 @@ namespace mcmc {
 
         // Preparing and executing code on the cpu cluster
 
-        void Executer::prepare_execution_on_cpu_cluster(const std::string mode_type, const std::vector<std::string> additional_args) {
+        void Executer::prepare_execution_on_cpu_cluster(const std::string mode_type, const bool eval, const bool run, const std::vector<std::string> additional_args) {
             if (Executer::executable_name == "None") {
                 std::cerr << "Executable name not properly set";
                 std::exit(EXIT_FAILURE);
@@ -74,11 +83,11 @@ namespace mcmc {
 #ifdef RUN_WITH_VITUAL_ENV
             os << "source " << Executer::conda_activate_path << " " << Executer::virtual_env << "\n" << std::endl;
 #endif
-            os << "cd " << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "release/" << "\n";
+            os << "cd " << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "build/" << "\n";
             // os << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.files_dir << std::endl;
-            os << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "release/" << Executer::executable_name
+            os << param_helper::fs::prfs::project_root() << path_parameters.sim_root_dir << "build/" << Executer::executable_name
                << " "  << mode_type << " " << path_parameters.files_dir << " "
-               << path_parameters.sim_root_dir << " "  << path_parameters.rel_path;
+               << path_parameters.sim_root_dir << " "  << path_parameters.rel_path << " " << run << " " << eval;
             if (additional_args.size() != 0)
                 for (auto additional_arg: additional_args)
                     os << " " << additional_arg;
@@ -108,7 +117,7 @@ namespace mcmc {
 
         // Preparing and executing code on the gpu cluster
 
-        void Executer::prepare_execution_on_gpu_cluster(const std::string mode_type) {
+        void Executer::prepare_execution_on_gpu_cluster(const std::string mode_type, const bool eval, const bool run) {
             std::cerr << "To be implemented" << std::endl;
             std::exit(EXIT_FAILURE);
         }

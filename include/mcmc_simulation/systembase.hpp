@@ -16,7 +16,7 @@ namespace mcmc {
         class SystemBaseParameters : public param_helper::params::Parameters {
         public:
             SystemBaseParameters(const json params_) : Parameters(params_),
-                                                       measures(get_entry<json>("measures", {"Mean"}))
+                                                       measures(get_entry<std::vector<std::string>>("measures", {}))
             {}
 
             // At the moment it is not allowed to overwrite the following two functions - not working
@@ -43,19 +43,19 @@ namespace mcmc {
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase_measures
-            void update_measures(const json measures_)
+            void update_measures(const std::vector<std::string> measures_)
             {
                 measures = measures_;
                 params["measures"] = measures_;
             }
 
-            const json get_measures() const
+            const std::vector<std::string> get_measures() const
             {
                 return measures;
             }
 
         protected:
-            json measures;
+            std::vector<std::string> measures;
         };
 
         template<typename Derived>
@@ -116,7 +116,7 @@ namespace mcmc {
             }
 
             /* By overiding this function one can also add custom generated measures */
-            virtual void generate_measures(const json& measure_names)
+            virtual void generate_measures(const std::vector<std::string>& measure_names)
             {
                 auto common_defined_measures = generate_systembase_measures(measure_names);
                 this->concat_measures(common_defined_measures);
@@ -125,7 +125,7 @@ namespace mcmc {
             //    virtual void save_config(int i) = 0;
 
         protected:
-            virtual std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > generate_systembase_measures(const json& measure_names);
+            virtual std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > generate_systembase_measures(const std::vector<std::string>& measure_names);
 
             void concat_measures(std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> &measures_);
 
@@ -143,7 +143,7 @@ namespace mcmc {
         };
 
         template<typename Derived>
-        std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > SystemBase<Derived>::generate_systembase_measures(const json& measure_names)
+        std::vector< std::unique_ptr<common_measures::MeasurePolicy<Derived>> > SystemBase<Derived>::generate_systembase_measures(const std::vector<std::string>& measure_names)
         {
             std::vector<std::unique_ptr<common_measures::MeasurePolicy<Derived>>> measures_{};
             for (auto &measure_name :  measure_names) {

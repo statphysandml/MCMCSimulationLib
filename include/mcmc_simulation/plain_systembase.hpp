@@ -34,7 +34,7 @@ namespace mcmc {
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
-            void update_measures(const json& measures_)
+            void update_measures(const std::vector<std::string>& measures_)
             {
                 std::cerr << "Usage of measures in execution mode so far only valid for systembase base class" << std::endl;
                 std::exit(EXIT_FAILURE);

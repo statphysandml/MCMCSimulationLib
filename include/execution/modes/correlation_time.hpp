@@ -62,6 +62,29 @@ namespace mcmc {
                 return "correlation_time";
             }
 
+            void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
+                const std::string running_parameter="None", const double rp_minimum=0.0,
+                const double rp_maximum=0.0, const int rp_number=0, const json simparams_json={})
+            {
+                #ifdef RUN_WITH_PYTHON_BACKEND
+                py::exec("from mcmctools.modes.correlation_time import correlation_time");
+                py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
+                py::exec(("correlation_time(\
+                    minimum_sample_size=" + std::to_string(minimum_sample_size) + ",\
+                    maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
+                    measure='" + measure + "',\
+                    running_parameter='" +running_parameter + "',\
+                    rp_keys=retrieve_rp_keys(running_parameter='" + running_parameter + "',\
+                        rp_minimum=" + std::to_string(rp_minimum) + ",\
+                        rp_maximum=" + std::to_string(rp_maximum) + ",\
+                        rp_number=" + std::to_string(rp_number) + "),\
+                    rel_data_dir='" + rel_data_dir + "',\
+                    rel_results_dir='" + rel_results_dir + "',\
+                    sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
+                    fma=fma)").c_str());
+                #endif
+            }
+
             std::unique_ptr<mcmc::simulation::MarkovChainParameters>
             generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
                 uint equilibrium_time = start_measuring;
@@ -73,11 +96,12 @@ namespace mcmc {
                         rp_key = "default";
                     else
                         rp_key = std::to_string(rp);
-                    std::cout << "Looking for equilibrium time for rp=" << rp << " in equilibrium_results.json"
+                    std::cout << " -- Looking for equilibrium time for rp=" << rp << " in equilibrium_time_results.json --" /*(in: "
+                              << param_helper::fs::prfs::get_path_to(equilibrium_time_rel_results_path)
+                              << ") --"*/
                               << std::endl;
                     equilibrium_time = param_helper::params::entry_by_key<uint>(
                             equilibrium_time_results["EquilibriumTime"], rp_key);
-                    std::cout << "Found equilibrium time: " << equilibrium_time << std::endl;
                 }
 
                 return std::make_unique<mcmc::simulation::MarkovChainParameters>(
@@ -88,9 +112,8 @@ namespace mcmc {
                         "hot");
             }
 
-            json get_measures() {
-                json measures(std::vector<std::string>{measure});
-                return measures;
+            std::vector<std::string> get_measures() {
+                return std::vector<std::string>{measure};
             }
 
         private:

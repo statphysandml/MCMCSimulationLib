@@ -10,7 +10,6 @@
 
 #include "../../mcmc_simulation/markov_chain.hpp"
 
-
 using json = nlohmann::json;
 
 namespace mcmc {
@@ -22,7 +21,7 @@ namespace mcmc {
                 sample_size = get_entry<uint>("sample_size", 100);
                 number_of_steps = get_entry<uint>("number_of_steps", 1000);
                 confidence_range = get_entry<double>("confidence_range", 0.1);
-                confidence_window = get_entry<double>("confidence_window", 10);
+                confidence_window = get_entry<uint>("confidence_window", 10);
                 measure = get_entry<std::string>("measure", "Mean");
             }
 
@@ -30,7 +29,7 @@ namespace mcmc {
                     uint sample_size_,
                     uint number_of_steps_,
                     double confidence_range_,
-                    double confidence_window_,
+                    uint confidence_window_,
                     std::string measure_="Mean"
             ) : EquilibriumTimeParameters(
                     json{{"sample_size",    sample_size_},
@@ -52,6 +51,31 @@ namespace mcmc {
                 return "equilibrium_time";
             }
 
+            void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
+                const std::string running_parameter="None", const double rp_minimum=0.0,
+                const double rp_maximum=0.0, const int rp_number=0, const json simparams_json={})
+            {
+                #ifdef RUN_WITH_PYTHON_BACKEND
+                py::exec("from mcmctools.modes.equilibrium_time import equilibrium_time");
+                py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
+                py::exec(("equilibrium_time(\
+                    sample_size=" + std::to_string(sample_size) + ",\
+                    number_of_steps=" + std::to_string(number_of_steps) + ",\
+                    measure='" + measure + "',\
+                    confidence_range=" + std::to_string(confidence_range) + ",\
+                    confidence_window=" + std::to_string(confidence_window) + ",\
+                    running_parameter='" + running_parameter + "',\
+                    rp_keys=retrieve_rp_keys(running_parameter='" + running_parameter + "',\
+                        rp_minimum=" + std::to_string(rp_minimum) + ",\
+                        rp_maximum=" + std::to_string(rp_maximum) + ",\
+                        rp_number=" + std::to_string(rp_number) + "),\
+                    rel_data_dir='" + rel_data_dir + "',\
+                    rel_results_dir='" + rel_results_dir + "',\
+                    sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
+                    fma=fma)").c_str());
+                #endif
+            }
+
             std::unique_ptr<mcmc::simulation::MarkovChainParameters>
             generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
                 return std::make_unique<mcmc::simulation::MarkovChainParameters>(
@@ -62,16 +86,15 @@ namespace mcmc {
                         "alternating");
             }
 
-            json get_measures() {
-                json measures(std::vector<std::string>{measure});
-                return measures;
+            std::vector<std::string> get_measures() {
+                return std::vector<std::string>{measure};
             }
 
         private:
             uint sample_size;
             uint number_of_steps;
             double confidence_range;
-            double confidence_window;
+            uint confidence_window;
             std::string measure;
         };
 

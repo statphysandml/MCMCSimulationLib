@@ -34,7 +34,7 @@ namespace mcmc {
     namespace execution {
 
 #ifdef RUN_WITH_PYTHON_BACKEND
-        void initialize_python(const std::string python_modules_path_);
+        void initialize_python(const std::string python_modules_path_, const bool fma_develop=false, const bool executing_from_python=false);
         void finalize_python();
 #endif
 
@@ -72,6 +72,7 @@ namespace mcmc {
             // Additional static parameters for running (executer_params)
             // Project dependent variables
             static std::string python_modules_path;
+            static bool is_python_initialized;
             static std::string executable_name;
             static std::string cluster_mode;
 
@@ -85,18 +86,20 @@ namespace mcmc {
             /* Helper functions */
 
             // Preparing and executing code on the cpu cluster
-            void prepare_execution_on_cpu_cluster(const std::string mode_type, const std::vector<std::string> additional_args = {});
+            void prepare_execution_on_cpu_cluster(const std::string mode_type, const bool eval = true, const bool run = true, const std::vector<std::string> additional_args = {});
             void run_execution_on_cpu_cluster(const std::string mode_type);
 
             // Preparing and executing code on the gpu cluster
-            void prepare_execution_on_gpu_cluster(const std::string mode_type);
+            void prepare_execution_on_gpu_cluster(const std::string mode_type, const bool eval = true, const bool run = true);
             void run_execution_on_gpu_cluster(const std::string mode_type);
 
             template<typename ExecutionParams, typename SBP>
             static void prep_default_execution(const mcmc::util::PathParameters path_parameters);
 
             template<typename SBP>
-            void main(const std::string mode_type) {
+            void main(const std::string mode_type, bool run, bool eval) {
+                std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
+
                 ExecutionMode mode;
                 // json config_file;
                 bool in_preparation;
@@ -105,15 +108,15 @@ namespace mcmc {
                 if (param_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_path() + "/",
                                                                      mode_type + "_params",
                                                                      path_parameters.rel_path)) {
-                    std::cout << "Mode = " << mode_type
-                              << " will be executed based on provided json file"
+                    std::cout << " -- Mode = " << mode_type
+                              << " will be executed based on provided json file -- "
                               << std::endl;
                     mode = mode_resolver.at(mode_type);
                     in_preparation = false;
                 } else {
-                    std::cout << "A default " << mode_type
+                    std::cout << " -- A default " << mode_type
                               << "_params.json file will be generated in " << path_parameters.get_rel_config_path()
-                              << "/ together with other parameter files. Adapt it to your considered set of equations and run the execution command again."
+                              << "/ together with other parameter files. Adapt it to your considered set of equations and run the execution command again. --"
                               << std::endl;
                     mode = mode_resolver.at(mode_type);
                     in_preparation = true;
@@ -127,32 +130,11 @@ namespace mcmc {
                             mcmc::simulation::SimulationParameters <SBP, ExpectationValueParameters> simparams = mcmc::simulation::SimulationParameters<SBP, ExpectationValueParameters>::generate_simulation_from_file(
                                     path_parameters.get_rel_config_path());
                             mcmc::simulation::Simulation <SBP, ExpectationValueParameters> sim(simparams);
-                            sim.run();
 
-                            uint number_of_measurements = simparams.execution_params->get_json()["number_of_measurements"].template get<uint>();
-                            uint n_means_bootstrap = simparams.execution_params->get_json()["n_means_bootstrap"].template get<uint>();
-                            const json& post_measures = simparams.execution_params->get_json()["post_measures"].template get<json>();
-                            const json& measures = simparams.get_measures();
-
-                            #ifdef RUN_WITH_PYTHON_BACKEND
-                            py::exec("from mcmctools.modes.expectation_value import expectation_value");
-                            py::exec("from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func");
-                            py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
-                            py::exec(("expectation_value(\
-                                measures=" + param_helper::params::merge_list_like<std::string>(measures, post_measures).dump() + ",\
-                                running_parameter='" + simparams.running_parameter + "',\
-                                rp_keys=retrieve_rp_keys(running_parameter='" + simparams.running_parameter + "',\
-                                    rp_minimum=" + std::to_string(simparams.rp_minimum) + ",\
-                                    rp_maximum=" + std::to_string(simparams.rp_maximum) + ",\
-                                    rp_number=" + std::to_string(simparams.rp_number) + "),\
-                                rel_data_dir='" + path_parameters.get_rel_data_path() + "',\
-                                number_of_measurements=" + std::to_string(number_of_measurements) + ",\
-                                n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
-                                rel_results_dir='" + path_parameters.get_rel_results_path() + "',\
-                                project_base_dir='" + param_helper::fs::prfs::project_root() + path_parameters.sim_root_dir + "',\
-                                custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams.build_expanded_raw_parameters().get_json().dump() + "',\
-                                custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams.build_expanded_raw_parameters().get_json().dump() + "')").c_str());
-                            #endif
+                            if(run)
+                                sim.run();
+                            if(eval)
+                                sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                         }
                         break;
                     }
@@ -163,29 +145,11 @@ namespace mcmc {
                             mcmc::simulation::SimulationParameters <SBP, CorrelationTimeParameters> simparams = mcmc::simulation::SimulationParameters<SBP, CorrelationTimeParameters>::generate_simulation_from_file(
                                     path_parameters.get_rel_config_path());
                             mcmc::simulation::Simulation <SBP, CorrelationTimeParameters> sim(simparams);
-                            sim.run();
 
-                            uint minimum_sample_size = simparams.execution_params->get_json()["minimum_sample_size"].template get<uint>();
-                            uint maximum_correlation_time = simparams.execution_params->get_json()["maximum_correlation_time"].template get<uint>();
-                            std::string measure = simparams.execution_params->get_json()["measure"].template get<std::string>();
-
-                            #ifdef RUN_WITH_PYTHON_BACKEND
-                            py::exec("from mcmctools.modes.correlation_time import correlation_time");
-                            py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
-                            py::exec(("correlation_time(\
-                                minimum_sample_size=" + std::to_string(minimum_sample_size) + ",\
-                                maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
-                                measure='" + measure + "',\
-                                running_parameter='" + simparams.running_parameter + "',\
-                                rp_keys=retrieve_rp_keys(running_parameter='" + simparams.running_parameter + "',\
-                                    rp_minimum=" + std::to_string(simparams.rp_minimum) + ",\
-                                    rp_maximum=" + std::to_string(simparams.rp_maximum) + ",\
-                                    rp_number=" + std::to_string(simparams.rp_number) + "),\
-                                rel_data_dir='" + path_parameters.get_rel_data_path() + "',\
-                                rel_results_dir='" + path_parameters.get_rel_results_path() + "',\
-                                project_base_dir='" + param_helper::fs::prfs::project_root() + path_parameters.sim_root_dir + "',\
-                                fma=fma)").c_str());
-                            #endif
+                            if(run)
+                                sim.run();
+                            if(eval)
+                                sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                         }
                         break;
                     }
@@ -196,33 +160,11 @@ namespace mcmc {
                             mcmc::simulation::SimulationParameters <SBP, EquilibriumTimeParameters> simparams = mcmc::simulation::SimulationParameters<SBP, EquilibriumTimeParameters>::generate_simulation_from_file(
                                     path_parameters.get_rel_config_path());
                             mcmc::simulation::Simulation <SBP, EquilibriumTimeParameters> sim(simparams);
-                            sim.run();
-
-                            uint sample_size = simparams.execution_params->get_json()["sample_size"].template get<uint>();
-                            uint number_of_steps = simparams.execution_params->get_json()["number_of_steps"].template get<uint>();
-                            std::string measure = simparams.execution_params->get_json()["measure"].template get<std::string>();
-                            double confidence_range = simparams.execution_params->get_json()["confidence_range"].template get<double>();
-                            uint confidence_window = simparams.execution_params->get_json()["confidence_window"].template get<uint>();
-
-                            #ifdef RUN_WITH_PYTHON_BACKEND
-                            py::exec("from mcmctools.modes.equilibrium_time import equilibrium_time");
-                            py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
-                            py::exec(("equilibrium_time(\
-                                sample_size=" + std::to_string(sample_size) + ",\
-                                number_of_steps=" + std::to_string(number_of_steps) + ",\
-                                measure='" + measure + "',\
-                                confidence_range=" + std::to_string(confidence_range) + ",\
-                                confidence_window=" + std::to_string(confidence_window) + ",\
-                                running_parameter='" + simparams.running_parameter + "',\
-                                rp_keys=retrieve_rp_keys(running_parameter='" + simparams.running_parameter + "',\
-                                    rp_minimum=" + std::to_string(simparams.rp_minimum) + ",\
-                                    rp_maximum=" + std::to_string(simparams.rp_maximum) + ",\
-                                    rp_number=" + std::to_string(simparams.rp_number) + "),\
-                                rel_data_dir='" + path_parameters.get_rel_data_path() + "',\
-                                rel_results_dir='" + path_parameters.get_rel_results_path() + "',\
-                                project_base_dir='" + param_helper::fs::prfs::project_root() + path_parameters.sim_root_dir + "',\
-                                fma=fma)").c_str());
-                            #endif
+                            
+                            if(run)
+                                sim.run();
+                            if(eval)
+                                sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                         }
                         break;
                     };
@@ -250,18 +192,18 @@ namespace mcmc {
 
             static void set_python_modules_path(const std::string python_modules_path_) {
                 Executer::python_modules_path = python_modules_path_;
-                std::cout << "Setting python scripts path to " << python_modules_path_ << std::endl;
+                std::cout << " -- Setting python scripts path to " << python_modules_path_ << " --" << std::endl;
             }
 #endif
 #ifdef RUN_WITH_VIRTUAL_ENV
             static void set_conda_activate_path(const std::string conda_activate_path_) {
                 Executer::conda_activate_path = conda_activate_path_;
-                std::cout << "Setting conda activate path to " << Executer::conda_activate_path << std::endl;
+                std::cout << " -- Setting conda activate path to " << Executer::conda_activate_path << " --" << std::endl;
             }
 
             static void set_virtual_env(const std::string virtual_env_) {
                 Executer::virtual_env = virtual_env_;
-                std::cout << "Setting virtual_env to " << Executer::virtual_env << std::endl;
+                std::cout << " -- Setting virtual_env to " << Executer::virtual_env << " --" << std::endl;
             }
 #endif
 
@@ -271,7 +213,7 @@ namespace mcmc {
 
             static void set_executable_name(const std::string executable_name_) {
                 Executer::executable_name = executable_name_;
-                std::cout << "Setting executable name to " << Executer::executable_name << std::endl;
+                std::cout << " -- Setting executable name to " << Executer::executable_name << " --" << std::endl;
             }
 
             static std::string get_cluster_mode() {
@@ -280,7 +222,7 @@ namespace mcmc {
 
             static void set_cluster_mode(const std::string cluster_mode_) {
                 Executer::cluster_mode = cluster_mode_;
-                std::cout << "Setting cluster mode to " << Executer::cluster_mode << std::endl;
+                std::cout << " -- Setting cluster mode to " << Executer::cluster_mode << " --" << std::endl;
             }
 
             const mcmc::util::PathParameters path_parameters;
@@ -292,12 +234,24 @@ namespace mcmc {
             std::string files_dir = std::string(argv[2]);
             std::string sim_root_dir = "./";
             bool rel_path = true;
+            bool run = true;
+            bool eval = true;
             if (argc > 3)
                 sim_root_dir = std::string(argv[3]);
             if (argc > 4) {
                 std::string rel_path_boolean = std::string(argv[4]);
                 if (rel_path_boolean == "false")
                     rel_path = false;
+            }
+            if (argc > 5) {
+                std::string run_boolean = std::string(argv[5]);
+                if (run_boolean == "false")
+                    run = false;
+            }
+            if (argc > 6) {
+                std::string eval_boolean = std::string(argv[6]);
+                if (eval_boolean == "false")
+                    eval = false;
             }
 
             /* std::cout << "mode_type: " << mode_type << std::endl;
@@ -307,7 +261,7 @@ namespace mcmc {
 
             mcmc::util::PathParameters path_parameters(files_dir, sim_root_dir, rel_path);
             Executer executer(path_parameters);
-            executer.main<SBP>(mode_type);
+            executer.main<SBP>(mode_type, run, eval);
         }
 
         /* Helper functions */
@@ -324,8 +278,8 @@ namespace mcmc {
 
         template<typename SBP>
         void execute(const std::string mode_type, const std::string files_dir, const std::string sim_root_dir = "./",
-                     const bool rel_path = true, const Executer::RunningMode running_mode = Executer::local,
-                     const bool execute_code = true,
+                     const bool rel_path = true, const bool eval = true, const bool run = true,
+                     const Executer::RunningMode running_mode = Executer::local, const bool execute_code = true,
                      const std::vector<std::string> additional_args = {}, const std::string rel_config_path="",
                      const std::string rel_data_path="", const std::string rel_results_path="",
                      const std::string rel_cpu_bash_script_path="") {
@@ -342,13 +296,13 @@ namespace mcmc {
             Executer executer(path_parameters);
             if (running_mode == Executer::local and execute_code)
                 // Run based on target name - Does the same as ./{ProjectName} {ExecutionMode} {Directory} - might also call directly the respective main function - exception!
-                executer.main<SBP>(mode_type);
+                executer.main<SBP>(mode_type, eval, run);
             else if (running_mode == Executer::on_cpu_cluster) {
-                executer.prepare_execution_on_cpu_cluster(mode_type, additional_args);
+                executer.prepare_execution_on_cpu_cluster(mode_type, eval, run, additional_args);
                 if (execute_code)
                     executer.run_execution_on_cpu_cluster(mode_type);
             } else if (running_mode == Executer::on_gpu_cluster) {
-                executer.prepare_execution_on_gpu_cluster(mode_type);
+                executer.prepare_execution_on_gpu_cluster(mode_type, eval, run);
                 if (execute_code)
                     executer.run_execution_on_gpu_cluster(mode_type);
             }

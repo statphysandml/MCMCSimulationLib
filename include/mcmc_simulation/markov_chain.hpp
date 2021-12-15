@@ -1,7 +1,7 @@
 #ifndef MARKOV_CHAIN_HPP
 #define MARKOV_CHAIN_HPP
 
-// #include <tiff.h>
+#include "util/tqdm.h"
 #include <param_helper/params.hpp>
 #include <param_helper/json.hpp>
 
@@ -57,12 +57,13 @@ namespace mcmc {
                                                                                                     os(os_) {}
 
             void run() {
-                std::cout << "Execute Markov Chain with " << mp.number_of_measurements
-                          << " measures with measure interval " <<
-                          mp.measure_interval << ".\nStart measuring after " << mp.start_measuring
-                          << " sweeps.\n -- Total number of sweeps "
-                          << long(mp.number_of_measurements) * long(mp.measure_interval) + long(mp.start_measuring)
-                          << " -- " << std::endl;
+                unsigned long long int total_number_of_sweeps = long(mp.repetitions) * long(mp.number_of_measurements) * long(mp.measure_interval) + long(mp.repetitions) * long(mp.start_measuring);
+                std::cout << "\n --- Running " << mp.repetitions << " Markov Chain(s) to make " << mp.number_of_measurements
+                          << " measurements with a measure interval of " <<
+                          mp.measure_interval << " and starting to measure after " << mp.start_measuring
+                          << " sweeps ---\n ---- Total number of sweeps: "
+                          << total_number_of_sweeps
+                          << " ----" << std::endl;
 
                 std::string starting_mode;
                 if (mp.starting_mode == "alternating")
@@ -70,11 +71,20 @@ namespace mcmc {
                 else
                     starting_mode = mp.starting_mode;
 
+                // Updating progress bar
+                tqdm bar;
+                bar.set_theme_line();
+
                 for (uint z = 0; z < mp.repetitions; z++) {
-                    //if(z%100 == 0)
-                    //    std::cout << z*1.0/sim.rep << " " << std::flush;
+                    // Updating progress bar based on repetitions
+                    if(mp.repetitions > 1)
+                        bar.progress(z, mp.repetitions);
+                    
+
                     auto systembase = sbp.generate(); // Smart pointer
                     systembase->init(starting_mode);
+                    
+                    // Write header of output file
                     if (z == 0) {
                         std::vector<std::string> measure_names = systembase->measure_names();
                         if(measure_names.size() > 0)
@@ -84,10 +94,21 @@ namespace mcmc {
                         if(measure_names.size() > 0)
                             os << std::endl;
                     }
-
+                    
+                    // Equilibriate
                     systembase->update(mp.start_measuring);
 
+                    // Reseting progress bar based on number of measurements
+                    if(mp.repetitions == 1)
+                        bar.reset();
+                    
+                    // Perform meauserments
                     for (uint i = 0; i < mp.number_of_measurements; i++) {
+                        // Updating progress bar based on number of measurements
+                        if(mp.repetitions == 1)
+                            bar.progress(i, mp.number_of_measurements);
+                        
+                        // Measure
                         std::vector<std::string> measures = systembase->measure();
                         if(measures.size() > 0)
                             os << measures[0];
@@ -95,13 +116,13 @@ namespace mcmc {
                             os << "\t" << measures[j];
                         if(measures.size() > 0)
                             os << "\n";
-
-                        if (i % 1000 == 0) {
-                            std::cout << "########## i:" << i << /*"\n" << systembase <<*/ "\n";
-                        }
+                        // Update for measure_interval steps
                         systembase->update(mp.measure_interval);
                     }
-                    std::cout << std::endl;
+
+                    // Finalizing progress bar based on number of measurements
+                    if(mp.repetitions == 1)
+                        bar.finish();
 
                     if (mp.starting_mode == "alternating") {
                         if (starting_mode == "hot")
@@ -110,6 +131,12 @@ namespace mcmc {
                             starting_mode = "hot";
                     }
                 }
+
+                // Finalizing progress bar based on repetitions
+                if(mp.repetitions > 1)
+                    bar.finish();
+
+                std::cout << " ---- Finished MCMC run(s) ----\n\n" << std::endl;
             }
 
         private:
