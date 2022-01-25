@@ -9,7 +9,7 @@
 #include <param_helper/json.hpp>
 
 #include "mcmc_simulation/markov_chain.hpp"
-#include "execution/python_integration.hpp"
+#include "mcmc_simulation/util/python_integration.hpp"
 
 using json = nlohmann::json;
 
@@ -85,7 +85,7 @@ namespace mcmc {
                     rp_keys=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
+                    sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
                     fma=fma)").c_str());
                 #endif
             }
@@ -102,7 +102,7 @@ namespace mcmc {
                     else
                         rp_key = std::to_string(rp);
                     std::cout << " -- Looking for equilibrium time for rp=" << rp << " in equilibrium_time_results.json --" /*(in: "
-                              << param_helper::fs::prfs::get_path_to(equilibrium_time_rel_results_path)
+                              << param_helper::proj::get_path_to(equilibrium_time_rel_results_path)
                               << ") --"*/
                               << std::endl;
                     equilibrium_time = param_helper::params::entry_by_key<uint>(

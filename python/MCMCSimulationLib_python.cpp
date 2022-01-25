@@ -12,8 +12,8 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include <mcmc_simulation/header.hpp>
-#include <execution/executer.hpp>
-#include <execution/python_integration.hpp>
+#include <mcmc_simulation/util/python_integration.hpp>
+#include <modes/mode_header.hpp>
 
 
 void init_functions(py::module &m)

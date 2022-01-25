@@ -18,13 +18,13 @@ set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
 set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
 
 # Include libraries
-find_library(ParamHelper NAMES libparamhelper.a PATHS ./../../build/ext/ParamHelper/src)
-message("ParamHelper = ${ParamHelper}")
-include_directories(../../ext/ParamHelper/include/)
+find_package(ParamHelper CONFIG REQUIRED)
+# message("ParamHelper = ${ParamHelper}")
+# include_directories(../../ext/ParamHelper/include/)
 
-find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS ../../build/src)
-message("MCMCSimulationLib = ${MCMCSimulationLib}")
-include_directories(../../include/)
+find_package(MCMCSimulationLib CONFIG REQUIRED)
+# message("MCMCSimulationLib = ${MCMCSimulationLib}")
+# include_directories(../../include/)
 
 
 configure_file(./include/ising_model/config.h.in ../include/ising_model/config.h @ONLY)
@@ -52,4 +52,4 @@ feature_summary(WHAT ALL)
 
 add_executable(IsingModel src/main.cpp)
 target_compile_definitions(IsingModel PUBLIC RUN_WITH_PYTHON_BACKEND)
-target_link_libraries(IsingModel PUBLIC ${MCMCSimulationLib} ${ParamHelper} ${target_link_libraries_python_appendix})
+target_link_libraries(IsingModel PUBLIC mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})

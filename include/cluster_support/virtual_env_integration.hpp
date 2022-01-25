@@ -14,7 +14,7 @@
  */
 
 #include <iostream>
-#include "execution/config.h"
+#include "cluster_support/config.h"
 
 #ifdef RUN_WITH_VITUAL_ENV
 

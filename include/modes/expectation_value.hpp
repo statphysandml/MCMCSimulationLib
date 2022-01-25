@@ -9,7 +9,7 @@
 #include <param_helper/json.hpp>
 
 #include "mcmc_simulation/markov_chain.hpp"
-#include "execution/python_integration.hpp"
+#include "mcmc_simulation/util/python_integration.hpp"
 
 using json = nlohmann::json;
 
@@ -205,7 +205,7 @@ namespace mcmc {
                     number_of_measurements=" + std::to_string(number_of_measurements) + ",\
                     n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
+                    sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
                     custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif

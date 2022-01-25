@@ -21,17 +21,7 @@
 using json = nlohmann::json;
 
 namespace mcmc {
-    namespace cmd {
-
-        // Additional parameters for running (executer_params)
-        // Project dependent variables
-        /** Todo */
-        extern bool from_args_simulation;
-        
-        /** @brief Todo
-         */
-        void enable_from_args_simulation();
-
+    namespace cmdint {
         // Managing execution modes
         enum ExecutionMode {
             expectation_value, correlation_time, equilibrium_time, plot_site_distribution
@@ -44,7 +34,7 @@ namespace mcmc {
         /** @brief Todo
          */
         template<typename ExecutionParams, typename SBP>
-        void prep_default_execution(const mcmc::cmd::PathParameters path_parameters) {
+        void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
             ExecutionParams expectation_value_parameters(json{});
             expectation_value_parameters.write_to_file(path_parameters.get_rel_config_path());
 
@@ -56,7 +46,7 @@ namespace mcmc {
         /** @brief Todo
          */
         template<typename SBP>
-        void execute(const std::string mode_type, const mcmc::cmd::PathParameters path_parameters,
+        void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const bool run = true, const bool eval = true
         )
         {
@@ -96,7 +86,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                     }
                     break;
                 }
@@ -111,7 +101,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                     }
                     break;
                 }
@@ -126,7 +116,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.evaluate(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
                     }
                     break;
                 };
@@ -143,51 +133,68 @@ namespace mcmc {
             }
         }
 
-        /** @brief Todo
-         */
         template<typename SBP>
-        void from_args(int argc, char **argv) {
-            if(!from_args_simulation)
+        struct CmdIntSim
+        {
+            CmdIntSim(const std::string target_name, // 
+                      const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
+                      const bool rel_path = true) : path_parameters(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
+            {}
+
+            void main(int argc, char **argv)
             {
-                std::cerr << "...ToDo..." << std::endl;
-                std::exit(EXIT_FAILURE);
+                if(argc > 1)
+                {
+                    execute(argc, argv);
+                }
+                else
+                {
+                    // Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
+                    prepare();
+                }
             }
 
-            std::string mode_type = std::string(argv[1]);
-            std::string files_dir = std::string(argv[2]);
-            std::string sim_root_dir = "./";
-            bool rel_path = true;
-            bool run = true;
-            bool eval = true;
-            if (argc > 3)
-                sim_root_dir = std::string(argv[3]);
-            if (argc > 4) {
-                std::string rel_path_boolean = std::string(argv[4]);
-                if (rel_path_boolean == "false")
-                    rel_path = false;
-            }
-            if (argc > 5) {
-                std::string run_boolean = std::string(argv[5]);
-                if (run_boolean == "false")
-                    run = false;
-            }
-            if (argc > 6) {
-                std::string eval_boolean = std::string(argv[6]);
-                if (eval_boolean == "false")
-                    eval = false;
+            void execute(int argc, char **argv) {
+                std::string mode_type = std::string(argv[1]);
+                std::string target_name = std::string(argv[2]);
+                std::string sim_root_dir = "./";
+                bool rel_path = true;
+                bool run = true;
+                bool eval = true;
+                if (argc > 3)
+                    sim_root_dir = std::string(argv[3]);
+                if (argc > 4) {
+                    std::string rel_path_boolean = std::string(argv[4]);
+                    if (rel_path_boolean == "false")
+                        rel_path = false;
+                }
+                if (argc > 5) {
+                    std::string run_boolean = std::string(argv[5]);
+                    if (run_boolean == "false")
+                        run = false;
+                }
+                if (argc > 6) {
+                    std::string eval_boolean = std::string(argv[6]);
+                    if (eval_boolean == "false")
+                        eval = false;
+                }
+
+                /* std::cout << "mode_type: " << mode_type << std::endl;
+                std::cout << "target_name: " << target_name << std::endl;
+                std::cout << "sim_root_dir: " << sim_root_dir << std::endl;
+                std::cout << "rp: " << rel_path << "\n\n" << std::endl; */
+
+                mcmc::cmdint::PathParameters path_parameters_(target_name, sim_root_dir, rel_path);
+                mcmc::cmdint::execute<SBP>(mode_type, path_parameters_, run, eval);
             }
 
-            /* std::cout << "mode_type: " << mode_type << std::endl;
-            std::cout << "files_dir: " << files_dir << std::endl;
-            std::cout << "sim_root_dir: " << sim_root_dir << std::endl;
-            std::cout << "rp: " << rel_path << "\n\n" << std::endl; */
+            virtual void prepare() = 0;
 
-            mcmc::cmd::PathParameters path_parameters(files_dir, sim_root_dir, rel_path);
-            execute<SBP>(mode_type, path_parameters, run, eval);
-        }
+            mcmc::cmdint::PathParameters path_parameters;
+        };
     }
 }
 
-// ./{Main} {mode_type} {files_dir} {sim_root_dir="/data/"} {rel_path=true}
+// ./{Main} {mode_type} {target_name} {sim_root_dir="/data/"} {rel_path=true}
 
 #endif //FROM_FILE_HPP

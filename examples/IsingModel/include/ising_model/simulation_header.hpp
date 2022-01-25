@@ -6,8 +6,6 @@
 #endif
 #include <mcmc_simulation/util/random.hpp>
 
-#include <execution/executer.hpp>
-
 #include "system.hpp"
 
 namespace from_file_simulation {

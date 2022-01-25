@@ -9,9 +9,9 @@
 void custom_main();
 
 int main(int argc, char **argv) {
-    param_helper::fs::prfs::set_relative_path_to_project_root_dir("../");
+    param_helper::proj::set_relative_path_to_project_root_dir("../");
 
-    std::cout << " -- Running with project root dir: " << param_helper::fs::prfs::path_to_executable() << " --" << std::endl;
+    std::cout << " -- Running with project root dir: " << param_helper::proj::path_to_executable() << " --" << std::endl;
 
     // Initialization - Only needed for GPU and CPU runs
     mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);

@@ -175,9 +175,8 @@ cython_debug/
 .idea/
 .ipynb_checkpoints/
 .vscode/
+install/
 lib/
-build/config.sh
-bash_scripts/project_config.sh
 __pycache__/
 
 include/execution/config.h

@@ -9,12 +9,12 @@
 #include <param_helper/json.hpp>
 
 #include "mcmc_simulation/markov_chain.hpp"
-#include "execution/python_integration.hpp"
+#include "mcmc_simulation/util/python_integration.hpp"
 
 using json = nlohmann::json;
 
 namespace mcmc {
-    namespace from_file {
+    namespace mode {
 
         class FromFilePreparation : public param_helper::params::Parameters {
         public:

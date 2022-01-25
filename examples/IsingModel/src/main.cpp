@@ -5,6 +5,65 @@
 #include "../include/ising_model/config.h"
 
 #include <mcmc_simulation/header.hpp>
+#include <mcmc_simulation/util/intervals.hpp>
+#include <modes/mode_header.hpp>
+
+#include <command_line_support/cmd.hpp>
+
+#include "../include/ising_model/simulation_header.hpp"
+
+
+struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<SystemParameters>
+{
+    using mcmc::cmdint::CmdIntSim<SystemParameters>::CmdIntSim;
+
+    void prepare() override
+    {
+        SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});
+
+        auto simulation_parameters = mcmc::simulation::SimulationParameters<SystemParameters>::prepare_simulation_from_file(
+            system_params, this->path_parameters.get_rel_config_path(),
+            "systembase_params", "beta", mcmc::util::linspace(0.1, 0.7, 6));
+
+        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
+
+        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
+
+        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        ExpectationValueParams expectation_value_parameters(
+            this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
+
+        // Store simulation parameters
+        simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+    }
+};
+
+int main(int argc, char **argv) {
+    param_helper::proj::set_relative_path_to_project_root_dir("../");
+
+#ifdef RUN_WITH_PYTHON_BACKEND
+    mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
+#endif
+
+    CmdIntSimulation cmdint_simulation("IsingModelSimulation", "./", "true");
+    cmdint_simulation.main(argc, argv);
+
+    // Finalization
+#ifdef RUN_WITH_PYTHON_BACKEND
+    mcmc::util::finalize_python();
+#endif
+    return 0;
+}
+
+
+/*
+
+#include <mcmc_simulation/header.hpp>
 #include <execution/executer.hpp>
 
 #include "../include/ising_model/simulation_header.hpp"
@@ -13,7 +72,7 @@
 void custom_main();
 
 int main(int argc, char **argv) {
-    param_helper::fs::prfs::set_relative_path_to_project_root_dir("../");
+    param_helper::proj::set_relative_path_to_project_root_dir("../");
 
     // Initialization - Only needed for GPU and CPU runs
     mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
@@ -48,14 +107,14 @@ void custom_main() {
     std::string correlation_time_results_path = "/results/" + target_name + "/";
 
     // Setting up system parameters
-    SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});
+    SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});*/
     /* // Alternativ:
     SystemParameters system_params(
             json {{"beta",  0.4},
                   {"J", 1.0},
                   {"h", 0.0},
                   {"dimensions", std::vector<int> {4, 4}}
-            }); */
+            }); *//*
     
     //[ Correlation time
 
@@ -115,3 +174,4 @@ void custom_main() {
     //]
     
 }
+ */

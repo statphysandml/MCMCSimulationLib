@@ -30,7 +30,7 @@ namespace mcmc
          * locally based on configuration files.
          * 
          */
-        template <typename SBP, typename EP=mcmc::cmd::FromFilePreparation>
+        template <typename SBP, typename EP=mcmc::mode::FromFilePreparation>
         class SimulationParameters : public param_helper::params::Parameters {
         public:
             // Constructor for loading from params
@@ -42,7 +42,7 @@ namespace mcmc
             {
                 // *** DIRECTORIES ***
                 // Create folder in data directory if not present
-                if(!param_helper::fs::direxists(param_helper::fs::prfs::project_root() + rel_data_path))
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_path))
                 {
                     // std::cout << "Create data directory" << std::endl;
                     param_helper::fs::generate_directory_if_not_present(rel_data_path);
@@ -261,11 +261,11 @@ namespace mcmc
 
             /** @brief Write the simulation parameters as sim_params.json to file.
              * 
-             * @param rel_config_path Reltive path to the project_root define by param_helper::fs::prfs::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_path, respectively.
+             * @param rel_config_path Reltive path to the project_root define by param_helper::proj::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_path, respectively.
              */
             void write_to_file(std::string rel_config_path) {
                 // Create folder in config directory if not present
-                if(!param_helper::fs::direxists(param_helper::fs::prfs::project_root() + rel_config_path))
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_config_path))
                 {
                     // std::cout << "Create config directory" << std::endl;
                     param_helper::fs::generate_directory_if_not_present(rel_config_path);
@@ -366,7 +366,7 @@ namespace mcmc
              *  For the evaluation to work, one need to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
              * 
              *  @param rel_results_dir Relative path to sim_root_dir for storing the results
-             *  @param sim_root_dir Relative (to the project_root_dir set by param_helper::fs::prfs::set_relative_path_to_project_root_dir("../")) path to the simulation directory used for storing the simulation config and results files
+             *  @param sim_root_dir Relative (to the project_root_dir set by param_helper::proj::set_relative_path_to_project_root_dir("../")) path to the simulation directory used for storing the simulation config and results files
              */
             void eval(std::string rel_results_dir, std::string sim_root_dir)
             {
@@ -385,7 +385,7 @@ namespace mcmc
 
                 write_setting_file(sp.rel_data_path, filename);
 
-                param_helper::fs::Fileos os (param_helper::fs::prfs::project_root() + sp.rel_data_path + "/" + filename  + ".dat");
+                param_helper::fs::Fileos os (param_helper::proj::project_root() + sp.rel_data_path + "/" + filename  + ".dat");
                 MarkovChain<SBP> mc(*sp.markovchain_params, *sp.systembase_params, os.get());
                 mc.run();
             }

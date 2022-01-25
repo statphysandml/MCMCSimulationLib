@@ -14,8 +14,8 @@ if __name__ == '__main__':
     sys.path.append("./python_scripts/")
 
     # Also used by the C++ MCMCSimulationLib
-    expectation_value(files_dir="IsingModelSimulation")
+    expectation_value(target_name="IsingModelSimulation")
 
-    expectation_values = load_expectation_value_results(files_dir="IsingModelSimulation")
+    expectation_values = load_expectation_value_results(target_name="IsingModelSimulation")
     print(expectation_values)
 

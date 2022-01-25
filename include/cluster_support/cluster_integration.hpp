@@ -12,7 +12,7 @@
 
 #include "config.h"
 
-#include "mcmc_simulation/util/path_parameters.hpp"
+#include "command_line_support/path_parameters.hpp"
 #include "command_line_support/cmd.hpp"
 
 #include "cluster_support/cpu_cluster_integration.hpp"
@@ -74,7 +74,7 @@ namespace mcmc {
          * @param addition_args List of additional args to be passed to the C++ executable when the simulation is executed.
          */
         template<typename SBP>
-        void execute(const std::string mode_type, const mcmc::cmd::PathParameters path_parameters,
+        void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const bool run = true, const bool eval = true,
             const Device device = locally,
             const RunningMode running_mode = prep_and_exec,
@@ -89,7 +89,7 @@ namespace mcmc {
                 if (running_mode == prep_and_exec or exec)
                 {
                     // Run based on target name - Does the same as ./{ProjectName} {ExecutionMode} {Directory} - might also call directly the respective main function - exception!
-                    mcmc::cmd::execute<SBP>(mode_type, path_parameters, run, eval);
+                    mcmc::cmdint::execute<SBP>(mode_type, path_parameters, run, eval);
                 }
             }
             else if (device == on_cpu_cluster) {
@@ -110,6 +110,6 @@ namespace mcmc {
     }
 }
 
-// ./{Main} {mode_type} {files_dir} {sim_root_dir="/data/"} {rel_path=true}
+// ./{Main} {mode_type} {target_name} {sim_root_dir="/data/"} {rel_path=true}
 
 #endif //CLUSTER_INTEGRATION_HPP
