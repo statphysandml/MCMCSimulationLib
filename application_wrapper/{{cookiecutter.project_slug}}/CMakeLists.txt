@@ -27,7 +27,7 @@ set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expecta
 
 # Project specific compliation options (used by config.h.in)
 set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
-set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
+set(PYTHON_SCRIPTS_PATH "../python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend (relative to build directory)")
 
 find_library(ParamHelper NAMES libparamhelper.a PATHS {{ cookiecutter.path_to_mcmc_simulation_lib }}/build/ext/ParamHelper/src)
 message("ParamHelper = ${ParamHelper}")

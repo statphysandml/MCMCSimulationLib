@@ -5,19 +5,18 @@
 #ifndef MAIN_HAT_FUNCTION_SAMPLER_HPP
 #define MAIN_HAT_FUNCTION_SAMPLER_HPP
 
-#include "../sampler.hpp"
 
+#include "../util/random.hpp"
 
-// ToDo: Problem -> child functions are not called with current implemented pattern...
-/* options:
-- Go back to crtp pattern -> look into webpage where this is explained
-- Remove inheritance and introduce static_asserts -> does this work properly if function is not used actively?
-- Use enable_if or something similar... */
 
 namespace mcmc {
     namespace sampler {
 
-        struct HatFunctionSampler //  : Sampler
+        /** @brief Hat function sampler with width 2 * eps
+         *
+         * Sampler function for sampling, evaluating and integrating a hat function.
+         */
+        struct HatFunctionSampler
         {
             HatFunctionSampler(const double eps_) : eps(eps_) {
                 uniform = std::uniform_real_distribution<double>(0, 1);
@@ -57,17 +56,11 @@ namespace mcmc {
             }
 
             struct transformer_func {
-/* #ifdef THRUST -> needs to be fixed
-        __host__ __device__
-#endif */
                 double operator()(const double val) {
                     return val;
                 }
             };
 
-/* #ifdef THRUST -> needs to be fixed
-        __host__ __device__
-#endif */
             double jacobian(const double x) {
                 return 1.0;
             }

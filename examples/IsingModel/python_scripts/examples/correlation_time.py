@@ -16,3 +16,4 @@ if __name__ == '__main__':
     from pystatplottools.utils.utils import load_json
     correlation_times = load_json("./results/IsingModelSimulation/correlation_time_results.json")
     print(correlation_times)
+

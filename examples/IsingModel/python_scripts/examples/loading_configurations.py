@@ -29,3 +29,4 @@ if __name__ == '__main__':
         running_parameter="beta")
     from mcmctools.utils.json import load_configs
     sim_params, execution_params, running_parameter = load_configs(files_dir="IsingModelSimulation", mode="expectation_value", sim_base_dir="../../")
+

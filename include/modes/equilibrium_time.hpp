@@ -8,13 +8,21 @@
 #include <param_helper/params.hpp>
 #include <param_helper/json.hpp>
 
-#include "../../mcmc_simulation/markov_chain.hpp"
+#include "mcmc_simulation/markov_chain.hpp"
+#include "execution/python_integration.hpp"
 
 using json = nlohmann::json;
 
 namespace mcmc {
-    namespace execution {
+    namespace mode {
 
+        /** @brief Prepares the computation of the necessary number of Monte Carlo sweeps for the system to in equilibrium
+         *
+         * This class defines necessary parameters for running a MCMC simulation
+         * for determining the number of Monte Carlo sweeps the system needs to be in equilibrium.
+         * Note that some of the parameters are only needed for the respective evaluation which
+         * is executed afterwards in Python.
+         */
         class EquilibriumTimeParameters : public param_helper::params::Parameters {
         public:
             explicit EquilibriumTimeParameters(const json params_) : Parameters(params_) {
@@ -25,6 +33,16 @@ namespace mcmc {
                 measure = get_entry<std::string>("measure", "Mean");
             }
 
+            /** @brief Constructor for defining all important parameters
+             *
+             * @param sample_size_ Number of Monte Carlo sweeps between measurements (autocorrelation time)
+             * @param number_of_steps_ Total number of measurements
+             * @param confidence_range_ Number of Monte Carlo sweeps before starting with the first measurement
+             * @param confidence_window_ Measures to be made during the simulation
+             * @param measure_ Measures which should be computed afterwards in Python.
+             *  Note that for this work the configurations have to be stored as well which can be achieved
+             *  by adding "Config" to measures
+             */
             EquilibriumTimeParameters(
                     uint sample_size_,
                     uint number_of_steps_,
@@ -38,6 +56,11 @@ namespace mcmc {
                          {"confidence_window", confidence_window_},
                          {"measure",        measure_}}) {}
 
+            /** @brief Write the equilibrium time parameters as equilibrium_time_params.json into root_dir
+             *
+             * @param root_dir Absolute path to the output directory
+             * @returns None
+             */
             void write_to_file(const std::string &root_dir) {
                 Parameters::write_to_file(root_dir, "equilibrium_time_params");
             }
@@ -50,14 +73,18 @@ namespace mcmc {
             static std::string name() {
                 return "equilibrium_time";
             }
-
+            
+            /** @brief Evaluate equilibrium times by calling the respective Python functions and writes the results to file
+             *
+             * @param x ...Todo
+             * @returns None
+             */
             void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
-                const std::string running_parameter="None", const double rp_minimum=0.0,
-                const double rp_maximum=0.0, const int rp_number=0, const json simparams_json={})
+                const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {
                 #ifdef RUN_WITH_PYTHON_BACKEND
+                py::exec("import json");
                 py::exec("from mcmctools.modes.equilibrium_time import equilibrium_time");
-                py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
                 py::exec(("equilibrium_time(\
                     sample_size=" + std::to_string(sample_size) + ",\
                     number_of_steps=" + std::to_string(number_of_steps) + ",\
@@ -65,10 +92,7 @@ namespace mcmc {
                     confidence_range=" + std::to_string(confidence_range) + ",\
                     confidence_window=" + std::to_string(confidence_window) + ",\
                     running_parameter='" + running_parameter + "',\
-                    rp_keys=retrieve_rp_keys(running_parameter='" + running_parameter + "',\
-                        rp_minimum=" + std::to_string(rp_minimum) + ",\
-                        rp_maximum=" + std::to_string(rp_maximum) + ",\
-                        rp_number=" + std::to_string(rp_number) + "),\
+                    rp_keys=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\

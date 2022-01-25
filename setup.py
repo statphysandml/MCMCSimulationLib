@@ -53,15 +53,13 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.', '--target', 'MCMCSimulationLib_python'] + build_args, cwd=self.build_temp)
-
-# ... Will follow ...
+        subprocess.check_call(['cmake', '--build', '.', '--target', 'mcmcsimulationlib_python'] + build_args, cwd=self.build_temp)
 
 setup(
     name='MCMCSimulationLib',
     version='0.0.1',
     author='Lukas Kades',
-    author_email='your@email.com',
+    author_email='statphysandml@thphys.uni-heidelberg.de',
     description='Add description here',
     long_description='',
     ext_modules=[CMakeExtension('MCMCSimulationLib')],
@@ -72,4 +70,7 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
     ],
+    # url='https://github.com/statphysandml/MCMCEvaluationLib',
+    package_dir={"mcmc": "python"},
+    packages=["mcmc"]
 )

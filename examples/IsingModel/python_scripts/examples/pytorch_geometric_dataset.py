@@ -163,3 +163,4 @@ if __name__ == '__main__':
 
     print("Real Time (BatchDataLoader):", elapsed_time, " sec. / ", elapsed_time2,
           " sec., From File (GeometricDataLoader):", elapsed_time_from_file, " sec.")
+

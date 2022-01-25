@@ -18,3 +18,4 @@ if __name__ == '__main__':
 
     expectation_values = load_expectation_value_results(files_dir="IsingModelSimulation")
     print(expectation_values)
+

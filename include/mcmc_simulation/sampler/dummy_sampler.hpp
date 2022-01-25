@@ -6,12 +6,15 @@
 #define MCMCSIMULATIONLIB_DUMMY_SAMPLER_HPP
 
 
-#include "../sampler.hpp"
+#include "../util/random.hpp"
+
 
 namespace mcmc {
     namespace sampler {
-
-        struct DummySampler //  : Sampler
+        
+        /** @brief Dummy sampler - can be used if a sampler function is needed for a template function, but the sampling is performed in a different way (without a sampler)
+         */
+        struct DummySampler
         {
             DummySampler(const double eps_) {}
 

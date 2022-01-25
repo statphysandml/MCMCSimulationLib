@@ -5,19 +5,18 @@
 #ifndef MAIN_GAUSSIAN_SAMPLER_HPP
 #define MAIN_GAUSSIAN_SAMPLER_HPP
 
-#include "../sampler.hpp"
 
+#include "../util/random.hpp"
 
-// ToDo: Problem -> child functions are not called with current implemented pattern...
-/* options:
-- Go back to crtp pattern -> look into webpage where this is explained
-- Remove inheritance and introduce static_asserts -> does this work properly if function is not used actively?
-- Use enable_if or something similar... */
 
 namespace mcmc {
     namespace sampler {
 
-        struct GaussianSampler : Sampler {
+        /** @brief Gaussian distribution sampler with variance 2 * eps
+         *
+         * Sampler function for sampling, evaluating and integrating a Gaussian distribution.
+         */
+        struct GaussianSampler {
             GaussianSampler(const double eps_) : eps(eps_) {
                 normal = std::normal_distribution<double>(0, 1);
             }
@@ -52,21 +51,14 @@ namespace mcmc {
             }
 
             struct transformer_func {
-/* #ifdef THRUST -> needs to be fixed
-        __host__ __device__
-#endif */
                 double operator()(const double val) {
                     return std::log((1.0 + val) / (1.0 - val));
                 }
             };
 
-/* #ifdef THRUST -> needs to be fixed
-    __host__ __device__
-#endif */
             double jacobian(const double x) {
                 return -2.0 / (std::pow(x, 2.0) - 1.0);
             }
-
 
             const static std::string name() {
                 return "GaussianSampler";

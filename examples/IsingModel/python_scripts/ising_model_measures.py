@@ -33,3 +33,4 @@ def compute_ising_model_energy(data, sim_params):
     data.insert(len(data.columns), "Energy", energies / (n_sites * elem_per_site))
 
     return ["Energy"], data
+

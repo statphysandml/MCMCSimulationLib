@@ -143,3 +143,4 @@ if __name__ == '__main__':
     for batch_idx, batch in enumerate(data_loader):
         data, target = batch
         print(batch_idx, len(data))
+

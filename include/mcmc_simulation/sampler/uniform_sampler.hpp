@@ -1,11 +1,18 @@
 #ifndef MAIN_UNIFORM_SAMPLER_HPP
 #define MAIN_UNIFORM_SAMPLER_HPP
 
-#include "../sampler.hpp"
+
+#include "../util/random.hpp"
+
 
 namespace mcmc {
     namespace sampler {
-        struct UniformSampler //  : public Sampler
+
+        /** @brief Uniform distribution sampler with witdh 2 * eps
+         *
+         * Sampler function for sampling, evaluating and integrating a uniform distribution.
+         */
+        struct UniformSampler
         {
             UniformSampler(const double eps_) : eps(eps_) {
                 uniform = std::uniform_real_distribution<double>(-1.0, 1.0);
@@ -36,17 +43,11 @@ namespace mcmc {
             }
 
             struct transformer_func {
-/* #ifdef THRUST -> needs to be fixed
-        __host__ __device__
-#endif */
                 double operator()(const double val) {
                     return val;
                 }
             };
 
-/* #ifdef THRUST -> needs to be fixed
-        __host__ __device__
-#endif */
             double jacobian(const double x) {
                 return 1.0;
             }

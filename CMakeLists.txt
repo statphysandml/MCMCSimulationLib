@@ -18,14 +18,14 @@ set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expecta
 set(BUILD_DOCS ON CACHE BOOL "Enable building of documentation")
 
 # Additional compliation options to be able to activate the environment before the actual simulation in a generated bash script.
-# These are only required for runs with a queue-script. (used by include/execution/config.h.in)
+# These are only required for runs with a queue-script. (used by include/cluster_support/config.h.in)
 set(VIRTUAL_ENV "None" CACHE STRING "Name of the virtual environment")
 set(CONDA_ACTIVATE_PATH "None" CACHE STRING "Path to conda activate path-to-conda-activate/bin/activate")
 
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
-    option(GIT_SUBMODULE "Check submodules during build" ON)
+    option(GIT_SUBMODULE "Check submodules during build" OFF)
     if(GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
@@ -41,7 +41,7 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/ParamHelper/CMakeLists.txt")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
-configure_file(./include/execution/config.h.in ../include/execution/config.h @ONLY)
+configure_file(./include/cluster_support/config.h.in ../include/cluster_support/config.h @ONLY)
 
 # Compilation options
 
@@ -53,8 +53,7 @@ if(BUILD_PYTHON_BINDINGS)
     message("Integrate python for python_bindings")
     # Add Python bindings
     add_subdirectory(ext/pybind11)
-
-    # Python virtual environment
+    # Python wrapper
     add_subdirectory(python)
 elseif(RUN_WITH_PYTHON_BACKEND)
     message("Load pybind11 module")

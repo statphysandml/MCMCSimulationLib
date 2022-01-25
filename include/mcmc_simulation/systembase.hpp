@@ -98,7 +98,6 @@ namespace mcmc {
             }
 
             // Predefined measure method
-
             virtual std::vector<std::string> perform_measure() {
                 std::vector<std::string> results;
                 for (auto const &element: measures) {

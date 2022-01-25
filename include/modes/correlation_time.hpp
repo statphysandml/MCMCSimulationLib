@@ -8,12 +8,13 @@
 #include <param_helper/params.hpp>
 #include <param_helper/json.hpp>
 
-#include "../../mcmc_simulation/markov_chain.hpp"
+#include "mcmc_simulation/markov_chain.hpp"
+#include "execution/python_integration.hpp"
 
 using json = nlohmann::json;
 
 namespace mcmc {
-    namespace execution {
+    namespace mode {
 
         class CorrelationTimeParameters : public param_helper::params::Parameters {
         public:
@@ -23,32 +24,41 @@ namespace mcmc {
                 equilibrium_time_rel_results_path = get_entry<std::string>("equilibrium_time_rel_results_path", "None");
                 start_measuring = get_entry<uint>("start_measuring", 0);
                 measure = get_entry<std::string>("measure", "Mean");
+                starting_mode = get_entry<std::string>("starting_mode", "hot");
             }
 
             CorrelationTimeParameters(
                     uint minimum_sample_size_,
                     uint maximum_correlation_time_,
                     uint start_measuring_,
-                    std::string measure_="Mean"
+                    std::string measure_="Mean",
+                    std::string starting_mode_ = "hot"
             ) : CorrelationTimeParameters(
                     json{{"minimum_sample_size",      minimum_sample_size_},
                          {"maximum_correlation_time", maximum_correlation_time_},
                          {"start_measuring",          start_measuring_},
-                         {"measure",                 measure_}}) {}
+                         {"measure",                 measure_},
+                         {"starting_mode",          starting_mode_}}) {}
             
             CorrelationTimeParameters(                    
                     uint minimum_sample_size_,
                     uint maximum_correlation_time_,
                     std::string equilibrium_time_rel_results_path_,
-                    std::string measure_="Mean"
+                    std::string measure_="Mean",
+                    std::string starting_mode_ = "hot"
             ) : CorrelationTimeParameters(
                     json{{"minimum_sample_size",      minimum_sample_size_},
                          {"maximum_correlation_time", maximum_correlation_time_},
                          {"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
                          {"start_measuring",          0},
-                         {"measure",                 measure_}}) {}
+                         {"measure",                 measure_},
+                         {"starting_mode",          starting_mode_}}) {}
 
-
+            /** @brief Write the correlation time parameters as correlation_time_params.json into root_dir
+             *
+             * @param root_dir Absolute path to the output directory
+             * @returns None
+             */
             void write_to_file(const std::string &root_dir) {
                 Parameters::write_to_file(root_dir, "correlation_time_params");
             }
@@ -63,21 +73,16 @@ namespace mcmc {
             }
 
             void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
-                const std::string running_parameter="None", const double rp_minimum=0.0,
-                const double rp_maximum=0.0, const int rp_number=0, const json simparams_json={})
+                const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {
                 #ifdef RUN_WITH_PYTHON_BACKEND
                 py::exec("from mcmctools.modes.correlation_time import correlation_time");
-                py::exec("from mcmctools.utils.utils import retrieve_rp_keys");
                 py::exec(("correlation_time(\
                     minimum_sample_size=" + std::to_string(minimum_sample_size) + ",\
                     maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
                     measure='" + measure + "',\
                     running_parameter='" +running_parameter + "',\
-                    rp_keys=retrieve_rp_keys(running_parameter='" + running_parameter + "',\
-                        rp_minimum=" + std::to_string(rp_minimum) + ",\
-                        rp_maximum=" + std::to_string(rp_maximum) + ",\
-                        rp_number=" + std::to_string(rp_number) + "),\
+                    rp_keys=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::fs::prfs::project_root() + sim_root_dir + "',\
@@ -123,6 +128,7 @@ namespace mcmc {
             uint maximum_correlation_time;
             uint start_measuring;
             std::string measure;
+            std::string starting_mode;
         };
     }
 }
