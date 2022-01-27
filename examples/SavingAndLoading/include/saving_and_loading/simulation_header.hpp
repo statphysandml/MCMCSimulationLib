@@ -1,7 +1,7 @@
 #ifndef MAIN_SIMULATION_HEADER_HPP
 #define MAIN_SIMULATION_HEADER_HPP
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
 #include <Python.h>
 #endif
 

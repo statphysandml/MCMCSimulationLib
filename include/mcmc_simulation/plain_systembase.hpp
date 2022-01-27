@@ -34,11 +34,19 @@ namespace mcmc {
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
-            void update_measures(const std::vector<std::string>& measures_)
+            void update_measures(const std::vector<std::string> measures_)
             {
-                std::cerr << "Usage of measures in execution mode so far only valid for systembase base class" << std::endl;
-                std::exit(EXIT_FAILURE);
+                measures = measures_;
+                params["measures"] = measures_;
             }
+
+            const std::vector<std::string> get_measures() const
+            {
+                return measures;
+            }
+
+        protected:
+            std::vector<std::string> measures;
         };
 
         template<typename Derived>
@@ -80,7 +88,9 @@ namespace mcmc {
                 return systembase().get_system_representation();
             }
 
-            //    virtual void save_config(int i) = 0;
+            virtual std::vector<std::string> perform_measure() = 0;
+
+            virtual std::vector<std::string> get_measure_names() = 0;
 
         private:
             Derived &systembase() {

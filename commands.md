@@ -1,9 +1,27 @@
 
+cmake
+
+https://sciencesoftcode.wordpress.com/2019/10/10/modern-cmake/
+https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1
+
+# Classic CMake
+cd pybind11
+mkdir build
+cd build
+cmake ..
+make install
+
+# CMake 3.15+
+cd pybind11
+cmake -S . -B build
+cmake --build build -j 2  # Build on 2 cores
+cmake --install build
+
+
 # Build documentation
 cmake --build . --target mcmcsimulationlib_doxygen
 
 cmake --build . --target mcmcsimulationlib-sphinx-doc
-
 
 https://breathe.readthedocs.io/en/latest/class.html#class-example
 

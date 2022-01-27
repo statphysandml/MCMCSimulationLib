@@ -75,8 +75,9 @@ namespace mcmc {
             void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
                 const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {
-                #ifdef RUN_WITH_PYTHON_BACKEND
+                #ifdef PYTHON_BACKEND
                 py::exec("from mcmctools.modes.correlation_time import correlation_time");
+                py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func");
                 py::exec(("correlation_time(\
                     minimum_sample_size=" + std::to_string(minimum_sample_size) + ",\
                     maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
@@ -86,7 +87,9 @@ namespace mcmc {
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
-                    fma=fma)").c_str());
+                    sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
+                    fma=fma,\
+                    custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif
             }
 

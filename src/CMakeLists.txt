@@ -9,11 +9,11 @@ add_library(mcmcsimulationlib STATIC
   cluster_support/gpu_cluster_integration.cpp
   cluster_support/cpu_cluster_integration.cpp
   cluster_support/virtual_env_integration.cpp
-  command_line_support/cmd.cpp)
+  command_line_support/cmdint.cpp)
   
 
 if (RUN_WITH_PYTHON_BACKEND)
-  target_compile_definitions(mcmcsimulationlib PUBLIC RUN_WITH_PYTHON_BACKEND BUILD_PYTHON_BINDINGS)
+  target_compile_definitions(mcmcsimulationlib PUBLIC PYTHON_BACKEND)
   target_link_libraries(mcmcsimulationlib PRIVATE ${target_link_libraries_python_appendix})
 endif()
 

@@ -11,8 +11,9 @@
 
 #include "util/complex_type.hpp"
 
+#include "systembase_parameters.hpp"
 #include "systembase.hpp"
-#include "plain_systembase.hpp"
+#include "measure_systembase.hpp"
 #include "markov_chain.hpp"
 #include "measure_policy.hpp"
 #include "simulation.hpp"

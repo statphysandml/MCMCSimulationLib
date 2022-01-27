@@ -3,7 +3,7 @@
 //
 #include "../../../include/mcmc_simulation/util/python_integration.hpp"
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
 
 namespace mcmc {
     namespace util {

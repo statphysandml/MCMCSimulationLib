@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     // Initialization - Only needed for GPU and CPU runs
     mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
         custom_main();
 
     // Finalization
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::execution::finalize_python();
 #endif
     return 0;

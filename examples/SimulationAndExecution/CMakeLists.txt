@@ -51,5 +51,7 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 add_executable(SimulationAndExecution src/main.cpp)
-target_compile_definitions(SimulationAndExecution PUBLIC RUN_WITH_PYTHON_BACKEND)
+if(RUN_WITH_PYTHON_BACKEND)
+    target_compile_definitions(SimulationAndExecution PUBLIC PYTHON_BACKEND)
+endif()
 target_link_libraries(SimulationAndExecution PUBLIC ${MCMCSimulationLib} ${ParamHelper} ${target_link_libraries_python_appendix})

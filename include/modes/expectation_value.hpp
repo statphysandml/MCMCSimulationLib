@@ -39,8 +39,10 @@ namespace mcmc {
                     std::exit(EXIT_FAILURE);
                 }
                 post_measures = get_entry<std::vector<std::string>>("post_measures", {});
-                n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 0);
                 starting_mode = get_entry<std::string>("starting_mode", "hot");
+                error_type = get_entry<std::string>("error_type", "statistical");
+                n_means_bootstrap = get_entry<uint>("n_means_bootstrap", 0);
+                
             }
 
             /** @brief Standard constructor with custom values for all important parameters
@@ -52,9 +54,10 @@ namespace mcmc {
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
              *  by adding "Config" to measures
+             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param error_type_ Method used to estimate the standard error of the expectation value
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
-             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
              */
             ExpectationValueParameters(
                     uint measure_interval_,
@@ -62,16 +65,18 @@ namespace mcmc {
                     uint start_measuring_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
-                    uint n_means_bootstrap_ = 0,
-                    std::string starting_mode_ = "hot"
+                    std::string starting_mode_ = "hot",
+                    std::string error_type_ = "statistical",
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"measure_interval",       measure_interval_},
                          {"number_of_measurements", number_of_measurements_},
                          {"start_measuring",        start_measuring_},
                          {"measures",               measures_},
                          {"post_measures",          post_measures_},
-                         {"n_means_bootstrap",      n_means_bootstrap_},
-                         {"starting_mode",          starting_mode_}}) {}
+                         {"starting_mode",          starting_mode_},
+                         {"error_type",             error_type_},
+                         {"n_means_bootstrap",      n_means_bootstrap_}}) {}
 
             /** @brief Same as above with the exceptation that the autocorrelation time which was precomputed by the CorrelationTimeParameters mode is loaded from file.
              *
@@ -82,9 +87,10 @@ namespace mcmc {
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
              *  by adding "Config" to measures
+             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param error_type_ Method used to estimate the standard error of the expectation value
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
-             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
              */
             ExpectationValueParameters(
                     std::string correlation_time_rel_results_path_,
@@ -92,8 +98,9 @@ namespace mcmc {
                     uint start_measuring_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
-                    uint n_means_bootstrap_ = 0,
-                    std::string starting_mode_ = "hot"
+                    std::string starting_mode_ = "hot",
+                    std::string error_type_ = "statistical",
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
                          {"measure_interval",                  0},
@@ -101,8 +108,9 @@ namespace mcmc {
                          {"start_measuring",                   start_measuring_},
                          {"measures",                          measures_},
                          {"post_measures",                     post_measures_},
-                         {"n_means_bootstrap",                 n_means_bootstrap_},
-                         {"starting_mode",                     starting_mode_}}) {}
+                         {"starting_mode",                     starting_mode_},
+                         {"error_type",                        error_type_},
+                         {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
 
             /** @brief Same as above with the exceptation that the number of Monte Carlo sweeps before the measurement which was precomputed by the EquilibriumTimeParameters mode is loaded from file.
              *
@@ -113,9 +121,10 @@ namespace mcmc {
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
              *  by adding "Config" to measures
+             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param error_type_ Method used to estimate the standard error of the expectation value
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
-             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
              */
             ExpectationValueParameters(
                     uint measure_interval_,
@@ -123,8 +132,9 @@ namespace mcmc {
                     std::string equilibrium_time_rel_results_path_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
-                    uint n_means_bootstrap_ = 0,
-                    std::string starting_mode_ = "hot"
+                    std::string starting_mode_ = "hot",
+                    std::string error_type_ = "statistical",
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"measure_interval",                  measure_interval_},
                          {"number_of_measurements",            number_of_measurements_},
@@ -132,8 +142,9 @@ namespace mcmc {
                          {"start_measuring",                   0},
                          {"measures",                          measures_},
                          {"post_measures",                     post_measures_},
-                         {"n_means_bootstrap",                 n_means_bootstrap_},
-                         {"starting_mode",                     starting_mode_}}) {}
+                         {"starting_mode",                     starting_mode_},
+                         {"error_type",                        error_type_},
+                         {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
             
             /** @brief Same as above with the exceptation that the number of sweeps before the first measurement as well as the autocorrelation time are loaded from file.
              * Both need to be computed beforhand with the EquilibriumTimeParameters and CorrelationTimeParameters mode.
@@ -145,9 +156,10 @@ namespace mcmc {
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
              *  by adding "Config" to measures
+             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param error_type_ Method used to estimate the standard error of the expectation value
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
-             * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
              */
             ExpectationValueParameters(
                     std::string correlation_time_rel_results_path_,
@@ -155,8 +167,9 @@ namespace mcmc {
                     std::string equilibrium_time_rel_results_path_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
-                    uint n_means_bootstrap_ = 0,
-                    std::string starting_mode_ = "hot"
+                    std::string starting_mode_ = "hot",
+                    std::string error_type_ = "statistical",
+                    uint n_means_bootstrap_ = 0
             ) : ExpectationValueParameters(
                     json{{"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
                          {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
@@ -165,8 +178,9 @@ namespace mcmc {
                          {"start_measuring",                   0},
                          {"measures",                          measures_},
                          {"post_measures",                     post_measures_},
-                         {"n_means_bootstrap",                 n_means_bootstrap_},
-                         {"starting_mode",                     starting_mode_}}) {}
+                         {"starting_mode",                     starting_mode_},
+                         {"error_type",                        error_type_},
+                         {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
 
             /** @brief Write the expectation values as expectation_value_params.json into root_dir
              *
@@ -194,15 +208,19 @@ namespace mcmc {
             void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
                 const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {
-                #ifdef RUN_WITH_PYTHON_BACKEND
+                #ifdef PYTHON_BACKEND
                 py::exec("from mcmctools.modes.expectation_value import expectation_value");
-                py::exec("from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func");
+                if(!post_measures.empty())
+                    py::exec("from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func");
+                else
+                    py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func; get_custom_measures_func = lambda: None;");
                 py::exec(("expectation_value(\
                     measures=" + param_helper::params::merge_list_like<std::string>(measures, post_measures).dump() + ",\
                     running_parameter='" + running_parameter + "',\
                     rp_keys=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     number_of_measurements=" + std::to_string(number_of_measurements) + ",\
+                    error_type='" + error_type + "',\
                     n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
@@ -264,8 +282,9 @@ namespace mcmc {
             uint start_measuring;
             std::vector<std::string> measures;
             std::vector<std::string> post_measures;
-            uint n_means_bootstrap;
             std::string starting_mode;
+            std::string error_type;
+            uint n_means_bootstrap;
         };
 
     }

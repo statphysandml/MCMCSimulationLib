@@ -1,4 +1,4 @@
-#include "../../include/command_line_support/cmd.hpp"
+#include "../../include/command_line_support/cmdint.hpp"
 
 namespace mcmc {
     namespace cmdint {

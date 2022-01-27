@@ -1,7 +1,7 @@
 #ifndef MAIN_PYBIND_SIMULATION_PARAMETERS_HPP
 #define MAIN_PYBIND_SIMULATION_PARAMETERS_HPP
 
-#ifdef BUILD_PYTHON_BINDINGS
+#ifdef PYTHON_BACKEND
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -11,7 +11,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include "../mcmc_simulation/header.hpp"
-#include "../execution/executer.hpp"
+#include "../modes/mode_header.hpp"
 
 
 /* Binds:
@@ -83,23 +83,23 @@ void init_simulation_parameters(py::module &m, std::string system_name)
     py::class_<SystemEquilibriumTime>(m, (system_name + "EquilibriumTime").c_str())
         .def(py::init<SystemEquilibriumTimeParameters&>())
         .def("run", &SystemEquilibriumTime::run)
-        .def("evaluate", &SystemEquilibriumTime::evaluate, "rel_results_dir"_a, "sim_root_dir"_a);
+        .def("eval", &SystemEquilibriumTime::eval, "rel_results_dir"_a, "sim_root_dir"_a);
 
     // -> Correlation Time
     typedef mcmc::simulation::Simulation<SystemParameters, mcmc::mode::CorrelationTimeParameters> SystemCorrelationTime;
     py::class_<SystemCorrelationTime>(m, (system_name + "CorrelationTime").c_str())
         .def(py::init<SystemCorrelationTimeParameters&>())
         .def("run", &SystemCorrelationTime::run)
-        .def("evaluate", &SystemCorrelationTime::evaluate, "rel_results_dir"_a, "sim_root_dir"_a);
+        .def("eval", &SystemCorrelationTime::eval, "rel_results_dir"_a, "sim_root_dir"_a);
 
     // -> Expectation Value
     typedef mcmc::simulation::Simulation<SystemParameters, mcmc::mode::ExpectationValueParameters> SystemExpectationValue;
     py::class_<SystemExpectationValue>(m, (system_name + "ExpectationValue").c_str())
         .def(py::init<SystemExpectationValueParameters&>())
         .def("run", &SystemExpectationValue::run)
-        .def("evaluate", &SystemExpectationValue::evaluate, "rel_results_dir"_a, "sim_root_dir"_a);
+        .def("eval", &SystemExpectationValue::eval, "rel_results_dir"_a, "sim_root_dir"_a);
 }
 
-#endif // BUILD_PYTHON_BINDINGS
+#endif // PYTHON_BACKEND
 
 #endif // MAIN_PYBIND_SIMULATION_PARAMETERS_HPP

@@ -13,7 +13,7 @@
 #include "config.h"
 
 #include "command_line_support/path_parameters.hpp"
-#include "command_line_support/cmd.hpp"
+#include "command_line_support/cmdint.hpp"
 
 #include "cluster_support/cpu_cluster_integration.hpp"
 #include "cluster_support/gpu_cluster_integration.hpp"

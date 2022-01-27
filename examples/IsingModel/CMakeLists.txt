@@ -15,7 +15,7 @@ set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expecta
 
 # Project specific compliation options (used by config.h.in)
 set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
-set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
+set(PYTHON_SCRIPTS_PATH "../python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
 
 # Include libraries
 find_package(ParamHelper CONFIG REQUIRED)
@@ -51,5 +51,7 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 add_executable(IsingModel src/main.cpp)
-target_compile_definitions(IsingModel PUBLIC RUN_WITH_PYTHON_BACKEND)
+if(RUN_WITH_PYTHON_BACKEND)
+    target_compile_definitions(IsingModel PUBLIC PYTHON_BACKEND)
+endif()
 target_link_libraries(IsingModel PUBLIC mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})

@@ -34,7 +34,7 @@ Todo:
 
 """
 
-from mcmctools.evaluation_module import EvaluationModule
+from mcmctools.mcmc.evaluation_module import EvaluationModule
 
 
 # ToDo: Implement simulation with non_equal rp_keys
@@ -48,16 +48,15 @@ class ModeSimulation(EvaluationModule):
                  running_parameter=None,
                  rp_keys=None,
                  rp_intervals=None, **kwargs):
-        print("Calling Simulation Mode Module Base Head")
         super().__init__(sim_base_dir=sim_base_dir, rel_data_path=rel_data_path, rel_results_path=rel_results_path,
                          running_parameter_kind=running_parameter_kind, running_parameter=running_parameter,
                          rp_keys=rp_keys, rp_intervals=rp_intervals, **kwargs)
-        print("Calling Simulation Mode Module Base Body")
 
         self.model = model
-        self.model.initialize_parameters()
+        self.model.initialize()
 
     def _run_and_evaluate(self, SimParamClass, SimClass, run, eval, simulation_mode_parameters):
+        # Call constructor of Simulation Class
         simulation_parameters = SimParamClass.generate_simulation(
             self.model.parameters, simulation_mode_parameters,
             self.rel_data_path,
@@ -69,7 +68,7 @@ class ModeSimulation(EvaluationModule):
         if eval:
             from mcmcsimulation import init_mcmc_python_binding
             init_mcmc_python_binding("./") # ToDo  Adapt Path!
-            simulation.evaluate(self.rel_results_path, "./")
+            simulation.eval(self.rel_results_path, "./")
         # assert False, "This should be also possible from file!" <-> i.e. wihtout the need to provide any parameters for the class
         # -> possilbe solutions solution:
         #  - write second constructor for loading lattice parameters form file? important distinugish between config files and json files in data dir

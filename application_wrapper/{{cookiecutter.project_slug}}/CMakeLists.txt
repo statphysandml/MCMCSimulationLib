@@ -96,5 +96,7 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 add_executable({{ cookiecutter.project_slug }} src/main.cpp)
-target_compile_definitions({{ cookiecutter.project_slug }} PUBLIC RUN_WITH_PYTHON_BACKEND)
+if(RUN_WITH_PYTHON_BACKEND)
+  target_compile_definitions({{ cookiecutter.project_slug }} PUBLIC PYTHON_BACKEND)
+endif()
 target_link_libraries({{ cookiecutter.project_slug }} PUBLIC ${MCMCSimulationLib} ${ParamHelper} ${target_link_libraries_python_appendix})

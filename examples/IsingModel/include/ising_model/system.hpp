@@ -55,7 +55,7 @@ private:
 };
 
 
-class System : public mcmc::simulation::SystemBase<System>
+class System : public mcmc::simulation::MeasureSystemBase<System>
 {
 public:
     explicit System(const SystemParameters &imsp_) :
@@ -129,29 +129,6 @@ public:
         }
         return  -1.0 * imsp.beta * site_value * (imsp.J * energy + imsp.h); // 0.5
     }
-
-    // Optional - For standard measurements, the already implemented method can be used (see systembase.hpp and the respective used methods)
-    /* std::vector<std::string> perform_measure()
-    {
-        std::vector<std::string> results;
-        results.push_back(std::to_string(0.0));
-        return results;
-    }
-
-    std::vector<std::string> get_measure_names()
-    {
-        std::vector<std::string> measure_names;
-        measure_names.emplace_back("default_measure");
-        return measure_names;
-    } */
-
-    // By overiding this function from SystemBase one can also add custom generated measures -> see LatticeSimulationLib/include/latticesimulationlib/lattice_model_empl/lattice/lattice.hpp for examples
-    /* virtual void generate_measures(const json& measure_names)
-    {
-        auto common_defined_measures = generate_systembase_measures(measure_names);
-        this->concat_measures(common_defined_measures);
-    } */
-
 
 private:
     std::vector<int> lattice;

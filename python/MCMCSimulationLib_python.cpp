@@ -41,23 +41,24 @@ void init_execution_modes(py::module &m)
 
     // Expectation Value
     py::class_<mcmc::mode::ExpectationValueParameters>(m, "ExpectationValueParameters")
-        .def(py::init<uint, uint, uint, std::vector<std::string>, std::vector<std::string>, uint, std::string>(),
+        .def(py::init<uint, uint, uint, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
             "measure_interval"_a=1, "number_of_measurements"_a=1000, "start_measuring"_a=0,
             "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
-            "n_means_bootstrap"_a=0, "starting_mode"_a="hot")
-        .def(py::init<std::string, uint, uint, std::vector<std::string>, std::vector<std::string>, uint, std::string>(),
+            "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
+        .def(py::init<std::string, uint, uint, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
             "correlation_time_rel_results_path"_a, "number_of_measurements"_a=1000, "start_measuring"_a=0,
             "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
-            "n_means_bootstrap"_a=0, "starting_mode"_a="hot")
-        .def(py::init<uint, uint, std::string, std::vector<std::string>, std::vector<std::string>, uint, std::string>(),
+            "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
+        .def(py::init<uint, uint, std::string, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
             "measure_interval"_a=1, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_path"_a,
             "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
-            "n_means_bootstrap"_a=0, "starting_mode"_a="hot")
-        .def(py::init<std::string, uint, std::string, std::vector<std::string>, std::vector<std::string>, uint, std::string>(),
+            "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
+        .def(py::init<std::string, uint, std::string, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
             "correlation_time_rel_results_path"_a, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_path"_a,
             "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
-            "n_means_bootstrap"_a=0, "starting_mode"_a="hot");
+            "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0);
 }
+
 
 PYBIND11_MODULE(mcmcsimulation, m)
 {

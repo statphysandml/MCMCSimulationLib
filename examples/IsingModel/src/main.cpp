@@ -8,7 +8,7 @@
 #include <mcmc_simulation/util/intervals.hpp>
 #include <modes/mode_header.hpp>
 
-#include <command_line_support/cmd.hpp>
+#include <command_line_support/cmdint.hpp>
 
 #include "../include/ising_model/simulation_header.hpp"
 
@@ -22,7 +22,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<SystemParameters>
         SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});
 
         auto simulation_parameters = mcmc::simulation::SimulationParameters<SystemParameters>::prepare_simulation_from_file(
-            system_params, this->path_parameters.get_rel_config_path(),
+            system_params, this->path_parameters.get_rel_data_path(),
             "systembase_params", "beta", mcmc::util::linspace(0.1, 0.7, 6));
 
         typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
@@ -33,7 +33,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<SystemParameters>
 
         typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-            this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"});
+            this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}, "hot", "statistical");
 
         // Store simulation parameters
         simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
@@ -46,7 +46,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<SystemParameters>
 int main(int argc, char **argv) {
     param_helper::proj::set_relative_path_to_project_root_dir("../");
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     cmdint_simulation.main(argc, argv);
 
     // Finalization
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::util::finalize_python();
 #endif
     return 0;
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     // Initialization - Only needed for GPU and CPU runs
     mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
         custom_main();
 
     // Finalization
-#ifdef RUN_WITH_PYTHON_BACKEND
+#ifdef PYTHON_BACKEND
     mcmc::execution::finalize_python();
 #endif
     return 0;

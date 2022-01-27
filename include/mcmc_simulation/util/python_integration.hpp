@@ -6,14 +6,14 @@
  * For a smooth integration, Python needs to be initialized at the beginning by
  * \code{.cpp}
  * // Initialization
- * #ifdef RUN_WITH_PYTHON_BACKEND
+ * #ifdef PYTHON_BACKEND
  * mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
  * #endif
  * \endcode
  * and at the end finalized by
  * \code{.cpp}
  * // Finalization
- * #ifdef RUN_WITH_PYTHON_BACKEND
+ * #ifdef PYTHON_BACKEND
  * mcmc::execution::finalize_python();
  * #endif
  * \endcode
@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-#ifdef RUN_WITH_PYTHON_BACKEND
+// #ifdef PYTHON_BACKEND
 
 #include <pybind11/embed.h>
 namespace py = pybind11;
@@ -58,6 +58,6 @@ namespace mcmc {
     }
 }
 
-#endif
+// #endif
 
 #endif //PYTHON_INTEGRATION_HPP

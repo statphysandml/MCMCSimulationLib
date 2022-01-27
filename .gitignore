@@ -183,17 +183,35 @@ include/execution/config.h
 
 examples/*
 
+!examples/ScalarTheory/
+examples/ScalarTheory/build
+examples/ScalarTheory/configs/*
+!examples/ScalarTheory/configs/.keep
+examples/ScalarTheory/cpu_cluster_runs/*
+!examples/ScalarTheory/cpu_cluster_runs/.keep
+examples/ScalarTheory/debug/*
+examples/ScalarTheory/data/*
+!examples/ScalarTheory/data/.keep
+examples/ScalarTheory/ext/*
+!examples/ScalarTheory/ext/.keep
+examples/ScalarTheory/include/scalar_theory/config.h
+examples/ScalarTheory/release/*
+examples/ScalarTheory/results/*
+!examples/ScalarTheory/results/.keep
+
 !examples/IsingModel/
 examples/IsingModel/build
 examples/IsingModel/configs/*
 !examples/IsingModel/configs/.keep
 examples/IsingModel/cpu_cluster_runs/*
 !examples/IsingModel/cpu_cluster_runs/.keep
+examples/IsingModel/debug/*
 examples/IsingModel/data/*
 !examples/IsingModel/data/.keep
 examples/IsingModel/ext/*
 !examples/IsingModel/ext/.keep
 examples/IsingModel/include/ising_model/config.h
+examples/IsingModel/release/*
 examples/IsingModel/results/*
 !examples/IsingModel/results/.keep
 

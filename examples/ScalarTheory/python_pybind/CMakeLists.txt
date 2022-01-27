@@ -1,0 +1,9 @@
+pybind11_add_module(scalartheory_python ScalarTheory_python.cpp)
+
+if(RUN_WITH_PYTHON_BACKEND)
+   target_compile_definitions(scalartheory_python PUBLIC PYTHON_BACKEND)
+    # target_link_libraries(scalartheory_python PRIVATE ${target_link_libraries_python_appendix})
+endif()
+
+target_link_libraries(scalartheory_python PUBLIC mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper)
+set_target_properties(scalartheory_python PROPERTIES OUTPUT_NAME scalartheorysimulation)
