@@ -16,5 +16,5 @@ def compute_measures(data, measure_name, custom_measures_args):
 
 """ Uncomment to overwrite the default load_data function in MCMCEvaluationLib/mcmctools/loading/loading.py """
 # def custom_load_data(rel_data_dir, running_parameter, identifier,
-#         sim_base_dir, rp_keys, custom_load_data_args):
+#         sim_base_dir, rp_values, custom_load_data_args):
 #     pass

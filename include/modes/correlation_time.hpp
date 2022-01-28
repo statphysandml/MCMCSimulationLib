@@ -83,7 +83,7 @@ namespace mcmc {
                     maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
                     measure='" + measure + "',\
                     running_parameter='" +running_parameter + "',\
-                    rp_keys=" + json(rp_intervals).dump() + ",\
+                    rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\

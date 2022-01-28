@@ -217,7 +217,7 @@ namespace mcmc {
                 py::exec(("expectation_value(\
                     measures=" + param_helper::params::merge_list_like<std::string>(measures, post_measures).dump() + ",\
                     running_parameter='" + running_parameter + "',\
-                    rp_keys=" + json(rp_intervals).dump() + ",\
+                    rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     number_of_measurements=" + std::to_string(number_of_measurements) + ",\
                     error_type='" + error_type + "',\

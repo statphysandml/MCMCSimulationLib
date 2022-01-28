@@ -50,6 +50,19 @@ namespace mcmc {
             virtual std::vector<std::string> perform_measure() = 0;
 
             virtual std::vector<std::string> get_measure_names() = 0;
+            
+            // Helper functions for pybind11
+            template<typename T>
+            void set_system_elem(int i, T &val)
+            {
+                this->operator[](i) = val;
+            }
+
+            template<typename T>
+            void set_system(T &val)
+            {
+                this->operator()() = val;
+            }
 
         protected:
             Derived &systembase() {

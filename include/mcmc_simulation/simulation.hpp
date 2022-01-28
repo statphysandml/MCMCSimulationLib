@@ -40,6 +40,8 @@ namespace mcmc
                                                                 running_parameter(get_entry<std::string>("running_parameter", "None")),
                                                                 rp_intervals(get_entry<std::vector<double>>("rp_intervals", std::vector<double>{0.0}))
             {
+                std::cout << "\n-- Setting up MCMC simulation --" << std::endl;
+
                 // *** DIRECTORIES ***
                 // Create folder in data directory if not present
                 if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_path))
@@ -70,7 +72,7 @@ namespace mcmc
                 if(!systembase_params->get_measures().empty())
                     std::cout << " -- Note that due to the usage of execution parameters, measures set by systembase parameters are ignored -- " << std::endl;
                 auto execution_params_measures = execution_params->get_measures();
-                systembase_params->update_measures(execution_params_measures);
+                systembase_params->set_measures(execution_params_measures);
 
                 // *** RUNNING PARAMETER ***
                 if(running_parameter != "None")

@@ -15,7 +15,7 @@ if __name__ == "__main__":
                                 rel_results_path="./data/Test/results/",
                                 # running_parameter_kind="model_params",
                                 running_parameter="beta",
-                                rp_keys=[0.1, 0.4, 0.7])
+                                rp_values=[0.1, 0.4, 0.7])
 
     simulation.run_equilibrium_time_simulation(measure="Mean", sample_size=100, number_of_steps=1000)
 

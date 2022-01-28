@@ -44,16 +44,6 @@ namespace mcmc {
 
             // Stores all measure objects - these objects need to created by the derived class by calling generate_measures in void initialize()
             std::vector<std::unique_ptr<measures::Measure<Derived>>> measures;
-
-            /* using SystemBase<Derived>::update;
-            using SystemBase<Derived>::init;
-            using SystemBase<Derived>::measure;
-            using SystemBase<Derived>::measure_names;
-            using SystemBase<Derived>::size;
-            using SystemBase<Derived>::operator[];
-            using SystemBase<Derived>::operator();
-            using System */
-
         };
 
         template<typename Derived>

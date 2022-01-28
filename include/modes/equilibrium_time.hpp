@@ -93,7 +93,7 @@ namespace mcmc {
                     confidence_range=" + std::to_string(confidence_range) + ",\
                     confidence_window=" + std::to_string(confidence_window) + ",\
                     running_parameter='" + running_parameter + "',\
-                    rp_keys=" + json(rp_intervals).dump() + ",\
+                    rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\

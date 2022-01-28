@@ -36,7 +36,7 @@ namespace mcmc {
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
-            void update_measures(const std::vector<std::string> measures_)
+            void set_measures(const std::vector<std::string> measures_)
             {
                 measures = measures_;
                 params["measures"] = measures_;
