@@ -4,8 +4,13 @@
 
 #include <mcmc_simulation/header.hpp>
 
+#include <variant>
 
 // Example implementation of a scalar theory
+
+
+template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
 
 class ScalarTheory;
@@ -179,23 +184,33 @@ public:
 
     std::vector<std::string> perform_measure()
     {
-        std::vector<std::string> results;
+        std::vector<std::variant<int, double, std::string>> results;
+        std::vector<std::string> results_str;
         for(const auto measure_name: get_measure_names())
         {
             if(measure_name == "Mean")
-                results.push_back(std::to_string(mean()));
+                results.push_back(mean());
             else if(measure_name == "AbsMean")
-                results.push_back(std::to_string(abs_mean()));
+                results.push_back(abs_mean());
             else if(measure_name == "SecondMoment")
-                results.push_back(std::to_string(second_moment()));
+                results.push_back(second_moment());
             else if(measure_name == "FourthMoment")
-                results.push_back(std::to_string(fourth_moment()));
+                results.push_back(fourth_moment());
             else if(measure_name == "Action")
-                results.push_back(std::to_string(action() / get_size()));
+                results.push_back(action() / get_size());
             else if(measure_name == "Config")
                 results.push_back(configuration());
         }
-        return results;
+        std::transform(results.begin(), results.end(), results_str.begin(), []
+            (std::variant<int, double, std::string>& val)
+            { return std::visit(
+                overload{
+                    [](const int &va)       { return std::to_string(va); },
+                    [](const double &va)   { return std::to_string(va); },
+                    [](const std::string &va)   { return va; }
+                }, val);
+            });
+        return results_str;
     }
 
     std::vector<std::string> get_measure_names()

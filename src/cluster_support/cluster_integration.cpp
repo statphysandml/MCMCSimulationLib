@@ -5,7 +5,6 @@
 
 namespace mcmc {
     namespace cluster {
-
         // Project dependent parameters
         std::string executable_name = "None";
         std::string cluster_mode = "local";

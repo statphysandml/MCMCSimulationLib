@@ -143,12 +143,16 @@ namespace mcmc {
         /** @brief Returns all variables of the system in a comma separated list. */
         template<typename SB>
         struct Config : public Measure<SB> {
-            std::string measure(const SB &system) override {
+            static auto compute_measure(const SB &system) {
                 std::string config = std::to_string(system[0]);
                 for (uint i = 1; i < system.size(); i++) {
                     config += ", " + std::to_string(system[i]);
                 }
                 return config;
+            }
+
+            std::string measure(const SB &system) override {
+                return compute_measure(system);
             }
 
             std::string name() override {

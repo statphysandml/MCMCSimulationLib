@@ -39,32 +39,35 @@ Alternatively
 
 Basic Structure
 
-- Further mention in each file which parameters need to be set and why!
+- Further mention in each file which parameters need to be set and why! (-> in particular with respect to the initializations)
 - Replace basic example by phi^4 theory
 
 C++ Simulation possibilities
-- Based on Simulation class and Mode class -> Explains three main execution modes, Simulation class and basic evaluations -> /data and /results folder
-- Mixing based on the different constructores of the simulation class
-- Based on stored parameters / from_file -> /config folder -> Explains loading from file <-> Explain different constructors and point out their usages:
-    - without mcmc::cmd <-> solely based on usage of the simulation::generate_from_file constructore (point out that this is also used in from_file and from_args)
-    - mcmc::cmd::from_file: Allows local, on cpu and on gpu execution and preparation
-    - mcmc::cmd::from_args: Allows local execution based on arguments passed in the terminal to the executable (used by from_file simulations), point out that from_args does the same as the local from_file simulation
+- Based on Simulation class and Mode class -> Explains three main execution modes, Simulation class and basic evaluations -> /data and /results folder (#1 Scalar Theory simulation) ((mcmc::SimulationParameter::generate_simulation)) <->
+Note that data directory is not cleaned before any run, allowing for running several simulations at different times, for example, one for each parameters on a cpu (very helpful here)
+- Based on stored parameters / from_file -> /config folder -> Explains loading from file <-> Explain different constructors and point out their usages
+    - ### Storing ###
+    - system_parameters.write_to_file(), execution_parameters.write_to_file() (#2 More generic simulation from file)
+    - simulation_parameters.write_to_file(), execution_parameters.write_to_file() (#3 Loading and Saving example for simple simulation)
+    - SimulationParameters::perpare_simulation_from_file (allows for an easy simulation with different running parameters, more naturally) (#4 Full simulation, used by Ising Model example) - Useful for running simulation at a different time, can also be used to run simulation with different running parameters at different times..as long as the number of samples doesn't change...
+    - ### Loading ###
+    - mcmc::SimulationParamaters::generate_simulation() with path_parameters allows for rerunning the same simulation with different parameters (note that the rel_data_path needs to be set) (#2 More generic simulation from file)
+    - mcmc::SimulationParameters::generate_simulation_from_file() solely based on parameters (3# Loading and Saving example for simple simulation, #4 Full simulation, used by Ising Model example)
+
+- Command line interface
+    - mcmc::cmdint::CmdIntSim: Allows local execution based on arguments passed in the terminal to the executable (used by from_file simulations), point out that from_args does the same as the local from_file simulation
+
+- GPU / CPU support
+    - extend mcmc::cmdi by mcmc::cluster::execute: Allows local, on cpu and on gpu execution and preparation
+
 - Based on default parameters (not that important at the moment)
 
 Python Evaluation possibilites
-- EvaluationModule class
+- EvaluationModule class (evaluation.py) <-> Allows to recompute mode expectation values and do load all kinds of results
 
-C++ Simulation in Python based on python binding
-- Bind your model to python (happens in the python_pybind/ directory of your project whereby all important C++ methods are wrapped up in the system class in "ising_model.py" and the c++ methods are binded in IsingModel_python.cpp using mcmc_pybind/pybind_simulation_parameters.hpp.)
-- The wrapped class can then be utilized by ModeSimulation (of the MCMCSimulationLib/python_bind/ module) <-> run and evaluate the C++ model in the same manner as done in the C++ Simulations
-- In addition the MCMCSimulation class of the MCMCEvaluationLib implements the same methods as the systembase class and implements the same execution modes as C++. This class can also be used with models written in Python!
+C++ Simulation in Python based on python binding (python_pybind/)
+- Mode simulation (mode_simulation.py) - Features the possibility to execute the same simulations as above just from python (inherits from EvaluationModule class and extends this class by the possiblity to also execute the simulations in C++)
+- Custom simulation (complete access on the mcmc model of C++ in python <-> can be used in combination with the MCMCSimulation class to also perform the same simulations with a full control in python)
 
 Pure Python simulation
-- Based on the MCMCSimulation and EvaluationModule class (are these fully independent of C++?)
-
-
-Examples:
-
-- Simulate and execute: Example for executing a simulation based on the Simulation class and Mode class - Without storing any parameters in config/
-- Saving and loading: Example for generating and saving the simulation parmaters in the config directory and a subsequent loading and running of the simluation
-- IsingModel: Full from file simulation that can also be run on cpu or gpu!
+- Based on the MCMCSimulation and EvaluationModule class

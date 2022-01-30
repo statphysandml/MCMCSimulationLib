@@ -17,7 +17,6 @@ using namespace pybind11::literals;
 
 namespace mcmc {
     namespace pybind {
-
         void init_functions(py::module &m)
         {
             m.def("init_mcmc_python_binding", &mcmc::util::initialize_python, "python_modules_path"_a, "fma_develop"_a=false, "executing_from_python"_a=true);

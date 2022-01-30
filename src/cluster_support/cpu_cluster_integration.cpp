@@ -3,7 +3,6 @@
 
 namespace mcmc {
     namespace cluster {
-
         void prepare_execution_on_cpu_cluster(
             const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const std::string executable_name, const bool eval, const bool run, const std::vector<std::string> additional_args) {

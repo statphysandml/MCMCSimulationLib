@@ -1,6 +1,3 @@
-# ToDo:
-# - Rewrite measurements as variant
-
 from scalartheorysimulation import ScalarTheoryEquilibriumTimeParameters
 from scalartheorysimulation import ScalarTheoryEquilibriumTime
 from scalartheorysimulation import ScalarTheoryCorrelationTimeParameters
