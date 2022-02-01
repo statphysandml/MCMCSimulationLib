@@ -1,4 +1,6 @@
 import os
+import time
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -11,11 +13,11 @@ if __name__ == '__main__':
     # Path to where to store
     root = "./datapt/"
 
-    ''' Data generation with storage of a permament file '''
+    ''' Data generation with storage of a permanent file '''
 
     data_generator_args = {
-        # BatchConfigDataGenerator Args
-        "data_type": "target_param",
+        # BatchGraphConfigDataGenerator Args
+        "dimensions": [4, 4],
         "complex_config": False,
         # Args for ConfigurationLoader
         "path": path,
@@ -31,37 +33,58 @@ if __name__ == '__main__':
 
     prepare_in_memory_dataset(
         root=root,
-        batch_size=89,
+        batch_size=128,
         data_generator_args=data_generator_args,
-        data_generator_name="BatchConfigDataGenerator",
+        data_generator_name="BatchGraphDataGenerator",
         data_generator_factory=data_generator_factory
     )
 
     # Load in memory dataset
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_dataset
+
     dataset = load_in_memory_dataset(
         root=root,
         data_generator_factory=data_generator_factory,
-        rebuild=False
-        # sample_data_generator_name="ConfigDataGenerator"  # optional: for a generation of new samples
+        rebuild=False,
+        dataset_type="geometric"
     )
 
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_data_loader
-    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(0, 3000), shuffle=True,
+    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(0, 3000), shuffle=False,
                                                       num_workers=0)
+    test_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(3000, 4000), shuffle=False,
+                                                  num_workers=0)
+
+    t = time.time()
 
     # Load training data
     for batch_idx, batch in enumerate(training_data_loader):
-        data, target = batch
-        print(batch_idx, len(data))
+        data = batch
+        print(batch_idx, len(data.y))
         if batch_idx == 0: # Useful for verifying the shuffle parameter of the data loader
-            print(data)
+            print("Training", data.y.cpu().numpy().flatten())
 
     # Load training data - Second epoch
     for batch_idx, batch in enumerate(training_data_loader):
-        data, target = batch
-        print(batch_idx, len(data))
+        data = batch
+        print(batch_idx, len(data.y))
         if batch_idx == 0:
-            print(data)
+            print("Training", data.y.cpu().numpy().flatten())
 
+    elapsed_time_from_file = np.round_(time.time() - t, 3)
 
+    # Load test data
+    for batch_idx, batch in enumerate(test_data_loader):
+        data = batch
+        print(batch_idx, len(data.y))
+        if batch_idx == 0: # Useful for verifying the shuffle parameter of the data loader
+            print("Test", data.y.cpu().numpy().flatten())
+
+    # Load test data - Second epoch
+    for batch_idx, batch in enumerate(test_data_loader):
+        data = batch
+        print(batch_idx, len(data.y))
+        if batch_idx == 0: # Useful for verifying the shuffle parameter of the data loader
+            print("Test", data.y.cpu().numpy().flatten())
+
+    print("From File (GeometricDataLoader):", elapsed_time_from_file, " sec.")

@@ -70,7 +70,7 @@ public:
     }
 
     // Optional - For standard measurements, the already implemented method can be used (see systembase.hpp and the respective used methods)
-    /* std::vector<std::string> perform_measure()
+    /* std::vector<std::string> perform_measurements()
     {
         std::vector<std::string> results;
         results.push_back(std::to_string(0.0));

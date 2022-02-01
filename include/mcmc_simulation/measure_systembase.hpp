@@ -14,7 +14,7 @@ namespace mcmc {
         class MeasureSystemBase : public SystemBase<Derived> {
         public:
             // Predefined measure method
-            virtual std::vector<std::string> perform_measure() {
+            virtual std::vector<std::string> perform_measurements() {
                 std::vector<std::string> results;
                 for (auto const &element: measures) {
                     results.push_back(element->measure(this->systembase()));

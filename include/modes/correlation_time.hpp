@@ -87,7 +87,6 @@ namespace mcmc {
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
                     sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
-                    sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
                     fma=fma,\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif

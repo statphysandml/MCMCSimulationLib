@@ -170,7 +170,7 @@ git pull --recurse-submodules
 
 It is very likely that one wants to compute measures on the configurations which are not implemeted already. There is the possiblity to add code to do this either in Python or C++.
 
-In C++, it is done by overloading the generate_measures function of SystemBase class or the perform_measure and get_measure_names functions.
+In C++, it is done by overloading the generate_measures function of SystemBase class or the perform_measurements and get_measure_names functions.
 
 In Python, one can generate a custom_measures.py file that implements a compute_measures function. For an example, see the Ising model implementation, i.e., the files in the examples/IsingModel/python_scripts/ directory. The path to this scripts needs to be set in C++. This can be done with the help of `PYTHON_SCRIPTS_PATH` CMake variable.
 

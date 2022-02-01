@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     auto kappa_intervals = mcmc::util::linspace(0.22, 0.3, 9);
 
     // Setting up system parameters
-    ScalarTheoryParameters system_params(0.3, 0.02, {32, 32}, 0.01, 100);
+    ScalarTheoryParameters system_params(0.3, 0.02, {4, 4}, 0.01, 100);
 
     /* //[ Equilibrium time
     
@@ -101,11 +101,13 @@ int main(int argc, char **argv) {
 
     ExpectationValueParams expectation_value_parameters(
             1, 1000, 100,
-            {"Mean", "AbsMean", "SecondMoment", "MagenticSusceptibility", "BinderCumulant", "Action", "Config"}, {}, "hot", "statistical");
+            {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical");
+
+    mcmc::measures::ReadableMeasureParameters readable_measures(rel_data_path);
 
     auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters<
             ScalarTheoryParameters, ExpectationValueParams>::generate_simulation(
-            system_params, expectation_value_parameters, rel_data_path,
+            system_params, expectation_value_parameters, readable_measures,
             "systembase_params", "kappa", kappa_intervals);
 
     // Run and evaluate the simulation

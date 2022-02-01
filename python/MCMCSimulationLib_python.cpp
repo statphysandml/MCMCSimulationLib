@@ -14,12 +14,22 @@ using namespace pybind11::literals;
 #include <mcmc_simulation/header.hpp>
 #include <mcmc_simulation/util/python_integration.hpp>
 #include <modes/mode_header.hpp>
+#include <mcmc_simulation/measurement/readable_measure.hpp>
 
 namespace mcmc {
     namespace pybind {
         void init_functions(py::module &m)
         {
             m.def("init_mcmc_python_binding", &mcmc::util::initialize_python, "python_modules_path"_a, "fma_develop"_a=false, "executing_from_python"_a=true);
+        }
+
+        void init_measurement_systems(py::module &m)
+        {
+            py::class_<mcmc::measures::ReadableMeasureParameters>(m, "ReadableMeasureParameters")
+                .def(py::init<const std::string>(), "rel_data_path"_a);
+            
+            py::class_<mcmc::measures::ReadableMeasure>(m, "ReadableMeasure")
+                .def(py::init<mcmc::measures::ReadableMeasureParameters&>(), "rmp"_a);
         }
 
         void init_execution_modes(py::module &m)
@@ -65,6 +75,7 @@ namespace mcmc {
 PYBIND11_MODULE(mcmcsimulation, m)
 {
     mcmc::pybind::init_functions(m);
+    mcmc::pybind::init_measurement_systems(m);
     mcmc::pybind::init_execution_modes(m);
 
     m.doc() = "Python Bindings for MCMCSimulationLib";

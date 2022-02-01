@@ -2,6 +2,8 @@
 #define SYSTEMBASE_HPP
 
 #include <vector>
+#include <variant>
+
 
 #include <param_helper/params.hpp>
 
@@ -11,21 +13,29 @@ namespace mcmc {
         template<typename Derived>
         class SystemBase {
         public:
-            void update(uint measure_interval = 1) {
-                systembase().update_step(measure_interval);
-            }
-
             void init(std::string starting_mode) {
                 systembase().initialize(starting_mode);
             }
 
-            std::vector<std::string> measure() {
-                return systembase().perform_measure();
+            /* void init_measurements(std::string starting_mode, uint rep=1) {
+                systembase().initialize_measurements(starting_mode, rep);
+            } */
+            
+            void update(uint measure_interval = 1) {
+                systembase().update_step(measure_interval);
+            }
+
+            auto measure() {
+                return systembase().perform_measurements();
             }
 
             std::vector<std::string> measure_names() {
                 return systembase().get_measure_names();
             }
+
+            /* void fina_measurements(std::string starting_mode, uint rep=1) {
+                systembase().finalize_measurements(starting_mode, rep);
+            } */
 
             const auto size() const {
                 return systembase().get_size();
@@ -46,10 +56,6 @@ namespace mcmc {
             auto &operator()() {
                 return systembase().get_system_representation();
             }
-
-            virtual std::vector<std::string> perform_measure() = 0;
-
-            virtual std::vector<std::string> get_measure_names() = 0;
             
             // Helper functions for pybind11
             template<typename T>

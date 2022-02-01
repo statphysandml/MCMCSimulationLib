@@ -4,13 +4,8 @@
 
 #include <mcmc_simulation/header.hpp>
 
-#include <variant>
 
 // Example implementation of a scalar theory
-
-
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
 
 class ScalarTheory;
@@ -84,6 +79,16 @@ public:
         }
     }
 
+    void initialize(std::string starting_mode)
+    {        
+        lattice = std::vector<double> (get_size(), 3.0);
+        if(starting_mode == "hot")
+        {
+            for(auto &site : lattice)
+                site = normal(mcmc::util::gen);
+        }
+    }
+
     // Hamiltonian Monte Carlo
     void update_step(uint measure_interval=1)
     {
@@ -120,16 +125,6 @@ public:
                 lattice = current_lattice; // Reject
             }
             // else{} // Accept
-        }
-    }
-
-    void initialize(std::string starting_mode)
-    {        
-        lattice = std::vector<double> (get_size(), 3.0);
-        if(starting_mode == "hot")
-        {
-            for(auto &site : lattice)
-                site = normal(mcmc::util::gen);
         }
     }
 
@@ -182,10 +177,13 @@ public:
         return drift_;
     }
 
-    std::vector<std::string> perform_measure()
+    /* void initialize_measurements(std::string starting_mode, uint rep=1)
+    {} */
+
+    auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        std::vector<std::string> results_str;
+        // std::vector<std::string> results_str;
         for(const auto measure_name: get_measure_names())
         {
             if(measure_name == "Mean")
@@ -201,7 +199,7 @@ public:
             else if(measure_name == "Config")
                 results.push_back(configuration());
         }
-        std::transform(results.begin(), results.end(), results_str.begin(), []
+        /* std::transform(results.begin(), results.end(), results_str.begin(), []
             (std::variant<int, double, std::string>& val)
             { return std::visit(
                 overload{
@@ -209,9 +207,12 @@ public:
                     [](const double &va)   { return std::to_string(va); },
                     [](const std::string &va)   { return va; }
                 }, val);
-            });
-        return results_str;
+            }); */
+        return results;
     }
+
+    /* void finalize_measurements(std::string starting_mode, uint rep=1)
+    {} */
 
     std::vector<std::string> get_measure_names()
     {

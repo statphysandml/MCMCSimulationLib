@@ -63,11 +63,15 @@ class ModeSimulation(EvaluationModule):
 
     def _run_and_evaluate(self, SimParamClass, SimClass, run, eval, simulation_mode_parameters):
         # Call constructor of Simulation Class
+        from mcmcsimulation import ReadableMeasureParameters
+        measurement_system = ReadableMeasureParameters(self.rel_data_path)
+
         simulation_parameters = SimParamClass.generate_simulation(
-            self.model.model_parameters, simulation_mode_parameters, self.rel_data_path,
+            self.model.model_parameters, simulation_mode_parameters, measurement_system,
             self.running_parameter_kind, self.running_parameter, self.rp_values
         )
-        simulation = SimClass(simulation_parameters)
+        
+        simulation = SimClass(simulation_parameters)        
         if run:
             simulation.run()
         if eval:

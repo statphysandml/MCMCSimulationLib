@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 
+
 namespace mcmc {
     namespace measures {
         // Measure policies

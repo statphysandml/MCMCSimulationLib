@@ -5,6 +5,7 @@
 #include <param_helper/params.hpp>
 #include <param_helper/json.hpp>
 
+
 using json = nlohmann::json;
 
 
@@ -40,8 +41,7 @@ namespace mcmc {
 
         private:
             template<typename>
-            friend
-            class MarkovChain;
+            friend class MarkovChain;
 
             uint measure_interval;
             uint number_of_measurements;
@@ -53,10 +53,11 @@ namespace mcmc {
         template<typename SBP>
         class MarkovChain {
         public:
-            explicit MarkovChain(const MarkovChainParameters &mp_, SBP &sbp_, std::ofstream &os_) : mp(mp_), sbp(sbp_),
-                                                                                                    os(os_) {}
+            explicit MarkovChain(const MarkovChainParameters &mp_, SBP &sbp_) : mp(mp_), sbp(sbp_)
+            {}
 
-            void run() {
+            template<typename MS>
+            void run(MS &measurements) {
                 unsigned long long int total_number_of_sweeps = long(mp.repetitions) * long(mp.number_of_measurements) * long(mp.measure_interval) + long(mp.repetitions) * long(mp.start_measuring);
                 std::cout << "\n --- Running " << mp.repetitions << " Markov Chain(s) to make " << mp.number_of_measurements
                           << " measurements with a measure interval of " <<
@@ -80,20 +81,12 @@ namespace mcmc {
                     if(mp.repetitions > 1)
                         bar.progress(z, mp.repetitions);
                     
-
+                    // Initialize system
                     auto systembase = sbp.generate(); // Smart pointer
                     systembase->init(starting_mode);
-                    
-                    // Write header of output file
-                    if (z == 0) {
-                        std::vector<std::string> measure_names = systembase->measure_names();
-                        if(measure_names.size() > 0)
-                            os << measure_names[0];
-                        for (uint i = 1; i < measure_names.size(); i++)
-                            os << "\t" << measure_names[i];
-                        if(measure_names.size() > 0)
-                            os << std::endl;
-                    }
+
+                    // Initialize measurements
+                    measurements.initialize_measurements(starting_mode, systembase->measure_names(), z);
                     
                     // Equilibriate
                     systembase->update(mp.start_measuring);
@@ -109,16 +102,15 @@ namespace mcmc {
                             bar.progress(i, mp.number_of_measurements);
                         
                         // Measure
-                        std::vector<std::string> measures = systembase->measure();
-                        if(measures.size() > 0)
-                            os << measures[0];
-                        for (uint j = 1; j < measures.size(); j++)
-                            os << "\t" << measures[j];
-                        if(measures.size() > 0)
-                            os << "\n";
+                        auto measures = systembase->measure();
+                        measurements.process_measurements(measures);
+                        
                         // Update for measure_interval steps
                         systembase->update(mp.measure_interval);
                     }
+
+                    // Finalize measurements
+                    measurements.finalize_measurements();
 
                     // Finalizing progress bar based on number of measurements
                     if(mp.repetitions == 1)
@@ -142,7 +134,6 @@ namespace mcmc {
         private:
             const MarkovChainParameters &mp;
             SBP &sbp;
-            std::ofstream &os;
         };
     }
 }

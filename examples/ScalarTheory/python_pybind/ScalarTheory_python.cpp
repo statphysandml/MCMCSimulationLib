@@ -25,7 +25,7 @@ void init_scalar_theory(py::module &m)
     mcmc::pybind::init_systembase_methods<mcmc::simulation::SystemBase<ScalarTheory>>(scalar_theory_base);
     // Initialize further methods of ScalarTheory
     py::class_<ScalarTheory>(m, "ScalarTheorySystem", scalar_theory_base)
-        .def(py::init<ScalarTheoryParameters&>(), "stsp");     
+        .def(py::init<ScalarTheoryParameters&>(), "stsp"_a);     
 }
 
 PYBIND11_MODULE(scalartheorysimulation, m)
@@ -33,7 +33,7 @@ PYBIND11_MODULE(scalartheorysimulation, m)
     // Initialize mcmc::simulation::SystemBaseParameters to be provide access to its methods in init_scalar_theory
     mcmc::pybind::init_systembase_parameters(m);
     // Inilialize simulation classes for mode simulations
-    mcmc::pybind::init_simulation_modes<ScalarTheoryParameters, ScalarTheory>(m, "ScalarTheory");
+    mcmc::pybind::init_simulation_modes<ScalarTheoryParameters, ScalarTheory, mcmc::measures::ReadableMeasureParameters>(m, "ScalarTheory");
     // Initialize standalone version of ScalarTheory for custom simulations
     init_scalar_theory(m);
 

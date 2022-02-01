@@ -10,10 +10,10 @@ if __name__ == '__main__':
     from mcmctools.pytorch.data_generation.configdatagenerator import ConfigDataGenerator
 
     data_generator_args = {
-        "path": "../../data/IsingModelSimulation/",
-        "total_number_of_data_per_file": 10000,
+        "path": "./data/Test/",
+        "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "beta",
+        "running_parameter": "kappa",
         "chunksize": 400
     }
 
@@ -60,10 +60,10 @@ if __name__ == '__main__':
     from mcmctools.pytorch.data_generation.batchconfigdatagenerator import BatchConfigDataGenerator
 
     data_generator_args = {
-        "path": "../../data/IsingModelSimulation/",
-        "total_number_of_data_per_file": 10000,
+        "path": "./data/Test/",
+        "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "beta",
+        "running_parameter": "kappa",
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
@@ -103,16 +103,16 @@ if __name__ == '__main__':
         data, target = batch
         print(batch_idx, len(data))
 
-    ''' Same as above with using the load_in_real_time_data_loader function '''
+    ''' Same as above with using the load_in_real_time_dataset and load_in_real_time_data_loader function '''
 
     data_generator_args = {
         # ConfigDataGenerator Args
         "data_type": "target_param",
         # Args for ConfigurationLoader
-        "path": "../../data/IsingModelSimulation/",
-        "total_number_of_data_per_file": 10000,
+        "path": "./data/Test/",
+        "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "beta",
+        "running_parameter": "kappa",
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
@@ -121,17 +121,22 @@ if __name__ == '__main__':
         'shuffle': True,  # Used correctly by the Dataloader??
         'num_workers': 0}
 
-    from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_real_time_data_loader
+    from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_real_time_dataset
     from mcmctools.pytorch.data_generation.datagenerationroutines import data_generator_factory
-    data_loader = load_in_real_time_data_loader(
-        batch_size=89,
+    dataset = load_in_real_time_dataset(
         data_generator_args=data_generator_args,
+        batch_size=89,
         data_generator_name="BatchConfigDataGenerator",
         data_generator_factory=data_generator_factory,
-        data_loader_params=data_loader_params,
-        data_loader_name="BatchDataLoader",
         seed=None,
         set_seed=True
+    )
+
+    from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_real_time_data_loader
+    data_loader = load_in_real_time_data_loader(
+        dataset=dataset,
+        data_loader_params=data_loader_params,
+        data_loader_name="BatchDataLoader"
     )
 
     # Load training data
