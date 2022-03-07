@@ -16,8 +16,6 @@
 #include <iostream>
 #include "cluster_support/config.h"
 
-#ifdef RUN_WITH_VITUAL_ENV
-
 namespace mcmc {
     namespace virtualenv {
             // Global parameters
@@ -36,8 +34,6 @@ namespace mcmc {
             void set_virtual_env(const std::string virtual_env_);
     }
 }
-
-#endif
 
 
 #endif //VIRTUAL_ENV_INTEGRATION

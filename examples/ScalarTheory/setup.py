@@ -8,9 +8,12 @@ from setuptools.command.build_ext import build_ext
 
 
 class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
+    def __init__(self, name, mcmcsimulationlib_cmake_prefix_path=None, sourcedir=''):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
+
+
+        self.mcmcsimulationlib_cmake_prefix_path = mcmcsimulationlib_cmake_prefix_path
 
 
 class CMakeBuild(build_ext):
@@ -33,9 +36,9 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DBUILD_DOCS=OFF',
                       '-DBUILD_TESTING=OFF',
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPYTHON_EXECUTABLE=' + sys.executable,
-                      '-DCMAKE_PREFIX_PATH=/home/lukas/MCMCSimulationLib/install'
-                     ]
+                      '-DPYTHON_EXECUTABLE=' + sys.executable]
+        if hasattr(ext, 'mcmcsimulationlib_cmake_prefix_path') and ext.mcmcsimulationlib_cmake_prefix_path != None:
+            cmake_args += ['-DCMAKE_PREFIX_PATH=' + ext.mcmcsimulationlib_cmake_prefix_path]
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -59,11 +62,13 @@ class CMakeBuild(build_ext):
 setup(
     name='ScalarTheory',
     version='0.0.1',
-    author='Lukas Kades',
-    author_email='statphysandml@thphys.uni-heidelberg.de',
+    author='Your Name',
+    author_email='yourmail@address.de',
     description='Add description here',
     long_description='',
-    ext_modules=[CMakeExtension('ScalarTheory')],
+    ext_modules=[CMakeExtension(
+        name='ScalarTheory', mcmcsimulationlib_cmake_prefix_path='/home/lukas/MCMCSimulationLib/install'
+    )],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     classifiers=[
@@ -71,7 +76,7 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
     ],
-    # url='https://github.com/statphysandml/MCMCEvaluationLib',
+    url='https://github.com/your_url',
     package_dir={"scalartheory": "python_pybind"},
     packages=["scalartheory"]
 )

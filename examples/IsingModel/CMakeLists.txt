@@ -7,8 +7,10 @@ project(IsingModel VERSION 0.0.1 LANGUAGES CXX)
 include(GNUInstallDirs)
 
 # Define the minimum C++ standard that is required
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # General compilation options
 set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expectation values, etc.")
@@ -19,31 +21,45 @@ set(PYTHON_SCRIPTS_PATH "../python_scripts" CACHE STRING "Path to the potential 
 
 # Include libraries
 find_package(ParamHelper CONFIG REQUIRED)
-# message("ParamHelper = ${ParamHelper}")
-# include_directories(../../ext/ParamHelper/include/)
-
 find_package(MCMCSimulationLib CONFIG REQUIRED)
-# message("MCMCSimulationLib = ${MCMCSimulationLib}")
-# include_directories(../../include/)
-
 
 configure_file(./include/ising_model/config.h.in ../include/ising_model/config.h @ONLY)
 
-
 if(RUN_WITH_PYTHON_BACKEND)
-    # Paths relative to path to CMakeLists.txt and relative to build/ path
-    file(COPY ../../ext/pybind11 DESTINATION ../ext)
-    add_subdirectory(ext/pybind11)
     set(target_link_libraries_python_appendix "pybind11::embed")
-    # Or without pybind11:
-    # set(Python3_FIND_VIRTUALENV "FIRST")  
-    # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-    # include_directories(${Python3_INCLUDE_DIRS})
-    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
     message("Running with python backend enabled.")
 else()
     # Use library without the integration of python code
-    message("Running with python backend disabled")
+    message("Running with python backend disabled.")
+endif()
+
+if(RUN_WITH_PYTHON_BACKEND AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11")
+    find_package(Git QUIET)
+    if(GIT_FOUND)
+        message("Downloading pybind11 into ${CMAKE_CURRENT_SOURCE_DIR}/ext")
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext")
+        execute_process(COMMAND ${GIT_EXECUTABLE} clone https://github.com/pybind/pybind11.git
+                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext"
+                RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git clone https://github.com/pybind/pybind11.git failed with ${GIT_SUBMOD_RESULT}.")
+        endif()
+        execute_process(COMMAND ${GIT_EXECUTABLE} checkout "v2.6.2"
+                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11"
+                RESULT_VARIABLE GIT_SUBMOD_RESULT OUTPUT_QUIET ERROR_QUIET)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git checkout \"v2.6.2\" failed with ${GIT_SUBMOD_RESULT}.")
+        endif()
+    endif()
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/pybind11")
+    message(FATAL_ERROR "pybind11 was not added to ${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11. Please install git or add pybind11 manually.")
+endif()
+
+if(RUN_WITH_PYTHON_BACKEND)
+    message("Load pybind11 module")
+    add_subdirectory(ext/pybind11)
 endif()
 
 # This prints a summary of found dependencies
@@ -51,6 +67,7 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 add_executable(IsingModel src/main.cpp)
+
 if(RUN_WITH_PYTHON_BACKEND)
     target_compile_definitions(IsingModel PUBLIC PYTHON_BACKEND)
 endif()

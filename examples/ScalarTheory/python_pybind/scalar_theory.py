@@ -9,7 +9,7 @@ from scalartheorysimulation import ScalarTheoryExpectationValue
 from mcmc.mcmc_system import MCMCSystem
 
 
-class ScalarTheory(MCMCSystem): 
+class ScalarTheory(MCMCSystem):
     # Static variables used by parent classmethods for mode simulation
     EquiTimeSimParams = ScalarTheoryEquilibriumTimeParameters
     EquiTimeSim = ScalarTheoryEquilibriumTime

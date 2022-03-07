@@ -8,8 +8,7 @@
 namespace mcmc {
     namespace simulation {
 
-        class SystemBaseParameters : public param_helper::params::Parameters {
-        public:
+        struct SystemBaseParameters : public param_helper::params::Parameters {
             SystemBaseParameters(const json params_) : Parameters(params_),
                                                        measures(get_entry<std::vector<std::string>>("measures", {}))
             {}
@@ -47,7 +46,6 @@ namespace mcmc {
                 return measures;
             }
 
-        protected:
             std::vector<std::string> measures;
         };
     }

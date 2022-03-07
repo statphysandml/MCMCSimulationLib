@@ -5,26 +5,18 @@
 #include <modes/mode_header.hpp>
 #include <mcmc_simulation/util/random.hpp>
 
-#ifdef RUN_WITH_PYTHON_BACKEND
-#include <Python.h>
-#endif
-
 #include "../include/scalar_theory/scalar_theory.hpp"
 
 
-// ToDo: Plot expectation values after runs
-// Transfer algoroithms to measures
-// Rename plain system params...
-
 int main(int argc, char **argv) {
-    // Initialization
+    // Initialize project dependent parameters
     param_helper::proj::set_relative_path_to_project_root_dir("../");
 
 #ifdef PYTHON_BACKEND
     mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    const std::string target_name = "ScalarTheorySimulationTest";
+    const std::string target_name = "ScalarTheorySimulation";
 
     std::string rel_data_path = "/data/" + target_name + "/";
     std::string rel_config_path = "/configs/" + target_name + "/";
@@ -34,25 +26,25 @@ int main(int argc, char **argv) {
     auto kappa_intervals = mcmc::util::linspace(0.22, 0.3, 9);
 
     // Setting up system parameters
-    ScalarTheoryParameters system_params(0.3, 0.02, {4, 4}, 0.01, 100);
+    ScalarTheoryParameters system_params(0.3, 0.02, {32, 32}, 0.14, 10, 1.0);
 
-    /* //[ Equilibrium time
+    mcmc::measures::ReadableMeasureParameters readable_measures(rel_data_path);
+
+    //[ Equilibrium time
     
-    typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
-    EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.1, 3, "SecondMoment");
+    /* typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+    EquilibriumTimeParams equilibrium_time_parameters(40, 500, 0.005, 10, "SecondMoment");
 
     auto simulation_params_equilibrium_time = mcmc::simulation::SimulationParameters<
             ScalarTheoryParameters, EquilibriumTimeParams>::generate_simulation(
-                    system_params, equilibrium_time_parameters, rel_data_path,
+                    system_params, equilibrium_time_parameters, readable_measures,
                     "systembase_params", "kappa", kappa_intervals);
 
     // Run and evaluate the simulation
     mcmc::simulation::Simulation<ScalarTheoryParameters, EquilibriumTimeParams> equilibrium_time_simulation(
         simulation_params_equilibrium_time);
     equilibrium_time_simulation.run();
-    equilibrium_time_simulation.eval(rel_results_path);
-
-    //]
+    equilibrium_time_simulation.eval(rel_results_path); */
 
     //[ Correlation time
 
@@ -62,24 +54,24 @@ int main(int argc, char **argv) {
     // - Maximum possible correlation time
     // - Number of sweeps before configurations for the computation of the correlation time are evaluated
     // - Observable to evaluate the correlation time
-    typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
-    CorrelationTimeParams correlation_time_parameters(1000, 400, equilibrium_time_results_path, {"Mean"});
+    /* typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+    CorrelationTimeParams correlation_time_parameters(1000, 400, 10000 *//*equilibrium_time_results_path*//*, {"SecondMoment"}, "cold");
     
     // Setting up the simulation
     // The simulation will execute six MCMC simulations for inverse temperatures
     // in the interval between 0.1 and 0.7 in a row.
     auto simulation_params_correlation_time = mcmc::simulation::SimulationParameters<
             ScalarTheoryParameters, CorrelationTimeParams>::generate_simulation(
-                    system_params, correlation_time_parameters, rel_data_path,
+                    system_params, correlation_time_parameters, readable_measures,
                     "systembase_params", "kappa", kappa_intervals);
 
     // Run and evaluate the simulation
     mcmc::simulation::Simulation<ScalarTheoryParameters, CorrelationTimeParams> correlation_time_simulation(
         simulation_params_correlation_time);
     correlation_time_simulation.run();
-    correlation_time_simulation.eval(rel_results_path);
+    correlation_time_simulation.eval(rel_results_path); */
 
-    //] */
+    //]
 
     //[ Expectation Value
 
@@ -99,11 +91,14 @@ int main(int argc, char **argv) {
         correlation_time_results_path, 1000, equilibrium_time_results_path,
         {"Mean", "AbsMean", "SecondMoment", "MagenticSusceptibility", "BinderCumulant", "Action", "Config"}, {}, "hot", "statistical"); */
 
-    ExpectationValueParams expectation_value_parameters(
+    /* ExpectationValueParams expectation_value_parameters(
             1, 1000, 100,
-            {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical");
+            {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical"); */
 
-    mcmc::measures::ReadableMeasureParameters readable_measures(rel_data_path);
+    ExpectationValueParams expectation_value_parameters(
+            3, 1000, 10000,
+            {"Config", "Mean", "AbsMean", "SecondMoment", "Action", "AcceptanceRate", "EnergyViolation",
+             "ExponentialEnergyViolation"}, {}, "hot", "statistical");
 
     auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters<
             ScalarTheoryParameters, ExpectationValueParams>::generate_simulation(

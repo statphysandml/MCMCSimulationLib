@@ -21,7 +21,7 @@ namespace mcmc {
 
         void set_executable_name(const std::string executable_name_) {
             executable_name = executable_name_;
-            std::cout << " -- Setting executable name to " << executable_name << " --" << std::endl;
+            std::cout << " -- Setting executable name to '" << executable_name << "' --" << std::endl;
         }
 
         std::string get_cluster_mode() {
@@ -30,7 +30,7 @@ namespace mcmc {
 
         void set_cluster_mode(const std::string cluster_mode_) {
             cluster_mode = cluster_mode_;
-            std::cout << " -- Setting cluster mode to " << cluster_mode << " --" << std::endl;
+            std::cout << " -- Setting cluster mode to '" << cluster_mode << "' --" << std::endl;
         }
     }
 }

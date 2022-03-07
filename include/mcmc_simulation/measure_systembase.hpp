@@ -13,14 +13,20 @@ namespace mcmc {
         template<typename Derived>
         class MeasureSystemBase : public SystemBase<Derived> {
         public:
+            void initialize_measurements(std::string starting_mode, uint rep=1)
+            {}
+
             // Predefined measure method
-            virtual std::vector<std::string> perform_measurements() {
-                std::vector<std::string> results;
+            virtual std::vector<std::variant<int, double, std::string>> perform_measurements() {
+                std::vector<std::variant<int, double, std::string>> results;
                 for (auto const &element: measures) {
                     results.push_back(element->measure(this->systembase()));
                 }
                 return results;
             }
+
+            void finalize_measurements(std::string starting_mode, uint rep=1)
+            {}
 
             virtual std::vector<std::string> get_measure_names() {
                 std::vector<std::string> measure_names;

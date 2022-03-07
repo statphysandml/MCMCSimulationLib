@@ -70,7 +70,7 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
     ],
-    # url='https://github.com/statphysandml/MCMCEvaluationLib',
+    # url='https://github.com/statphysandml/MCMCSimulationLib',
     package_dir={"mcmc": "python"},
     packages=["mcmc"]
 )

@@ -13,7 +13,7 @@
     "gitlab_ci": ["No", "Yes"],
     "readthedocs": ["No", "Yes"],
     "doxygen": ["No", "Yes"],
-    "cxx_minimum_standard": ["14", "17", "20"],
+    "cxx_minimum_standard": ["17", "20"],
     "python_bindings": ["No", "Yes"],
     "pypi_release": "{{ cookiecutter.python_bindings }}",
     "codecovio": ["No", "Yes"],

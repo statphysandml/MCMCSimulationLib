@@ -23,10 +23,8 @@ namespace mcmc {
             os << "#PBS -l mem=2gb\n"; // 15gb
             os << "#PBS -l vmem=2gb\n"; // 15gb
             os << "#PBS -l walltime=72:00:00\n" << std::endl;
-
-#ifdef RUN_WITH_VITUAL_ENV
-            os << "source " << mcmc::virtualenv::conda_activate_path << " " << mcmc::virtualenv::virtual_env << "\n" << std::endl;
-#endif
+            if(VIRTUAL_ENV != "None")
+                os << "source " << mcmc::virtualenv::conda_activate_path << " " << mcmc::virtualenv::virtual_env << "\n" << std::endl;
             os << "cd " << param_helper::proj::project_root() << path_parameters.sim_root_dir << "build/" << "\n";
             // os << param_helper::proj::project_root() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.target_name << std::endl;
             os << param_helper::proj::project_root() << path_parameters.sim_root_dir << "build/" << executable_name

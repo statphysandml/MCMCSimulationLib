@@ -29,7 +29,7 @@ if __name__ == "__main__":
                                                 eval_confidence_range=0.1,
                                                 eval_confidence_window=10, measure="Mean")
 
-    mode_simulation.correlation_time_simulation(run=True, eval=True, minimum_sample_size=10,
+    mode_simulation.correlation_time_simulation(run=True, eval=False, minimum_sample_size=10,
                                                 maximum_correlation_time=200,
                                                 equilibrium_time_rel_results_path="./data/Test/results/", measure="Mean"
                                                 )

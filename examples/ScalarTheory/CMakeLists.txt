@@ -10,6 +10,8 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # General compilation options
 set(BUILD_PYTHON_BINDINGS ON CACHE BOOL "Enable building of Python bindings")
 set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expectation values, etc.")
@@ -20,20 +22,12 @@ set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential p
 
 # Include libraries
 find_package(ParamHelper CONFIG REQUIRED)
-# message("ParamHelper = ${ParamHelper}")
-# include_directories(../../ext/ParamHelper/include/)
-
 find_package(MCMCSimulationLib CONFIG REQUIRED)
-# message("MCMCSimulationLib = ${MCMCSimulationLib}")
-# include_directories(../../include/)
-
 
 configure_file(./include/scalar_theory/config.h.in ../include/scalar_theory/config.h @ONLY)
 
 if(RUN_WITH_PYTHON_BACKEND)
     set(target_link_libraries_python_appendix "pybind11::embed")
-    # Or without pybind11:
-    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
     message("Running with python backend enabled.")
 else()
     # Use library without the integration of python code
@@ -66,22 +60,14 @@ endif()
 
 if(BUILD_PYTHON_BINDINGS)
     message("Integrate python for python_bindings")
-    # Paths relative to path to CMakeLists.txt and relative to build/ path
-    # file(COPY ../../ext/pybind11 DESTINATION ../ext)
     # Add Python bindings
     add_subdirectory(ext/pybind11)
     # Python wrapper
     add_subdirectory(python_pybind)
 elseif(RUN_WITH_PYTHON_BACKEND)
     message("Load pybind11 module")
-    # Paths relative to path to CMakeLists.txt and relative to build/ path
-    # file(COPY ../../ext/pybind11 DESTINATION ../ext)
     # Add Python bindings for correct binding of pybind11 without usage of pybind11_modules
     add_subdirectory(ext/pybind11)
-    # Or without pybind11:
-    # set(Python3_FIND_VIRTUALENV "FIRST")
-    # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-    # include_directories(${Python3_INCLUDE_DIRS})
 endif()
 
 # This prints a summary of found dependencies
@@ -89,6 +75,7 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 add_executable(ScalarTheory src/main.cpp)
+
 if(RUN_WITH_PYTHON_BACKEND)
     target_compile_definitions(ScalarTheory PUBLIC PYTHON_BACKEND)
 endif()

@@ -19,11 +19,24 @@ cmake --install build
 
 
 # Build documentation
+
+(dependencies: 
+conda install sphinx
+conda install -c conda-forge breathe
+pip install sphinx-rtd-theme
+)
+
 cmake --build . --target mcmcsimulationlib_doxygen
 
 cmake --build . --target mcmcsimulationlib-sphinx-doc
 
+https://shunsvineyard.info/2019/09/19/use-sphinx-for-python-documentation/
+https://github.com/tox-dev/sphinx-autodoc-typehints
+
 https://breathe.readthedocs.io/en/latest/class.html#class-example
+https://breathe.readthedocs.io/en/latest/file.html#file-example
+https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html
+https://jalammar.github.io/illustrated-transformer/
 
 # Useful link for a correct installation of your package
 
@@ -36,6 +49,9 @@ Alternatively
 
 -DCMAKE_INSTALL_PREFIX=/home/lukas/install
 -DCMAKE_PREFIX_PATH=/home/lukas/install
+
+
+-> cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/lukas/MCMCSimulationLib/install -DVIRTUAL_ENV="rapunzel" -DCONDA_ACTIVATE_PATH="~/.miniconda3/bin/activate" ..
 
 Basic Structure
 

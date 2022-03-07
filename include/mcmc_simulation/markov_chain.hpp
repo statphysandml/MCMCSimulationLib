@@ -84,12 +84,13 @@ namespace mcmc {
                     // Initialize system
                     auto systembase = sbp.generate(); // Smart pointer
                     systembase->init(starting_mode);
-
-                    // Initialize measurements
-                    measurements.initialize_measurements(starting_mode, systembase->measure_names(), z);
                     
                     // Equilibriate
                     systembase->update(mp.start_measuring);
+
+                    // Initialize measurements
+                    measurements.initialize_measurements(starting_mode, systembase->measure_names(), z);
+                    systembase->init_measurements(starting_mode, z);
 
                     // Reseting progress bar based on number of measurements
                     if(mp.repetitions == 1)
@@ -111,6 +112,7 @@ namespace mcmc {
 
                     // Finalize measurements
                     measurements.finalize_measurements();
+                    systembase->fina_measurements(starting_mode, z);
 
                     // Finalizing progress bar based on number of measurements
                     if(mp.repetitions == 1)

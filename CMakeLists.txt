@@ -67,16 +67,7 @@ endif()
 
 if(RUN_WITH_PYTHON_BACKEND)
     set(target_link_libraries_python_appendix "pybind11::embed")
-    # Or without pybind11:
-    # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
     message("Running with python backend enabled.")
-    if(NOT VIRTUAL_ENV EQUAL "None" AND NOT CONDA_ACTIVATE_PATH EQUAL "None")
-        message("Enable queue-script generation with virtual environment")
-        option(RUN_WITH_VIRTUAL_ENV "Enable queue-script generation with virtual environment" ON)
-    else()
-        message("Disable queue-script generation with virtual environment")
-        option(RUN_WITH_VIRTUAL_ENV "Disable queue-script generation with virtual environment" OFF)
-    endif()
 else()
     # Use library without the integration of python code
     message("Running with python backend disabled.")

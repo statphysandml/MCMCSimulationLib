@@ -7,11 +7,9 @@
 
 // Example implementation of a scalar theory
 
-
 class ScalarTheory;
 
-class ScalarTheoryParameters : public mcmc::simulation::SystemBaseParameters {
-public:
+struct ScalarTheoryParameters : public mcmc::simulation::SystemBaseParameters {
     explicit ScalarTheoryParameters(const json params):
             SystemBaseParameters(params),
             kappa(get_entry<double>("kappa", 0.4)),
@@ -43,9 +41,6 @@ public:
 
     std::unique_ptr<ScalarTheory> generate() { return std::make_unique<ScalarTheory>(*this); }
 
-private:
-    friend class ScalarTheory;
-
     const double kappa;
     const double lambda;
     const double dt;
@@ -66,15 +61,18 @@ public:
         normal(std::normal_distribution<double>(0.0, 1.0)),
         rand(std::uniform_real_distribution<double> (0,1)),
         momenta(std::vector<double>(get_size(), 0.0)),
-        current_momenta(std::vector<double>(get_size(), 0.0))
+        current_momenta(std::vector<double>(get_size(), 0.0)),
+        acceptance_rate(0.0),
+        energy_violation(0.0),
+        exponential_energy_violation(0.0)
     {
-        neighbours = std::vector<std::vector<int>> (get_size(), std::vector<int>(2 * stsp.dimensions.size()));
+        neighbour_indices = std::vector<std::vector<int>> (get_size(), std::vector<int>(2 * stsp.dimensions.size()));
         for(uint site_idx = 0; site_idx < get_size(); site_idx++)
         {
             for(uint d = 0; d < stsp.dimensions.size(); d++)
             {
-                neighbours[site_idx][2 * d] = neigh_dir(site_idx, d, true);
-                neighbours[site_idx][2 * d + 1] = neigh_dir(site_idx, d, false);
+                neighbour_indices[site_idx][2 * d] = neigh_dir(site_idx, d, true);
+                neighbour_indices[site_idx][2 * d + 1] = neigh_dir(site_idx, d, false);
             }
         }
     }
@@ -92,6 +90,10 @@ public:
     // Hamiltonian Monte Carlo
     void update_step(uint measure_interval=1)
     {
+        int n_accepted = 0;
+        double energy_violation_ = 0;
+        double exponential_energy_violation_ = 0;
+
         for(auto i = 0; i < measure_interval; i++)
         {
             auto current_action = action();
@@ -109,7 +111,7 @@ public:
                 for (uint site_idx = 0; site_idx < get_size(); site_idx++)
                     lattice[site_idx] += stsp.dt * momenta[site_idx] / stsp.m;
                 for (uint site_idx = 0; site_idx < get_size(); site_idx++)
-                    momenta[site_idx] -= stsp.dt  / 2.0 * drift(site_idx);
+                    momenta[site_idx] -= stsp.dt / 2.0 * drift(site_idx);
             }
 
             auto proposal_action = action();
@@ -119,13 +121,22 @@ public:
 
             // std::cout << proposal_action + 0.5 / stsp.m * proposal_kinetic_term << " == " << current_action + 0.5 / stsp.m * current_kinetic_term << std::endl;
 
+            auto energy_difference = 1.0 * (proposal_action - current_action) + 0.5 * (proposal_kinetic_term - current_kinetic_term) / stsp.m;
+
+            energy_violation_ += std::abs(energy_difference);
+            exponential_energy_violation_ += std::exp(-1.0 * energy_difference);
+
             // Accept/Reject step
-            if (rand(mcmc::util::gen) >= std::min(1.0, std::exp(
-                    -1.0 * (proposal_action - current_action) - 0.5 * (proposal_kinetic_term - current_kinetic_term) / stsp.m))) {
+            if (rand(mcmc::util::gen) >= std::min(1.0, std::exp(-1.0 * energy_difference))) {
                 lattice = current_lattice; // Reject
             }
-            // else{} // Accept
+            else {
+                n_accepted += 1; // Accept
+            }
         }
+        energy_violation = energy_violation_ / measure_interval;
+        exponential_energy_violation = exponential_energy_violation_ / measure_interval;
+        acceptance_rate = n_accepted * 1.0 / measure_interval;
     }
 
     uint16_t get_size() const
@@ -160,7 +171,7 @@ public:
         {
             double kinetic_term = 0;
             for(uint d = 0; d < stsp.dimensions.size(); d++)
-                kinetic_term += lattice[neighbours[site_idx][2 * d]];
+                kinetic_term += lattice[neighbour_indices[site_idx][2 * d]];
             action_ += -2.0 * stsp.kappa * lattice[site_idx] * kinetic_term + \
                 (1.0 - 2.0 * stsp.lambda) * std::pow(lattice[site_idx], 2.0) + stsp.lambda * std::pow(lattice[site_idx], 4.0);
         }
@@ -171,19 +182,18 @@ public:
     {
         double drift_ = 0;
         for(uint d = 0; d < stsp.dimensions.size(); d++)
-            drift_ += lattice[neighbours[site_idx][2 * d]] + lattice[neighbours[site_idx][2 * d + 1]];
+            drift_ += lattice[neighbour_indices[site_idx][2 * d]] + lattice[neighbour_indices[site_idx][2 * d + 1]];
         drift_ = -2.0 * stsp.kappa * drift_  + \
             2.0 * (1.0 - 2.0 * stsp.lambda) * lattice[site_idx] + 4.0 * stsp.lambda * std::pow(lattice[site_idx], 3.0);
         return drift_;
     }
 
-    /* void initialize_measurements(std::string starting_mode, uint rep=1)
-    {} */
+    void initialize_measurements(std::string starting_mode, uint rep=1)
+    {}
 
     auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        // std::vector<std::string> results_str;
         for(const auto measure_name: get_measure_names())
         {
             if(measure_name == "Mean")
@@ -196,23 +206,20 @@ public:
                 results.push_back(fourth_moment());
             else if(measure_name == "Action")
                 results.push_back(action() / get_size());
+            else if(measure_name == "AcceptanceRate")
+                results.push_back(acceptance_rate);
+            else if(measure_name == "EnergyViolation")
+                results.push_back(energy_violation);
+            else if(measure_name == "ExponentialEnergyViolation")
+                results.push_back(exponential_energy_violation);
             else if(measure_name == "Config")
                 results.push_back(configuration());
         }
-        /* std::transform(results.begin(), results.end(), results_str.begin(), []
-            (std::variant<int, double, std::string>& val)
-            { return std::visit(
-                overload{
-                    [](const int &va)       { return std::to_string(va); },
-                    [](const double &va)   { return std::to_string(va); },
-                    [](const std::string &va)   { return va; }
-                }, val);
-            }); */
         return results;
     }
 
-    /* void finalize_measurements(std::string starting_mode, uint rep=1)
-    {} */
+    void finalize_measurements(std::string starting_mode, uint rep=1)
+    {}
 
     std::vector<std::string> get_measure_names()
     {
@@ -221,7 +228,7 @@ public:
 
 private:
     std::vector<double> lattice;
-    std::vector<std::vector<int>> neighbours;
+    std::vector<std::vector<int>> neighbour_indices;
 
     const ScalarTheoryParameters &stsp;
 
@@ -229,6 +236,10 @@ private:
     std::vector<double> current_momenta;
     std::normal_distribution<double> normal;
     std::uniform_real_distribution<double> rand;
+
+    double acceptance_rate;
+    double energy_violation;
+    double exponential_energy_violation;
 
     double mean()
     {

@@ -17,9 +17,9 @@ namespace mcmc {
                 systembase().initialize(starting_mode);
             }
 
-            /* void init_measurements(std::string starting_mode, uint rep=1) {
+            void init_measurements(std::string starting_mode, uint rep=1) {
                 systembase().initialize_measurements(starting_mode, rep);
-            } */
+            }
             
             void update(uint measure_interval = 1) {
                 systembase().update_step(measure_interval);
@@ -33,9 +33,9 @@ namespace mcmc {
                 return systembase().get_measure_names();
             }
 
-            /* void fina_measurements(std::string starting_mode, uint rep=1) {
+            void fina_measurements(std::string starting_mode, uint rep=1) {
                 systembase().finalize_measurements(starting_mode, rep);
-            } */
+            }
 
             const auto size() const {
                 return systembase().get_size();

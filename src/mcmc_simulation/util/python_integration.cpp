@@ -20,7 +20,7 @@ namespace mcmc {
 
         void set_python_modules_path(const std::string python_modules_path_) {
             python_modules_path = python_modules_path_;
-            std::cout << " -- Setting python scripts path to " << python_modules_path_ << " --" << std::endl;
+            std::cout << " -- Setting python scripts path to '" << python_modules_path_ << "' --" << std::endl;
         }
 
         void initialize_python(const std::string python_modules_path_, const bool fma_develop, const bool executing_from_python) {

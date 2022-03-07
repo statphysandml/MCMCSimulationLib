@@ -27,34 +27,68 @@ set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expecta
 
 # Project specific compliation options (used by config.h.in)
 set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
-set(PYTHON_SCRIPTS_PATH "../python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend (relative to build directory)")
+set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend (relative to build directory)")
 
-find_library(ParamHelper NAMES libparamhelper.a PATHS {{ cookiecutter.path_to_mcmc_simulation_lib }}/build/ext/ParamHelper/src)
-message("ParamHelper = ${ParamHelper}")
-include_directories({{ cookiecutter.path_to_mcmc_simulation_lib }}/ext/ParamHelper/include/)
-
-find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS {{ cookiecutter.path_to_mcmc_simulation_lib }}/build/src)
-message("MCMCSimulationLib = ${MCMCSimulationLib}")
-include_directories({{ cookiecutter.path_to_mcmc_simulation_lib }}/include/)
+# Include libraries
+find_package(ParamHelper CONFIG REQUIRED)
+find_package(MCMCSimulationLib CONFIG REQUIRED)
 
 
 configure_file(./include/{{ cookiecutter.project_slug }}/config.h.in ../include/{{ cookiecutter.project_slug }}/config.h @ONLY)
 
 
 if(RUN_WITH_PYTHON_BACKEND)
-    # Paths relative to path to CMakeLists.txt and relative to build/ path
-    file(COPY {{ cookiecutter.path_to_mcmc_simulation_lib }}/ext/pybind11 DESTINATION ../ext)
-    add_subdirectory(ext/pybind11)
     set(target_link_libraries_python_appendix "pybind11::embed")
     # Or without pybind11:
-    # set(Python3_FIND_VIRTUALENV "FIRST")  
-    # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-    # include_directories(${Python3_INCLUDE_DIRS})
     # set(target_link_libraries_python_appendix "${Python3_LIBRARIES}")
     message("Running with python backend enabled.")
 else()
     # Use library without the integration of python code
-    message("Running without python backend enabled.")
+    message("Running with python backend disabled.")
+endif()
+
+if((BUILD_PYTHON_BINDINGS OR RUN_WITH_PYTHON_BACKEND) AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11")
+    find_package(Git QUIET)
+    if(GIT_FOUND)
+        message("Downloading pybind11 into ${CMAKE_CURRENT_SOURCE_DIR}/ext")
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext")
+        execute_process(COMMAND ${GIT_EXECUTABLE} clone https://github.com/pybind/pybind11.git
+                        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext"
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git clone https://github.com/pybind/pybind11.git failed with ${GIT_SUBMOD_RESULT}.")
+        endif()
+        execute_process(COMMAND ${GIT_EXECUTABLE} checkout "v2.6.2"
+                        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11"
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT OUTPUT_QUIET ERROR_QUIET)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git checkout \"v2.6.2\" failed with ${GIT_SUBMOD_RESULT}.")
+        endif()
+    endif()
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/pybind11")
+    message(FATAL_ERROR "pybind11 was not added to ${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11. Please install git or add pybind11 manually.")
+endif()
+
+if(BUILD_PYTHON_BINDINGS)
+    message("Integrate python for python_bindings")
+    # Paths relative to path to CMakeLists.txt and relative to build/ path
+    # file(COPY ../../ext/pybind11 DESTINATION ../ext)
+    # Add Python bindings
+    add_subdirectory(ext/pybind11)
+    # Python wrapper
+    add_subdirectory(python_pybind)
+elseif(RUN_WITH_PYTHON_BACKEND)
+    message("Load pybind11 module")
+    # Paths relative to path to CMakeLists.txt and relative to build/ path
+    # file(COPY ../../ext/pybind11 DESTINATION ../ext)
+    # Add Python bindings for correct binding of pybind11 without usage of pybind11_modules
+    add_subdirectory(ext/pybind11)
+    # Or without pybind11:
+    # set(Python3_FIND_VIRTUALENV "FIRST")
+    # find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+    # include_directories(${Python3_INCLUDE_DIRS})
 endif()
 
 {% if cookiecutter.build_tests == "Yes" -%}
@@ -99,4 +133,4 @@ add_executable({{ cookiecutter.project_slug }} src/main.cpp)
 if(RUN_WITH_PYTHON_BACKEND)
   target_compile_definitions({{ cookiecutter.project_slug }} PUBLIC PYTHON_BACKEND)
 endif()
-target_link_libraries({{ cookiecutter.project_slug }} PUBLIC ${MCMCSimulationLib} ${ParamHelper} ${target_link_libraries_python_appendix})
+target_link_libraries({{ cookiecutter.project_slug }} PUBLIC mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})

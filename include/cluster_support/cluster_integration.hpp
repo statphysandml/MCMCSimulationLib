@@ -42,6 +42,10 @@ namespace mcmc {
          */
         void initialize_cluster_params(const std::string executable_name_, const std::string cluster_mode_);
 
+        // Global parameters
+        extern std::string executable_name;
+        extern std::string cluster_mode;
+
         std::string get_executable_name();
         void set_executable_name(const std::string executable_name_);
 
@@ -73,7 +77,7 @@ namespace mcmc {
          *      - or prepared and executed (prep_and_exec), referring to a generation of the .sh file and a subsequent submission to the cluster.
          * @param addition_args List of additional args to be passed to the C++ executable when the simulation is executed.
          */
-        template<typename SBP>
+        template<typename SBP, typename MS>
         void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const bool run = true, const bool eval = true,
             const Device device = locally,
@@ -84,12 +88,12 @@ namespace mcmc {
             if (device == locally) {
                 if (running_mode == prep_and_exec or running_mode == prep)
                 {
-                    std::cout << "-- Note, if locally is used as running device, no preparation is necessary. Change running_mode to exec instead -- " << std::endl;
+                    // std::cout << "-- Note, if locally is used as running device, no preparation is necessary. Change running_mode to exec instead -- " << std::endl;
                 }
-                if (running_mode == prep_and_exec or exec)
+                if (running_mode == prep_and_exec or running_mode == exec)
                 {
                     // Run based on target name - Does the same as ./{ProjectName} {ExecutionMode} {Directory} - might also call directly the respective main function - exception!
-                    mcmc::cmdint::execute<SBP>(mode_type, path_parameters, run, eval);
+                    mcmc::cmdint::execute<SBP, MS>(mode_type, path_parameters, run, eval);
                 }
             }
             else if (device == on_cpu_cluster) {

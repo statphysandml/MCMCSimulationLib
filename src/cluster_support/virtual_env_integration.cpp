@@ -1,7 +1,5 @@
 #include "../../include/cluster_support/virtual_env_integration.hpp"
 
-#ifdef RUN_WITH_VITUAL_ENV
-
 namespace mcmc {
     namespace virtualenv {
         // Global parameters - Default
@@ -10,13 +8,12 @@ namespace mcmc {
 
         void set_conda_activate_path(const std::string conda_activate_path_) {
             conda_activate_path = conda_activate_path_;
-            std::cout << " -- Setting conda activate path to " << conda_activate_path << " --" << std::endl;
+            std::cout << " -- Setting conda activate path to '" << conda_activate_path << "' --" << std::endl;
         }
 
-        static void set_virtual_env(const std::string virtual_env_) {
+        void set_virtual_env(const std::string virtual_env_) {
             virtual_env = virtual_env_;
-            std::cout << " -- Setting virtual_env to " << virtual_env << " --" << std::endl;
+            std::cout << " -- Setting virtual_env to '" << virtual_env << "' --" << std::endl;
         }
     }
 }
-#endif
