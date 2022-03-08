@@ -35,7 +35,7 @@ class CMakeBuild(build_ext):
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable,
                       '-DCudaUsage=GPU',
-                      '-DCMAKE_PREFIX_PATH=/home/lukas/MCMCSimulationLib/install'
+                      '-DCMAKE_PREFIX_PATH=~/MCMCSimulationLib/install'
                      ]
 
         cfg = 'Debug' if self.debug else 'Release'

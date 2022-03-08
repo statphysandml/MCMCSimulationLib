@@ -4,7 +4,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser("Build Application")
-parser.add_argument("-o", "--output-dir", help="Where to output the generated project dir into.", type=str)
+parser.add_argument("-o", "--output-dir", help="Where to build the project.", type=str)
 parser.add_argument("--config-file", help="User configuration file", type=str, default=None)
 parser.add_argument("-n", "--project_name", help="The name of the project.", type=str, default="my-mcmc-simulation-project")
 args = parser.parse_args()

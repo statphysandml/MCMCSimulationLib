@@ -1,7 +1,3 @@
-//
-// Created by lukas on 28.02.20.
-//
-
 #ifndef CLUSTER_INTEGRATION_HPP
 #define CLUSTER_INTEGRATION_HPP
 

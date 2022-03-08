@@ -314,6 +314,8 @@ C++
 Integrating pybind11
 --------------------
 
+In particular, one needs to adapt the files in python_pybind to the respective new constructor
+
 Again scalar theory
 
 - Mode simulation

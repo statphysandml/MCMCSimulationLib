@@ -1,7 +1,3 @@
-//
-// Created by lukas on 28.09.20.
-//
-
 #include "../../../include/mcmc_simulation/sampler/gaussian_sampler.hpp"
 
 namespace mcmc {

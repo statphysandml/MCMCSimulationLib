@@ -4,12 +4,12 @@ import numpy as np
 from mcmctools.utils.lattice import get_neighbour_index
 
 
-def compute_ising_model_measures(data, measure_name, sim_params):
+def compute_{{ cookiecutter.project_slug }}_measures(data, measure_name, sim_params):
     if measure_name == "Energy":
-        return compute_ising_model_energy(data, sim_params)
+        return compute_{{ cookiecutter.project_slug }}_energy(data, sim_params)
 
 
-def compute_ising_model_energy(data, sim_params):
+def compute_{{ cookiecutter.project_slug }}_energy(data, sim_params):
     dimensions = sim_params["systembase_params"]["dimensions"]
     dim_mul = np.cumprod([1] + dimensions)
     lattice_configs = data["Config"].values

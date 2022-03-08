@@ -1,7 +1,3 @@
-//
-// Created by lukas on 09.10.19.
-//
-
 #ifndef MAIN_SIMULATION_LIB_HEADER_HPP
 #define MAIN_SIMULATION_LIB_HEADER_HPP
 

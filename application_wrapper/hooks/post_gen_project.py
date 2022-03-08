@@ -55,8 +55,6 @@ def conditional_remove(condition, path):
             rmtree(path)
 
 
-conditional_remove(True, "ext/.keep")
-conditional_remove("{{ cookiecutter.use_submodules }}" == "No", "ext")
 conditional_remove("{{ cookiecutter.license }}" == "None", "LICENSE.md")
 conditional_remove("{{ cookiecutter.header_only }}" == "Yes", "src")
 conditional_remove("{{ cookiecutter.build_tests }}" == "No", "tests")

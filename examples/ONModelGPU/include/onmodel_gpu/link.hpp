@@ -1,7 +1,3 @@
-//
-// Created by lukas on 04.11.19.
-//
-
 #ifndef ONMODELGPU_LINK_HPP
 #define ONMODELGPU_LINK_HPP
 

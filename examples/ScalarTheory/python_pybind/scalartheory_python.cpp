@@ -39,4 +39,3 @@ PYBIND11_MODULE(scalartheorysimulation, m)
 
     m.doc() = "Python Bindings for ScalarTheory simulation";
 }
-

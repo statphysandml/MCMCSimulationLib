@@ -1,7 +1,3 @@
-//
-// Created by lukas on 31.03.20.
-//
-
 #ifndef PROGRAM_PATH_PARAMETERS_HPP
 #define PROGRAM_PATH_PARAMETERS_HPP
 

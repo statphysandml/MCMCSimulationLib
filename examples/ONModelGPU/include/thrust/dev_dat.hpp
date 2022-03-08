@@ -1,7 +1,3 @@
-//
-// Created by lukas on 31.07.19.
-//
-
 #ifndef PROGRAM_DEV_DAT_HPP
 #define PROGRAM_DEV_DAT_HPP
 

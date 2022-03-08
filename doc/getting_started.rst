@@ -67,7 +67,7 @@ The additional CMake variable `CLUSTER_MODE` is only required if the library is 
 If custom functions are used for evaluating observables or for loading the data, the CMake variable `PYTHON_SCRIPTS_PATH` defines the path to the resepctive python modules. The path is added
 by C++ to the sys.path (for more information, see ...):
 
-* `PYTHON_SCRIPTS_PATH`: Path to the potential python scripts evaluated by the python backend (default: "./python_scripts")
+* `PYTHON_SCRIPTS_PATH`: Path to the potential python scripts evaluated by the python backend. (default: "./python_scripts")
 
 
 Generate your first application

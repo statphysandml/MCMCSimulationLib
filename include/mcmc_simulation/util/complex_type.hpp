@@ -1,7 +1,3 @@
-//
-// Created by lukas on 12.12.20.
-//
-
 #ifndef MCMCSIMULATIONLIB_COMPLEX_TYPE_HPP
 #define MCMCSIMULATIONLIB_COMPLEX_TYPE_HPP
 

@@ -1,6 +1,3 @@
-//
-// Created by lukas on 28.02.20.
-//
 #include "../../include/cluster_support/cluster_integration.hpp"
 
 namespace mcmc {

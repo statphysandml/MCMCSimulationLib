@@ -18,7 +18,7 @@ set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expecta
 
 # Project specific compliation options (used by config.h.in)
 set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
-set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend")
+set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend.")
 
 # Include libraries
 find_package(ParamHelper CONFIG REQUIRED)
@@ -62,10 +62,10 @@ if((BUILD_PYTHON_BINDINGS OR RUN_WITH_PYTHON_BACKEND) AND NOT EXISTS "${CMAKE_CU
             message(FATAL_ERROR "git checkout \"v2.6.2\" failed with ${GIT_SUBMOD_RESULT}.")
         endif()
     endif()
-endif()
 
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/pybind11")
-    message(FATAL_ERROR "pybind11 was not added to ${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11. Please install git or add pybind11 manually.")
+    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/pybind11")
+        message(FATAL_ERROR "pybind11 was not added to ${CMAKE_CURRENT_SOURCE_DIR}/ext/pybind11. Please install git or add pybind11 manually.")
+    endif()
 endif()
 
 if(BUILD_PYTHON_BINDINGS)
@@ -91,6 +91,5 @@ endif()
 if (GPU)
     target_compile_definitions(ScalarTheoryGPU PUBLIC -D GPU)
 endif()
-
 set_target_properties(ScalarTheoryGPU PROPERTIES CUDA_SEPARABLE_COMPILATION ON CUDA_STANDARD 14)
-target_link_libraries(ScalarTheoryGPU mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})
+target_link_libraries(ScalarTheoryGPU PUBLIC mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})

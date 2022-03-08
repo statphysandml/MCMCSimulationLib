@@ -1,7 +1,3 @@
-//
-// Created by lukas on 28.02.20.
-//
-
 #ifndef FROM_FILE_HPP
 #define FROM_FILE_HPP
 

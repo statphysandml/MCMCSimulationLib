@@ -1,7 +1,3 @@
-//
-// Created by lukas on 14.09.20.
-//
-
 #ifndef MCMCSIMULATIONLIB_EQUILIBRIUM_HPP
 #define MCMCSIMULATIONLIB_EQUILIBRIUM_HPP
 

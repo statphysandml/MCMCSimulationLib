@@ -1,7 +1,3 @@
-//
-// Created by lukas on 28.02.20.
-//
-
 #ifndef MAIN_CORRELATION_TIME_HPP
 #define MAIN_CORRELATION_TIME_HPP
 

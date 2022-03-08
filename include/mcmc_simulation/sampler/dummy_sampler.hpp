@@ -1,7 +1,3 @@
-//
-// Created by lukas on 05.10.20.
-//
-
 #ifndef MCMCSIMULATIONLIB_DUMMY_SAMPLER_HPP
 #define MCMCSIMULATIONLIB_DUMMY_SAMPLER_HPP
 

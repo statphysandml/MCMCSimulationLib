@@ -1,7 +1,3 @@
-//
-// Created by lukas on 21.02.20.
-//
-
 #ifndef MAIN_HAT_FUNCTION_SAMPLER_HPP
 #define MAIN_HAT_FUNCTION_SAMPLER_HPP
 

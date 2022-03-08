@@ -38,6 +38,15 @@ https://breathe.readthedocs.io/en/latest/file.html#file-example
 https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html
 https://jalammar.github.io/illustrated-transformer/
 
+# Next ToDo:
+
+- Finalize appiction wrapper for measure_system, command line support, cluster support and cuda support (currently only pybind and scalar theory like exmaple is working)
+
+- Include table of how examples are generated
+- Recheck the python part (in particular python_examples and respective data loaders)
+- Clearify ParamHelper support
+- Fix correct pybinding of .cu files
+
 # Useful link for a correct installation of your package
 
 https://decovar.dev/blog/2021/03/08/cmake-cpp-library/
@@ -47,11 +56,11 @@ https://decovar.dev/blog/2021/03/08/cmake-cpp-library/
 
 Alternatively
 
--DCMAKE_INSTALL_PREFIX=/home/lukas/install
--DCMAKE_PREFIX_PATH=/home/lukas/install
+-DCMAKE_INSTALL_PREFIX=~/MCMCSimulationLib/install
+-DCMAKE_PREFIX_PATH=~/MCMCSimulationLib/install
 
 
--> cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/lukas/MCMCSimulationLib/install -DVIRTUAL_ENV="rapunzel" -DCONDA_ACTIVATE_PATH="~/.miniconda3/bin/activate" ..
+-> cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/MCMCSimulationLib/install -DVIRTUAL_ENV="rapunzel" -DCONDA_ACTIVATE_PATH="~/.miniconda3/bin/activate" ..
 
 Basic Structure
 

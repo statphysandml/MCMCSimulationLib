@@ -1,7 +1,3 @@
-//
-// Created by lukas on 02.03.22.
-//
-
 #ifndef ONMODELGPU_SCALAR_THEORY_GPU_HPP
 #define ONMODELGPU_SCALAR_THEORY_GPU_HPP
 

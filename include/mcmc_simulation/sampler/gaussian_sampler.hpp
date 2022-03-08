@@ -1,7 +1,3 @@
-//
-// Created by lukas on 09.01.20.
-//
-
 #ifndef MAIN_GAUSSIAN_SAMPLER_HPP
 #define MAIN_GAUSSIAN_SAMPLER_HPP
 

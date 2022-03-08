@@ -1,4 +1,4 @@
-pybind11_add_module(scalartheory_python ScalarTheory_python.cpp)
+pybind11_add_module(scalartheory_python scalartheory_python.cpp)
 
 if(RUN_WITH_PYTHON_BACKEND)
  target_compile_definitions(scalartheory_python PUBLIC PYTHON_BACKEND)

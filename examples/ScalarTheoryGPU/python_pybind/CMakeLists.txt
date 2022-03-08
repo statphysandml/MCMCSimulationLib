@@ -1,4 +1,4 @@
- pybind11_add_module(scalartheorygpu_python ScalarTheoryGPU_python.cpp ../src/scalar_theory_gpu_helper.cu)
+ pybind11_add_module(scalartheorygpu_python scalartheorygpu_python.cpp ../src/scalar_theory_gpu_helper.cu)
 
  enable_language(CUDA)
 # if(NOT DEFINED CMAKE_CUDA_STANDARD)

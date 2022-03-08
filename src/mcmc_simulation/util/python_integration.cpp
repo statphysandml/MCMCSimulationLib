@@ -1,6 +1,3 @@
-//
-// Created by lukas on 28.02.20.
-//
 #include "../../../include/mcmc_simulation/util/python_integration.hpp"
 
 #ifdef PYTHON_BACKEND

@@ -1,7 +1,3 @@
-//
-// Created by lukas on 14.03.19.
-//
-
 #ifndef PROJECT_THRUST_FUNCTORS_HPP
 #define PROJECT_THRUST_FUNCTORS_HPP
 

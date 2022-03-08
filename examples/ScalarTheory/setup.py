@@ -12,7 +12,6 @@ class CMakeExtension(Extension):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
 
-
         self.mcmcsimulationlib_cmake_prefix_path = mcmcsimulationlib_cmake_prefix_path
 
 
@@ -63,11 +62,11 @@ setup(
     name='ScalarTheory',
     version='0.0.1',
     author='Your Name',
-    author_email='yourmail@address.de',
+    author_email='your@email.com',
     description='Add description here',
     long_description='',
     ext_modules=[CMakeExtension(
-        name='ScalarTheory', mcmcsimulationlib_cmake_prefix_path='/home/lukas/MCMCSimulationLib/install'
+        name='ScalarTheory', mcmcsimulationlib_cmake_prefix_path='~/MCMCSimulationLib/install'
     )],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,

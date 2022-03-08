@@ -1,7 +1,3 @@
-//
-// Created by lukas on 12.12.20.
-//
-
 #ifndef ONMODELGPU_ON_HPP
 #define ONMODELGPU_ON_HPP
 

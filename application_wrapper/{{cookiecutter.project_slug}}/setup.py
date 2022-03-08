@@ -8,9 +8,11 @@ from setuptools.command.build_ext import build_ext
 
 
 class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
+    def __init__(self, name, mcmcsimulationlib_cmake_prefix_path=None, sourcedir=''):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
+
+        self.mcmcsimulationlib_cmake_prefix_path = mcmcsimulationlib_cmake_prefix_path
 
 
 class CMakeBuild(build_ext):
@@ -33,8 +35,10 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DBUILD_DOCS=OFF',
                       '-DBUILD_TESTING=OFF',
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPYTHON_EXECUTABLE=' + sys.executable,
-                     ]
+                      '-DPYTHON_EXECUTABLE=' + sys.executable]
+
+        if hasattr(ext, 'mcmcsimulationlib_cmake_prefix_path') and ext.mcmcsimulationlib_cmake_prefix_path != None:
+            cmake_args += ['-DCMAKE_PREFIX_PATH=' + ext.mcmcsimulationlib_cmake_prefix_path]
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -57,13 +61,15 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    name='{{ cookiecutter.project_slug.replace("-", "") }}',
+    name='{{ cookiecutter.project_name }}',
     version='0.0.1',
     author='{{ cookiecutter.full_name }}',
     author_email='your@email.com',
     description='Add description here',
     long_description='',
-    ext_modules=[CMakeExtension('{{ cookiecutter.project_slug.replace("-", "") }}')],
+    ext_modules=[CMakeExtension(
+        name='{{ cookiecutter.project_name }}', mcmcsimulationlib_cmake_prefix_path='~/MCMCSimulationLib/install'
+    )],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     classifiers=[
@@ -79,4 +85,7 @@ setup(
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
 {%- endif %}
     ],
+    url='https://github.com/your_url',
+    package_dir={"{{ cookiecutter.project_slug.replace("-", "") }}": "python_pybind"},
+    packages=["{{ cookiecutter.project_slug.replace("-", "") }}"]
 )
