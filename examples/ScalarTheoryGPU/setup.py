@@ -5,6 +5,7 @@ import subprocess
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 
 
 class CMakeExtension(Extension):
@@ -34,9 +35,9 @@ class CMakeBuild(build_ext):
                       '-DBUILD_TESTING=OFF',
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable,
-                      '-DCudaUsage=GPU',
-                      '-DCMAKE_PREFIX_PATH=~/MCMCSimulationLib/install'
-                     ]
+                      '-DCudaUsage=GPU']
+        if mcmcsimulationlib_cmake_prefix_path is not None:
+            cmake_args += ['-DCMAKE_PREFIX_PATH=' + mcmcsimulationlib_cmake_prefix_path]
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -55,24 +56,52 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.', '--target', 'scalartheorygpu_python'] + build_args, cwd=self.build_temp)
+        subprocess.check_call(['cmake', '--build', '.', '--target', 'scalartheorygou_python'] + build_args, cwd=self.build_temp)
+
+
+class InstallCommand(install):
+    user_options = install.user_options + [
+        # ('someopt', None, None), # a 'flag' option
+        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
+    ]
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        # self.someopt = None
+        self.mcmcsimulationlib_cmake_prefix_path = None
+
+    def finalize_options(self):
+        #print("value of someopt is", self.someopt)
+        print("mcmcsimulationlib_cmake_prefix_path is", self.mcmcsimulationlib_cmake_prefix_path)
+        install.finalize_options(self)
+
+    def run(self):
+        global mcmcsimulationlib_cmake_prefix_path
+        if self.mcmcsimulationlib_cmake_prefix_path is None:
+            mcmcsimulationlib_prefix_path = None
+        else:
+            mcmcsimulationlib_cmake_prefix_path = self.mcmcsimulationlib_cmake_prefix_path
+        install.run(self)
+
 
 setup(
     name='ScalarTheoryGPU',
     version='0.0.1',
-    author='Lukas Kades',
-    author_email='statphysandml@thphys.uni-heidelberg.de',
+    author='Your Name',
+    author_email='your@email.com',
     description='Add description here',
     long_description='',
-    ext_modules=[CMakeExtension('ScalarTheoryGPU')],
-    cmdclass=dict(build_ext=CMakeBuild),
+    ext_modules=[CMakeExtension(
+        name='ScalarTheory'
+    )],
+    cmdclass=dict(build_ext=CMakeBuild, install=InstallCommand),
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
     ],
-    # url='https://github.com/statphysandml/MCMCEvaluationLib',
+    url='https://github.com/your_url',
     package_dir={"scalartheorygpu": "python_pybind"},
     packages=["scalartheorygpu"]
 )

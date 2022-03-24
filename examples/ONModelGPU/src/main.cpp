@@ -10,6 +10,7 @@
 
 #include "../include/onmodel_gpu/onmodel_gpu.hpp"
 
+
 template<uint N>
 void prepare_simulation_parameters(const std::string target_name, // Name of the simulation
                         const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
@@ -31,6 +32,7 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
     simulation_parameters.write_to_file(path_parameters.get_rel_config_path());
 }
 
+
 template<uint N>
 struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
 {
@@ -50,6 +52,7 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<
     }
 };
 
+
 template<uint N>
 struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
 {
@@ -59,7 +62,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<
     {
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"SecondMoment"});
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "SecondMoment");
         correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
@@ -68,6 +71,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
+
 
 template<uint N>
 struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
@@ -89,6 +93,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
+
 
 int main(int argc, char **argv) {
     // Initialize project dependent parameters

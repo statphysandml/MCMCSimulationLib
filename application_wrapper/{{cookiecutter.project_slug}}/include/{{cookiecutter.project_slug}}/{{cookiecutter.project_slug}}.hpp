@@ -37,7 +37,11 @@ struct {{ cookiecutter.project_name }}Parameters : public mcmc::simulation::Syst
 // Define which ones are optional...
 
 
+{%- if cookiecutter.use_predefined_measures == "No" %}
 class {{ cookiecutter.project_name }} : public mcmc::simulation::SystemBase<{{ cookiecutter.project_name }}>
+{%- else %}
+class {{ cookiecutter.project_name }} : public mcmc::simulation::MeasureSystemBase<{{ cookiecutter.project_name }}>
+{%- endif %}
 {
 public:
     explicit {{ cookiecutter.project_name }}(const {{ cookiecutter.project_name }}Parameters &sp_) :
@@ -88,7 +92,8 @@ public:
         // Returns the entire MCMC system representation, for example,
         return system;
     }
-    
+
+{%- if cookiecutter.use_predefined_measures == "No" %}
     void initialize_measurements(std::string starting_mode, uint rep=1)
     {}
 
@@ -115,7 +120,8 @@ public:
     
     void finalize_measurements(std::string starting_mode, uint rep=1)
     {}
-    
+{%- endif %}
+
     std::vector<std::string> get_measure_names()
     {
         return sp.get_measures();

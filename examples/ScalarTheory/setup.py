@@ -5,14 +5,13 @@ import subprocess
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 
 
 class CMakeExtension(Extension):
-    def __init__(self, name, mcmcsimulationlib_cmake_prefix_path=None, sourcedir=''):
+    def __init__(self, name, sourcedir=''):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
-
-        self.mcmcsimulationlib_cmake_prefix_path = mcmcsimulationlib_cmake_prefix_path
 
 
 class CMakeBuild(build_ext):
@@ -36,8 +35,8 @@ class CMakeBuild(build_ext):
                       '-DBUILD_TESTING=OFF',
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
-        if hasattr(ext, 'mcmcsimulationlib_cmake_prefix_path') and ext.mcmcsimulationlib_cmake_prefix_path != None:
-            cmake_args += ['-DCMAKE_PREFIX_PATH=' + ext.mcmcsimulationlib_cmake_prefix_path]
+        if mcmcsimulationlib_cmake_prefix_path is not None:
+            cmake_args += ['-DCMAKE_PREFIX_PATH=' + mcmcsimulationlib_cmake_prefix_path]
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -58,6 +57,32 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake', '--build', '.', '--target', 'scalartheory_python'] + build_args, cwd=self.build_temp)
 
+
+class InstallCommand(install):
+    user_options = install.user_options + [
+        # ('someopt', None, None), # a 'flag' option
+        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
+    ]
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        # self.someopt = None
+        self.mcmcsimulationlib_cmake_prefix_path = None
+
+    def finalize_options(self):
+        #print("value of someopt is", self.someopt)
+        print("mcmcsimulationlib_cmake_prefix_path is", self.mcmcsimulationlib_cmake_prefix_path)
+        install.finalize_options(self)
+
+    def run(self):
+        global mcmcsimulationlib_cmake_prefix_path
+        if self.mcmcsimulationlib_cmake_prefix_path is None:
+            mcmcsimulationlib_prefix_path = None
+        else:
+            mcmcsimulationlib_cmake_prefix_path = self.mcmcsimulationlib_cmake_prefix_path
+        install.run(self)
+
+
 setup(
     name='ScalarTheory',
     version='0.0.1',
@@ -66,9 +91,9 @@ setup(
     description='Add description here',
     long_description='',
     ext_modules=[CMakeExtension(
-        name='ScalarTheory', mcmcsimulationlib_cmake_prefix_path='~/MCMCSimulationLib/install'
+        name='ScalarTheory'
     )],
-    cmdclass=dict(build_ext=CMakeBuild),
+    cmdclass=dict(build_ext=CMakeBuild, install=InstallCommand),
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",

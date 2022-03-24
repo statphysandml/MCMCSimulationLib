@@ -43,16 +43,20 @@ https://jalammar.github.io/illustrated-transformer/
 - Finalize appiction wrapper for measure_system, command line support, cluster support and cuda support (currently only pybind and scalar theory like exmaple is working)
 
 - Include table of how examples are generated
-- Recheck the python part (in particular python_examples and respective data loaders)
+- Recheck the python part (in particular python_examples and respective data loaders) in the application wrapper
 - Clearify ParamHelper support
-- Fix correct pybinding of .cu files
+- Fix correct pybinding of .cu files...
+- Fix cmake install prefix in setup.py...
+pip install --use-feature=in-tree-build . --install-option='--mcmcsimulationlib-cmake-prefix-path=~/MCMCSimulationLib/install/' -v
+
+
+- Set Git to ON in CmakeLists.txt...
 
 # Useful link for a correct installation of your package
 
 https://decovar.dev/blog/2021/03/08/cmake-cpp-library/
 
 -> use: sudo make install
-
 
 Alternatively
 

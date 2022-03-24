@@ -8,6 +8,171 @@
 #include "../include/{{ cookiecutter.project_slug }}/{{ cookiecutter.project_slug }}.hpp"
 
 
+{%- if cookiecutter.main_template == "command_line_support"}
+struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>
+{
+    using mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+
+    void prepare() override
+    {
+        auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+
+        {{ cookiecutter.project_name }}Parameters system_params({1.0, 2.0, -1.5}, 1.0, 0.01);
+        mcmc::measures::ReadableMeasureParameters readable_measures(this->path_parameters.get_rel_data_path());
+
+        auto simulation_parameters = mcmc::simulation::SimulationParameters<{{ cookiecutter.project_name }}Parameters>::prepare_simulation_from_file(
+            system_params, readable_measures,
+            "systembase_params", "sigma", sigma_intervals);
+
+        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
+
+        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
+
+        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        ExpectationValueParams expectation_value_parameters(
+            this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"Config", "Mean"}, {}, "hot", "statistical");
+
+        // Store simulation parameters
+        simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+    }
+};
+
+
+int main(int argc, char **argv) {
+    // Initialize project dependent parameters
+    param_helper::proj::set_relative_path_to_project_root_dir("../");
+
+#ifdef PYTHON_BACKEND
+    mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
+#endif
+
+    CmdIntSimulation cmdint_simulation("{{ cookiecutter.project_name }}Simulation", "./", true);
+    cmdint_simulation.main(argc, argv);
+
+    // Finalization
+#ifdef PYTHON_BACKEND
+    mcmc::util::finalize_python();
+#endif
+    return 0;
+}
+{%- else if cookiecutter.main_template == "cluster_support"}
+void prepare_simulation_parameters(const std::string target_name, // Name of the simulation
+                        const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
+                        const bool rel_path = true)
+{
+    mcmc::cmdint::PathParameters path_parameters(target_name, sim_root_dir, rel_path);
+
+    auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+
+    // Setting up system parameters
+    {{ cookiecutter.project_name }}Parameters system_params({1.0, 2.0, -1.5}, 1.0, 0.01);
+    mcmc::measures::ReadableMeasureParameters readable_measures(path_parameters.get_rel_data_path());
+
+    auto simulation_parameters = mcmc::simulation::SimulationParameters<{{ cookiecutter.project_name }}Parameters>::prepare_simulation_from_file(
+            system_params, readable_measures,
+            "systembase_params", "sigma", sigma_intervals);
+
+    // Store simulation parameters
+    simulation_parameters.write_to_file(path_parameters.get_rel_config_path());
+}
+
+
+struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>
+{
+    using mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+
+    void prepare() override
+    {
+        // Prepare equilibrium time simulation
+        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.05, 10, "Mean");
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+
+        // Prepare simulation on a cluster and submit the job with one function call
+        mcmc::cluster::execute<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>(
+                "equilibrium_time", this->path_parameters, true, true,
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+    }
+};
+
+
+struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>
+{
+    using mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+
+    void prepare() override
+    {
+        // Prepare correlation time simulation
+        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "Mean");
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+
+        // Prepare simulation on a cluster and submit the job with one function call
+        mcmc::cluster::execute<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>(
+                "correlation_time", this->path_parameters, true, true,
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+    }
+};
+
+
+struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>
+{
+    using mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+
+    void prepare() override
+    {
+        // Prepare correlation time simulation
+        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        ExpectationValueParams expectation_value_parameters(
+                this->path_parameters.get_rel_results_path(), 200, this->path_parameters.get_rel_results_path(),
+                {"Config", "Mean"}, {}, "hot", "statistical");
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+
+        // Prepare expectation value simulation on a cluster and submit the job with one function call
+        mcmc::cluster::execute<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>(
+                "expectation_value", this->path_parameters, true, true,
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+    }
+};
+
+
+int main(int argc, char **argv) {
+    // Initialize project dependent parameters
+    param_helper::proj::set_relative_path_to_project_root_dir("../");
+
+#ifdef PYTHON_BACKEND
+    mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
+#endif
+    mcmc::cluster::initialize_cluster_params(PROJECT_NAME, CLUSTER_MODE);
+
+    const std::string target_name = "{{ cookiecutter.project_name }}Simulation";
+    const std::string sim_root_dir = "./";
+    const bool rel_path = true;
+
+    prepare_simulation_parameters(target_name, sim_root_dir, rel_path);
+
+    EquilibriumTimeSimulation equilibrium_time_simulation(target_name, sim_root_dir, rel_path);
+    equilibrium_time_simulation.main(argc, argv);
+
+    CorrelationTimeSimulation correlation_time_simulation(target_name, sim_root_dir, rel_path);
+    correlation_time_simulation.main(argc, argv);
+
+    ExpectationValueSimulation expectation_value_simulation(target_name, sim_root_dir, rel_path);
+    expectation_value_simulation.main(argc, argv);
+
+
+    // Finalization
+#ifdef PYTHON_BACKEND
+    mcmc::util::finalize_python();
+#endif
+    return 0;
+}
+{%- else}
 int main(int argc, char **argv) {
     // Initialize project dependent parameters
     param_helper::proj::set_relative_path_to_project_root_dir("../");
@@ -118,3 +283,4 @@ int main(int argc, char **argv) {
 #endif
     return 0;
 }
+{%- endif}

@@ -28,7 +28,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModelParameters, mcmc::me
         EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
 
         typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "Mean");
 
         typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
@@ -41,6 +41,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModelParameters, mcmc::me
         expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
     }
 };
+
 
 int main(int argc, char **argv) {
     // Initialize project dependent parameters
