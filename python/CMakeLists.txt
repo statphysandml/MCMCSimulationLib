@@ -1,7 +1,7 @@
 pybind11_add_module(mcmcsimulationlib_python mcmcsimulationlib_python.cpp)
 
 # Project specific compliation options (used by config.h.in)
-set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
+set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster ('local' or 'on_cluster').")
 # set(PYTHON_SCRIPTS_PATH "./../../python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend.")
 
 configure_file(config.h.in ./../../python/config.h @ONLY)

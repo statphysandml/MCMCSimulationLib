@@ -562,16 +562,15 @@ namespace mcmc
             
             /** @brief Executes the respective Python functions for evaluating the MCMC simulation and stores the results in rel_results_dir
              *  
-             *  For the evaluation to work, one need to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
+             *  For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
              * 
-             *  @param rel_results_dir Relative path to sim_root_dir for storing the results
-             *  @param sim_root_dir Relative path to the simulation directory (to the project_root_dir set by param_helper::proj::set_relative_path_to_project_root_dir("../"))
+             *  @param rel_results_dir Relative path to the project_root_dir for storing the results
              */
-            void eval(std::string rel_results_dir, std::string sim_root_dir="./")
+            void eval(std::string rel_results_dir)
             {
                 std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
 
-                sp.execution_params->evaluate(sp.measure_params->get_rel_data_path(), rel_results_dir, sim_root_dir, sp.running_parameter,
+                sp.execution_params->evaluate(sp.measure_params->get_rel_data_path(), rel_results_dir, sp.running_parameter,
                     sp.rp_intervals, sp.build_expanded_raw_parameters().get_json()
                 );
             }

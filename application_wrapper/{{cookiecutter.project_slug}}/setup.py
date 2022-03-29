@@ -37,7 +37,7 @@ class CMakeBuild(build_ext):
                       '-DPYTHON_EXECUTABLE=' + sys.executable,
 {%- if cookiecutter.cuda_support == "Yes" %}
                       '-DCudaUsage=GPU'
-{%- endif}
+{%- endif %}
                      ]
         if mcmcsimulationlib_cmake_prefix_path is not None:
             cmake_args += ['-DCMAKE_PREFIX_PATH=' + mcmcsimulationlib_cmake_prefix_path]

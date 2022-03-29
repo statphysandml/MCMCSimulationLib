@@ -12,7 +12,7 @@ namespace mcmc {
             }
 
             std::string filename = mode_type + "_" + path_parameters.target_name;
-            param_helper::fs::Fileos fileos(param_helper::proj::project_root() + path_parameters.sim_root_dir + "/" +
+            param_helper::fs::Fileos fileos(param_helper::proj::project_root() + "/" +
                                            path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename +
                                            ".sh");
             auto &os = fileos.get();
@@ -25,11 +25,11 @@ namespace mcmc {
             os << "#PBS -l walltime=72:00:00\n" << std::endl;
             if(VIRTUAL_ENV != "None")
                 os << "source " << mcmc::virtualenv::conda_activate_path << " " << mcmc::virtualenv::virtual_env << "\n" << std::endl;
-            os << "cd " << param_helper::proj::project_root() << path_parameters.sim_root_dir << "build/" << "\n";
-            // os << param_helper::proj::project_root() << path_parameters.sim_root_dir << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.target_name << std::endl;
-            os << param_helper::proj::project_root() << path_parameters.sim_root_dir << "build/" << executable_name
+            os << "cd " << param_helper::proj::project_root() << "build/" << "\n";
+            // os << param_helper::proj::project_root() << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.target_name << std::endl;
+            os << param_helper::proj::project_root() << "build/" << executable_name
                << " "  << mode_type << " " << path_parameters.target_name << " "
-               << path_parameters.sim_root_dir << " "  << path_parameters.rel_path << " " << run << " " << eval;
+               << " "  << path_parameters.rel_path << " " << run << " " << eval;
             if (additional_args.size() != 0)
                 for (auto additional_arg: additional_args)
                     os << " " << additional_arg;
@@ -39,12 +39,12 @@ namespace mcmc {
         void run_execution_on_cpu_cluster(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters, const std::string cluster_mode) {
             std::this_thread::sleep_for(std::chrono::seconds(3));
             std::string filename = mode_type + "_" + path_parameters.target_name;
-            std::string qsubfile = param_helper::proj::project_root() + path_parameters.sim_root_dir + "/" +
+            std::string qsubfile = param_helper::proj::project_root() + "/" +
                                    path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
-            std::string progoutfile = param_helper::proj::project_root() + path_parameters.sim_root_dir + "/" +
+            std::string progoutfile = param_helper::proj::project_root() + "/" +
                                       path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename +
                                       ".txt";
-            std::string progerrfile = param_helper::proj::project_root() + path_parameters.sim_root_dir + "/" +
+            std::string progerrfile = param_helper::proj::project_root() + "/" +
                                       path_parameters.get_rel_cpu_bash_script_path() + "error_run_" + filename +
                                       ".txt";
             int res;

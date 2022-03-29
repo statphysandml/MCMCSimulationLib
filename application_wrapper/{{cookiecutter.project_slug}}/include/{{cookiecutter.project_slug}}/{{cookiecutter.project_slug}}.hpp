@@ -34,9 +34,6 @@ struct {{ cookiecutter.project_name }}Parameters : public mcmc::simulation::Syst
 };
 
 
-// Define which ones are optional...
-
-
 {%- if cookiecutter.use_predefined_measures == "No" %}
 class {{ cookiecutter.project_name }} : public mcmc::simulation::SystemBase<{{ cookiecutter.project_name }}>
 {%- else %}

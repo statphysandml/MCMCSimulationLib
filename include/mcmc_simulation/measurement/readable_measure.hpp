@@ -18,26 +18,39 @@ namespace mcmc {
 
         struct ReadableMeasure;
 
+        /** @brief Class taking care of initalizing and writing measurements to file.
+         */
+
         struct ReadableMeasureParameters : public param_helper::params::Parameters {
             explicit ReadableMeasureParameters(const json params_) : Parameters(params_),
-                rel_data_path(get_entry<std::string>("rel_data_path", "None"))
+                rel_data_dir(get_entry<std::string>("rel_data_dir", "./data/"))
             {
                 // *** DIRECTORIES ***
                 // Create folder in data directory if not present
-                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_path))
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_dir))
                 {
                     // std::cout << "Create data directory" << std::endl;
-                    param_helper::fs::generate_directory_if_not_present(rel_data_path);
+                    param_helper::fs::generate_directory_if_not_present(rel_data_dir);
                 }
             }
-            
-            ReadableMeasureParameters(std::string rel_data_path_) :
+
+            /** @brief Prepare directory for writing simulation data to file.
+             * 
+             *  @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
+             */
+            ReadableMeasureParameters(std::string rel_data_dir_) :
                 ReadableMeasureParameters(
-                    json{{"rel_data_path", rel_data_path_}})
+                    json{{"rel_data_dir", rel_data_dir_}}
+                )
             {}
 
-            void write_to_file(const std::string &root_dir) {
-                Parameters::write_to_file(root_dir, "readable_measure_params");
+            /** @brief Write the readable measure parameters as readable_meausre_params.json into rel_root_dir
+             *
+             * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
+             * @returns None
+             */
+            void write_to_file(const std::string &rel_root_dir) {
+                Parameters::write_to_file(rel_root_dir, "readable_measure_params");
             }
 
             Parameters build_expanded_raw_parameters() const {
@@ -49,12 +62,12 @@ namespace mcmc {
                 return "readable_measure";
             }
 
-            std::string get_rel_data_path() const
+            std::string get_rel_data_dir() const
             {
-                return rel_data_path;
+                return rel_data_dir;
             }
 
-            std::string rel_data_path;
+            std::string rel_data_dir;
 
             typedef ReadableMeasure Measure;
         };
@@ -77,7 +90,7 @@ namespace mcmc {
                 rp_value = rp_value_;
 
                 // Prepare file os
-                os_ptr = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + rmp.get_rel_data_path() + "/" + gen_filename() + ".dat");
+                os_ptr = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + rmp.get_rel_data_dir() + "/" + gen_filename() + ".dat");
             }
 
             void initialize_measurements(const std::string starting_mode, const std::vector<std::string> measure_names, const uint rep)

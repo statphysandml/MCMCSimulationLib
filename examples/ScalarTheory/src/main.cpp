@@ -31,8 +31,9 @@ int main(int argc, char **argv) {
     mcmc::measures::ReadableMeasureParameters readable_measures(rel_data_path);
 
     //[ Equilibrium time
-    
-    /* typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+
+#ifdef PYTHON_BACKEND    
+    typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
     EquilibriumTimeParams equilibrium_time_parameters(40, 500, 0.005, 10, "SecondMoment");
 
     auto simulation_params_equilibrium_time = mcmc::simulation::SimulationParameters<
@@ -44,7 +45,7 @@ int main(int argc, char **argv) {
     mcmc::simulation::Simulation<ScalarTheoryParameters, EquilibriumTimeParams> equilibrium_time_simulation(
         simulation_params_equilibrium_time);
     equilibrium_time_simulation.run();
-    equilibrium_time_simulation.eval(rel_results_path); */
+    equilibrium_time_simulation.eval(rel_results_path);
 
     //[ Correlation time
 
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
     // - Maximum possible correlation time
     // - Number of sweeps before configurations for the computation of the correlation time are evaluated
     // - Observable to evaluate the correlation time
-    /* typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+    typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
     CorrelationTimeParams correlation_time_parameters(1000, 400, 10000 *//*equilibrium_time_results_path*//*, {"SecondMoment"}, "cold");
     
     // Setting up the simulation
@@ -69,9 +70,11 @@ int main(int argc, char **argv) {
     mcmc::simulation::Simulation<ScalarTheoryParameters, CorrelationTimeParams> correlation_time_simulation(
         simulation_params_correlation_time);
     correlation_time_simulation.run();
-    correlation_time_simulation.eval(rel_results_path); */
+    correlation_time_simulation.eval(rel_results_path);
 
     //]
+#endif
+
 
     //[ Expectation Value
 

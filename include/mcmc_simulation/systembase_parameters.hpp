@@ -17,8 +17,8 @@ namespace mcmc {
                 return "systembase_params";
             }
 
-            virtual void write_to_file(const std::string &root_dir) {
-                Parameters::write_to_file(root_dir, name());
+            virtual void write_to_file(const std::string &rel_root_dir) {
+                Parameters::write_to_file(rel_root_dir, name());
             }
 
             // Function that enables to add parameters of other used classes with parameters

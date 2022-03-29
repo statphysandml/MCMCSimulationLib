@@ -8,7 +8,7 @@
 #include "../include/{{ cookiecutter.project_slug }}/{{ cookiecutter.project_slug }}.hpp"
 
 
-{%- if cookiecutter.main_template == "command_line_support"}
+{%- if cookiecutter.main_template == "command_line_support" %}
 struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>
 {
     using mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}Parameters, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 #endif
     return 0;
 }
-{%- else if cookiecutter.main_template == "cluster_support"}
+{%- elif cookiecutter.main_template == "cluster_support" %}
 void prepare_simulation_parameters(const std::string target_name, // Name of the simulation
                         const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
                         const bool rel_path = true)
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 #endif
     return 0;
 }
-{%- else}
+{%- else %}
 int main(int argc, char **argv) {
     // Initialize project dependent parameters
     param_helper::proj::set_relative_path_to_project_root_dir("../");
@@ -283,4 +283,4 @@ int main(int argc, char **argv) {
 #endif
     return 0;
 }
-{%- endif}
+{%- endif %}

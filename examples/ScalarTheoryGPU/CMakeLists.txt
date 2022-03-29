@@ -17,7 +17,7 @@ set(BUILD_PYTHON_BINDINGS ON CACHE BOOL "Enable building of Python bindings")
 set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expectation values, etc.")
 
 # Project specific compliation options (used by config.h.in)
-set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster.")
+set(CLUSTER_MODE "local" CACHE STRING "Mode to run the cluster ('local' or 'on_cluster').")
 set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential python scripts evaluated by the python backend.")
 
 # Include libraries

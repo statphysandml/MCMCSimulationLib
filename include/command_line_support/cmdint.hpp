@@ -82,7 +82,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 }
@@ -97,7 +97,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 }
@@ -112,7 +112,7 @@ namespace mcmc {
                         if(run)
                             sim.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path(), path_parameters.sim_root_dir);
+                            sim.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 };
@@ -129,6 +129,8 @@ namespace mcmc {
             }
         }
 
+        /** @brief Todo
+         */
         template<typename SBP, typename MS>
         struct CmdIntSim
         {

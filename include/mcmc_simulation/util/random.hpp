@@ -39,7 +39,6 @@ namespace mcmc {
             else
                 return T(-1);
         }
-
     }
 }
 

@@ -54,7 +54,7 @@ which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 * `RUN_WITH_PYTHON_BACKEND`: Enable the computation of numerical results in Python (default: `ON`). Some features, like the computation of the correlation time do not work if this is disabled.
 * `BUILD_TESTING`: Enable building of the test suite (default: `ON`)
 * `BUILD_DOCS`: Enable building the documentation (default: `ON`)
-<!-- * `BUILD_PYTHON_BINDINGS`: Enable building the Python bindings (default: `ON`) -->
+<!-- * `BUILD_PYTHON_BINDINGS`: Enable building Python bindings (default: `ON`) -->
 
 The following additional CMake variables are only required if the library is used to submit jobs on a cluster:
 

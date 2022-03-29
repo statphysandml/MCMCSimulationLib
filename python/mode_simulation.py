@@ -77,7 +77,7 @@ class ModeSimulation(EvaluationModule):
         if eval:
             from mcmcsimulation import init_mcmc_python_binding
             init_mcmc_python_binding(self.python_modules_path)
-            simulation.eval(self.rel_results_path, self.sim_base_dir)
+            simulation.eval(self.rel_results_path)
         # assert False, "This should be also possible from file!" <-> i.e. wihtout the need to provide any parameters for the class
         # -> possilbe solutions solution:
         #  - write second constructor for loading lattice parameters form file? important distinugish between config files and json files in data dir

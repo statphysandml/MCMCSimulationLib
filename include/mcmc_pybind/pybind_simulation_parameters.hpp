@@ -109,21 +109,21 @@ namespace mcmc {
             py::class_<SystemEquilibriumTime>(m, (system_name + "EquilibriumTime").c_str())
                 .def(py::init<SystemEquilibriumTimeParameters&>())
                 .def("run", &SystemEquilibriumTime::run)
-                .def("eval", &SystemEquilibriumTime::eval, "rel_results_dir"_a, "sim_root_dir"_a);
+                .def("eval", &SystemEquilibriumTime::eval, "rel_results_dir"_a);
 
             // -> Correlation Time
             typedef mcmc::simulation::Simulation<SystemParameters, mcmc::mode::CorrelationTimeParameters, MeasureParameters> SystemCorrelationTime;
             py::class_<SystemCorrelationTime>(m, (system_name + "CorrelationTime").c_str())
                 .def(py::init<SystemCorrelationTimeParameters&>())
                 .def("run", &SystemCorrelationTime::run)
-                .def("eval", &SystemCorrelationTime::eval, "rel_results_dir"_a, "sim_root_dir"_a);
+                .def("eval", &SystemCorrelationTime::eval, "rel_results_dir"_a);
 
             // -> Expectation Value
             typedef mcmc::simulation::Simulation<SystemParameters, mcmc::mode::ExpectationValueParameters, MeasureParameters> SystemExpectationValue;
             py::class_<SystemExpectationValue>(m, (system_name + "ExpectationValue").c_str())
                 .def(py::init<SystemExpectationValueParameters&>())
                 .def("run", &SystemExpectationValue::run)
-                .def("eval", &SystemExpectationValue::eval, "rel_results_dir"_a, "sim_root_dir"_a);
+                .def("eval", &SystemExpectationValue::eval, "rel_results_dir"_a);
         }
     }
 }

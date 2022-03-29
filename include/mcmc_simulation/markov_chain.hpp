@@ -35,8 +35,8 @@ namespace mcmc {
                          {"start_measuring",        start_measuring_},
                          {"starting_mode",          starting_mode_}}) {}
 
-            void write_to_file(const std::string &root_dir) {
-                Parameters::write_to_file(root_dir, "markovchain_params");
+            void write_to_file(const std::string &rel_root_dir) {
+                Parameters::write_to_file(rel_root_dir, "markovchain_params");
             }
 
         private:

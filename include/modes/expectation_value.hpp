@@ -74,7 +74,8 @@ namespace mcmc {
                          {"error_type",             error_type_},
                          {"n_means_bootstrap",      n_means_bootstrap_}}) {}
 
-            /** @brief Same as above with the exceptation that the autocorrelation time which was precomputed by the CorrelationTimeParameters mode is loaded from file.
+            /** @brief Same as above with the exception that the autocorrelation time,
+             * which can be computed by the CorrelationTimeParameters mode, is loaded from file.
              *
              * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json file
              * @param number_of_measurements_ Total number of measurements
@@ -108,7 +109,8 @@ namespace mcmc {
                          {"error_type",                        error_type_},
                          {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
 
-            /** @brief Same as above with the exceptation that the number of Monte Carlo sweeps before the measurement which was precomputed by the EquilibriumTimeParameters mode is loaded from file.
+            /** @brief Same as above with the exception that the time to equilibrium before the first measurement,
+             * which can be computed by the EquilibriumTimeParameters mode, is loaded from file.
              *
              * @param measure_interval_ Number of Monte Carlo sweeps between measurements (autocorrelation time)
              * @param number_of_measurements_ Total number of measurements
@@ -142,7 +144,7 @@ namespace mcmc {
                          {"error_type",                        error_type_},
                          {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
             
-            /** @brief Same as above with the exceptation that the number of sweeps before the first measurement as well as the autocorrelation time are loaded from file.
+            /** @brief Same as above with the exception that the time to equilibrium before the first measurement as well as the autocorrelation time are loaded from file.
              * Both need to be computed beforhand with the EquilibriumTimeParameters and CorrelationTimeParameters mode.
              *
              * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json results file
@@ -178,13 +180,13 @@ namespace mcmc {
                          {"error_type",                        error_type_},
                          {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
 
-            /** @brief Write the expectation values as expectation_value_params.json into root_dir
+            /** @brief Write the expectation values as expectation_value_params.json into rel_root_dir
              *
-             * @param root_dir Absolute path to the output directory
+             * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
              * @returns None
              */
-            void write_to_file(const std::string &root_dir) {
-                Parameters::write_to_file(root_dir, "expectation_value_params");
+            void write_to_file(const std::string &rel_root_dir) {
+                Parameters::write_to_file(rel_root_dir, "expectation_value_params");
             }
 
             Parameters build_expanded_raw_parameters() const {
@@ -198,10 +200,15 @@ namespace mcmc {
 
             /** @brief Evaluate expectation values by calling the respective Python functions and writes the results to file
              *
-             * @param x ...Todo
+             * For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
+             * 
+             * @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
+             * @param rel_results_dir Relative path to the project_root_dir for storing the results
+             * @param running_parameter Name of the running parameter (default: "None")
+             * @param rp_intervals_ List of values for the running parameter
              * @returns None
              */
-            void evaluate(const std::string rel_data_dir, const std::string rel_results_dir, const std::string sim_root_dir,
+            void evaluate(const std::string rel_data_dir, const std::string rel_results_dir,
                 const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {
                 #ifdef PYTHON_BACKEND
@@ -219,7 +226,7 @@ namespace mcmc {
                     error_type='" + error_type + "',\
                     n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::proj::project_root() + sim_root_dir + "',\
+                    sim_base_dir='" + param_helper::proj::project_root()"',\
                     custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif
