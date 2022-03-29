@@ -30,8 +30,8 @@ namespace mcmc {
          * \f{eqnarray*}{
          *  \chi(t) &=& \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t') m(t' + t) \\&&- \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t') \times \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t' + t)\,,
          * \f}
-         * where \f$t\f$ refers to the computer time and \f$t_{\text{max}}\f$ to the ``maximum_correlation_time``
-         * and \f$t\f$ to the ``measure`` used to evaluate the autocorrelation time.
+         * where \f$t\f$ refers to the computer time, \f$t_{\text{max}}\f$ to the ``maximum_correlation_time``
+         * and \f$m\f$ to the ``measure`` used to evaluate the autocorrelation time.
          * 
          * Note that some of the parameters are only needed for the respective evaluation which
          * is executed afterwards in Python.
@@ -110,7 +110,7 @@ namespace mcmc {
                 return "correlation_time";
             }
 
-            /** @brief Evaluates the equilibrium times by calling the respective Python functions and writes the results to file
+            /** @brief Evaluates the correlation time by calling the respective Python functions and writes the results to file
              *
              * For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
              * 
@@ -134,7 +134,7 @@ namespace mcmc {
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::proj::project_root()"',\
+                    sim_base_dir='" + param_helper::proj::project_root() + "',\
                     fma=fma,\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif

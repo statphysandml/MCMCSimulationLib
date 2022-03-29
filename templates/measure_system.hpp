@@ -1,46 +1,41 @@
-#ifndef {{ cookiecutter.project_slug.upper() }}_HPP
-#define {{ cookiecutter.project_slug.upper() }}_HPP
+#ifndef MCMCMEASURESYSTEM_HPP
+#define MCMCMEASURESYSTEM_HPP
 
 
 #include <mcmc_simulation/header.hpp>
 
 
-// Template implementation for a MCMC system
+// Template implementation for a MCMC measure system
 
 
-class {{ cookiecutter.project_name }};
+class MCMCMeasureSystem;
 
 
-struct {{ cookiecutter.project_name }}Parameters : public mcmc::simulation::SystemBaseParameters {
-    explicit {{ cookiecutter.project_name }}Parameters(const json params):
+struct MCMCMeasureSystemParameters : public mcmc::simulation::SystemBaseParameters {
+    explicit MCMCMeasureSystemParameters(const json params):
             SystemBaseParameters(params),
             mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
             sigma(get_entry<double>("sigma", 0.4)),
             dt(get_entry<double>("dt", 0.01))
     {}
 
-    {{ cookiecutter.project_name }}Parameters(const std::vector<double> mu_, const double sigma_, const double dt_) : {{ cookiecutter.project_name }}Parameters(json{
+    MCMCMeasureSystemParameters(const std::vector<double> mu_, const double sigma_, const double dt_) : MCMCMeasureSystemParameters(json{
             {"mu", mu_},
             {"sigma", sigma_},
             {"dt", dt_}
     })
     {}
 
-    std::unique_ptr<{{ cookiecutter.project_name }}> generate() { return std::make_unique<{{ cookiecutter.project_name }}>(*this); }
+    std::unique_ptr<MCMCMeasureSystem> generate() { return std::make_unique<MCMCMeasureSystem>(*this); }
 
     const std::vector<double> mu;
     const double sigma;
     const double dt;
 };
-
-
-// Define which ones are optional...
-
-
-class {{ cookiecutter.project_name }} : public mcmc::simulation::MeasureSystemBase<{{ cookiecutter.project_name }}>
+class MCMCMeasureSystem : public mcmc::simulation::MeasureSystemBase<MCMCMeasureSystem>
 {
 public:
-    explicit {{ cookiecutter.project_name }}(const {{ cookiecutter.project_name }}Parameters &sp_) :
+    explicit MCMCMeasureSystem(const MCMCMeasureSystemParameters &sp_) :
         sp(sp_),
         normal(std::normal_distribution<double>(0.0, 1.0))
     {}
@@ -88,12 +83,17 @@ public:
         // Returns the entire MCMC system representation, for example,
         return system;
     }
-    
+
+    std::vector<std::string> get_measure_names()
+    {
+        return sp.get_measures();
+    }
+
 private:
     std::vector<double> system; // Or any other system representation
     std::normal_distribution<double> normal;
 
-    const {{ cookiecutter.project_name }}Parameters &sp;
+    const MCMCMeasureSystemParameters &sp;
 };
 
-#endif //{{ cookiecutter.project_slug.upper() }}_HPP
+#endif //MCMCMEASURESYSTEM_HPP

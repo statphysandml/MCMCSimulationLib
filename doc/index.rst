@@ -23,7 +23,9 @@ Further, it simplifies setting up and running simulations by providing support f
 
    getting_started.rst
    tutorials.rst
-   modules.rst
+   basic_features.rst
+   functional_features.rst
+   advanced_features.rst
    python_modules.rst
 
 

@@ -198,7 +198,7 @@ namespace mcmc {
                 return "expectation_value";
             }
 
-            /** @brief Evaluate expectation values by calling the respective Python functions and writes the results to file
+            /** @brief Evaluates expectation values by calling the respective Python functions and writes the results to file
              *
              * For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
              * 
@@ -226,7 +226,7 @@ namespace mcmc {
                     error_type='" + error_type + "',\
                     n_means_bootstrap=" + std::to_string(n_means_bootstrap) + ",\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::proj::project_root()"',\
+                    sim_base_dir='" + param_helper::proj::project_root() + "',\
                     custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif

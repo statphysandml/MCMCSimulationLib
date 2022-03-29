@@ -101,7 +101,7 @@ namespace mcmc {
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
-                    sim_base_dir='" + param_helper::proj::project_root()"',\
+                    sim_base_dir='" + param_helper::proj::project_root() + "',\
                     fma=fma,\
                     custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
                 #endif

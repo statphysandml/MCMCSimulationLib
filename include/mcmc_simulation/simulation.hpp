@@ -27,9 +27,23 @@ namespace mcmc
         /** @brief Helper class for preparing a MCMC simulation
          *
          * The class features different constructores allowing for running simulations based
-         * on the same model or execution parameters and for simulations on a cluster or
-         * locally based on configuration files.
+         * on the same system, execution and measure parameters, for simulations from configuration files.
          * 
+         * The static constructor SimulationParameters::generate_simulation is overloaded to allow for various combinations
+         * of parameters defined within in C++ or loaded from file. The list of possible parameters is as follows:
+         * 
+         * <b>Parameters</b>:
+         *     - <b>system_base</b> Instance of a systembase parameter class
+         *     - <b>execution_params_</b> Instance of an exeuction mode parameter class
+         *     - <b>measure_params_</b> Instance of a measure parameter class handling gathering and writing the simulation data to file
+         *     - <b>running_parameter_kind_</b> Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
+         *     - <b>running_parameter_</b> Name of the running parameter (default: "None")
+         *     - <b>rp_intervals_</b> List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+         *     - <b>rel_systembase_params_path_</b> Relative path to the project_dir of the simulation pointing to the sim_params.json file
+         *     - <b>rel_execution_params_path_</b> Relative path to the project_dir of the simulation pointing to the execution_params.json file
+         *     - <b>rel_measure_params_path_</b> Relative path to the project_dir of the simulation pointing to the readable_measure_params.json file
+         * 
+         * The respective constructors and constructors for generating simulations entirely from file are listed below.
          */
         template <typename SBP, typename EP=mcmc::mode::FromFilePreparation, typename MSP=mcmc::measures::ReadableMeasureParameters>
         class SimulationParameters : public param_helper::params::Parameters {
@@ -95,15 +109,9 @@ namespace mcmc
                 }
             }
 
-            /** @brief Prepare a simulation based on systembase parameters and execution parameters
-             * 
-             * @param systembase_params_ Instance of a systembase parameter class
-             * @param execution_params_ Instance of an exeuction mode parameter class
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
-             */
+            /* Constructors with measure_params_ as an instance */
+
+            /** @brief Simulation based on systembase parameters, execution parameters and measure parameters */
             static SimulationParameters generate_simulation(
                     SBP& systembase_params_,
                     EP& execution_params_,
@@ -126,17 +134,8 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation using the same execution parameters and systembase parameters stored at rel_systembase_params_path and rel_execution_params_path
-             * 
-             * The static constructor allows for running different simulations with the same execution parameters and systembase parameters. It is useful if other parameter ranges need to be covered.
-             * 
-             * @param rel_systembase_params_path_ Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_params_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
-             */
+            /** @brief Simulation based on execution parameters and measure parameters, where systembase parameters are loaded
+             * from rel_systembase_params_path_ */
             static SimulationParameters generate_simulation(
                     const std::string& rel_systembase_params_path_,
                     EP& execution_params_,
@@ -165,17 +164,9 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation using the same execution parameters stored at rel_execution_params_path
-             * 
-             * The static constructor allows for running different simulations with the same exeuction parameters.
-             * 
-             * @param systembase_params_ Instance of a systembase parameter class
-             * @param rel_execution_params_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
-             */
+            /** @brief Simulation based on systembase parameters and measure parameters, where execution parameters are
+             * loaded from rel_execution_params_path_
+             * */
             static SimulationParameters generate_simulation(
                     SBP& systembase_params_,
                     const std::string& rel_execution_params_path_,
@@ -198,47 +189,8 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation based on systembase parameters and execution parameters
-             * 
-             * @param systembase_params_ Instance of a systembase parameter class
-             * @param execution_params_ Instance of an exeuction mode parameter class
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
-             */
-            static SimulationParameters generate_simulation(
-                    SBP& systembase_params_,
-                    EP& execution_params_,
-                    const std::string& rel_measure_params_path_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
-                    const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
-            )
-            {
-                // Assert if EP = PrepareFromFile
-                return SimulationParameters(
-                        json {
-                                {"measure_params_path", rel_measure_params_path_},
-                                {"running_parameter_kind", running_parameter_kind_},
-                                {"running_parameter", running_parameter_},
-                                {"rp_intervals", rp_intervals_},
-                                {systembase_params_.name(), systembase_params_.get_json()},
-                                {"execution_params", execution_params_.get_json()}
-                        }
-                );
-            }
-
-            /** @brief Prepare a simulation using the same execution parameters and systembase parameters stored at rel_systembase_params_path and rel_execution_params_path
-             * 
-             * The static constructor allows for running different simulations with the same execution parameters and systembase parameters. It is useful if other parameter ranges need to be covered.
-             * 
-             * @param rel_systembase_params_path_ Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_params_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+            /** @brief Simulation based on measure parameters, where systembase parameters are loaded from rel_systembase_params_path_
+             * and execution parameters from rel_execution_params_path_
              */
             static SimulationParameters generate_simulation(
                     const std::string& rel_systembase_params_path_,
@@ -268,16 +220,35 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation using the same execution parameters and systembase parameters stored at rel_systembase_params_path and rel_execution_params_path
-             * 
-             * The static constructor allows for running different simulations with the same execution parameters and systembase parameters. It is useful if other parameter ranges need to be covered.
-             * 
-             * @param rel_systembase_params_path_ Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_params_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+            /* Constructors with measure_params_ loaded from file */
+
+            /** @brief Simulation based on systembase parameters and execution parameters, where measure parameters are loaded
+             * from rel_measure_params_path_
+             */
+            static SimulationParameters generate_simulation(
+                    SBP& systembase_params_,
+                    EP& execution_params_,
+                    const std::string& rel_measure_params_path_,
+                    const std::string& running_parameter_kind_="None",
+                    const std::string& running_parameter_="None",
+                    const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
+            )
+            {
+                // Assert if EP = PrepareFromFile
+                return SimulationParameters(
+                        json {
+                                {"measure_params_path", rel_measure_params_path_},
+                                {"running_parameter_kind", running_parameter_kind_},
+                                {"running_parameter", running_parameter_},
+                                {"rp_intervals", rp_intervals_},
+                                {systembase_params_.name(), systembase_params_.get_json()},
+                                {"execution_params", execution_params_.get_json()}
+                        }
+                );
+            }
+
+            /** @brief Simulation based on execution parameters, where systembase parameters are loaded from
+             * rel_systembase_params_path_ and measure parameters from rel_measure_params_path_
              */
             static SimulationParameters generate_simulation(
                     const std::string& rel_systembase_params_path_,
@@ -307,14 +278,8 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation based on systembase parameters and execution parameters
-             * 
-             * @param systembase_params_ Instance of a systembase parameter class
-             * @param execution_params_ Instance of an exeuction mode parameter class
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+            /** @brief Simulation based on systembase parameters, where execution parameters are loaded from
+             * rel_execution_params_path_ and measure parameters from rel_measure_params_path_
              */
             static SimulationParameters generate_simulation(
                     SBP& systembase_params_,
@@ -338,16 +303,8 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation using the same execution parameters and systembase parameters stored at rel_systembase_params_path and rel_execution_params_path
-             * 
-             * The static constructor allows for running different simulations with the same execution parameters and systembase parameters. It is useful if other parameter ranges need to be covered.
-             * 
-             * @param rel_systembase_params_path_ Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_params_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
-             * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter_ Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+            /** @brief Simulation, where systembase parameters are loaded from rel_systembase_params_path_,
+             * execution parameters from rel_execution_params_path_ and measure parameters from rel_measure_params_path_
              */
             static SimulationParameters generate_simulation(
                     const std::string& rel_systembase_params_path_,
@@ -382,7 +339,7 @@ namespace mcmc
              * ToDo: Explain what kind of EP need to be used in this case..
              * 
              * @param systembase_params_ Instance of a systembase parameter class
-             * @param rel_data_path_ Relative path to the project_dir of the simulation for storing the simulation data
+             * @param measure_params_ Instance of a measure parameter class handling gathering and writing the simulation data to file
              * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
              * @param running_parameter_ Name of the running parameter (default: "None")
              * @param rp_intervals_ List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
@@ -411,7 +368,9 @@ namespace mcmc
             }
 
             /** @brief Generate a simulation solely from file
-             * 
+             *
+             * ToDo!!
+             *  
              * Uses the given paths to load an entire simulation - It is important that the template parameters are in
              * concordance with the simulation parameter file.
              * If the rel_execution_params_path == "" the execution path will be loaded from the simulation parameter file
