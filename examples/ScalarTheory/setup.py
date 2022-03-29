@@ -61,7 +61,7 @@ class CMakeBuild(build_ext):
 class InstallCommand(install):
     user_options = install.user_options + [
         # ('someopt', None, None), # a 'flag' option
-        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
+        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
     ]
 
     def initialize_options(self):

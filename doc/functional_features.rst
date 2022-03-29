@@ -26,25 +26,6 @@ Integrating external python modules
 
 .. doxygenfunction:: mcmc::util::set_python_modules_path
 
-Sampler
--------
-
-Gaussian sampler
-****************
-.. doxygenstruct:: mcmc::sampler::GaussianSampler
-
-Uniform sampler
-***************
-.. doxygenstruct:: mcmc::sampler::UniformSampler
-
-Hat function sampler
-********************
-.. doxygenstruct:: mcmc::sampler::HatFunctionSampler
-
-Dummy sampler
-*************
-.. doxygenstruct:: mcmc::sampler::DummySampler
-
 Utils
 -----
 

@@ -11,7 +11,6 @@ using json = nlohmann::json;
 
 namespace mcmc {
     namespace mode {
-
         class FromFilePreparation : public param_helper::params::Parameters {
         public:
             explicit FromFilePreparation(const json params_) : Parameters(params_) {}
@@ -36,10 +35,10 @@ namespace mcmc {
                 const std::string running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
             {}
 
-            std::unique_ptr<mcmc::simulation::MarkovChainParameters>
-            generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
+            mcmc::simulation::MarkovChain
+            generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
                 std::cerr << "-- A markov chain based on the from file preparation mode shouldn't be executed -- " << std::endl;
-                return std::make_unique<mcmc::simulation::MarkovChainParameters>(0, 0, 0, 0, "hot");
+                return mcmc::simulation::MarkovChain(0, 0, 0, 0, "hot");
             }
 
             std::vector<std::string> get_measures() {

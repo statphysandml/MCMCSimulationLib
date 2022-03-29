@@ -3,22 +3,31 @@
 
 
 #include <mcmc_simulation/header.hpp>
+#include <mcmc_simulation/util/random.hpp>
 
 
 // Example implementation of a scalar theory
 
-class ScalarTheory;
 
-struct ScalarTheoryParameters : public mcmc::simulation::SystemBaseParameters {
-    explicit ScalarTheoryParameters(const json params):
-            SystemBaseParameters(params),
-            kappa(get_entry<double>("kappa", 0.4)),
-            lambda(get_entry<double>("lambda", 1.0)),
-            dt(get_entry<double>("dt", 0.01)),
-            n(get_entry<int>("n", 20)),
-            m(get_entry<double>("m", 1.0)),
-            dimensions(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4}))
+class ScalarTheory : public mcmc::simulation::SystemBase<ScalarTheory>
+{
+public:
+    explicit ScalarTheory(const json params):
+        SystemBase(params),
+        // Configuration parameters
+        kappa(get_entry<double>("kappa", 0.4)),
+        lambda(get_entry<double>("lambda", 1.0)),
+        dt(get_entry<double>("dt", 0.1)),
+        n(get_entry<int>("n", 10)),
+        m(get_entry<double>("m", 1.0)),
+        dimensions(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4})),
 
+        // Further member variables
+        normal(std::normal_distribution<double>(0.0, 1.0)),
+        rand(std::uniform_real_distribution<double> (0,1)),
+        acceptance_rate(0.0),
+        energy_violation(0.0),
+        exponential_energy_violation(0.0)
     {
         n_sites = 1;
         dim_mul.push_back(n_sites);
@@ -26,10 +35,23 @@ struct ScalarTheoryParameters : public mcmc::simulation::SystemBaseParameters {
             n_sites *= dim;
             dim_mul.push_back(n_sites);
         }
+
+        neighbour_indices = std::vector<std::vector<int>> (get_size(), std::vector<int>(2 * dimensions.size()));
+        for(uint site_idx = 0; site_idx < get_size(); site_idx++)
+        {
+            for(uint d = 0; d < dimensions.size(); d++)
+            {
+                neighbour_indices[site_idx][2 * d] = neigh_dir(site_idx, d, true);
+                neighbour_indices[site_idx][2 * d + 1] = neigh_dir(site_idx, d, false);
+            }
+        }
+
+        momenta = std::vector<double>(get_size(), 0.0);
+        current_momenta = std::vector<double>(get_size(), 0.0);
     }
 
-    ScalarTheoryParameters(const double kappa_, const double lambda_, std::vector<int> dimensions_,
-        const double dt_, const int n_, const double m_=1.0) : ScalarTheoryParameters(json{
+    ScalarTheory(const double kappa_=0.4, const double lambda_=1.0, std::vector<int> dimensions_={4, 4},
+        const double dt_=0.1, const int n_=10, const double m_=1.0) : ScalarTheory(json{
             {"kappa", kappa_},
             {"lambda", lambda_},
             {"dimensions", dimensions_},
@@ -38,44 +60,6 @@ struct ScalarTheoryParameters : public mcmc::simulation::SystemBaseParameters {
             {"m", m_}
     })
     {}
-
-    std::unique_ptr<ScalarTheory> generate() { return std::make_unique<ScalarTheory>(*this); }
-
-    const double kappa;
-    const double lambda;
-    const double dt;
-    const int n;
-    const double m;
-
-    uint16_t n_sites; // Total number of sites
-    std::vector<int> dimensions; // Different dimensions
-    std::vector<int> dim_mul; // Accumulated different dimensions (by product)
-};
-
-
-class ScalarTheory : public mcmc::simulation::SystemBase<ScalarTheory>
-{
-public:
-    explicit ScalarTheory(const ScalarTheoryParameters &stsp_) :
-        stsp(stsp_),
-        normal(std::normal_distribution<double>(0.0, 1.0)),
-        rand(std::uniform_real_distribution<double> (0,1)),
-        momenta(std::vector<double>(get_size(), 0.0)),
-        current_momenta(std::vector<double>(get_size(), 0.0)),
-        acceptance_rate(0.0),
-        energy_violation(0.0),
-        exponential_energy_violation(0.0)
-    {
-        neighbour_indices = std::vector<std::vector<int>> (get_size(), std::vector<int>(2 * stsp.dimensions.size()));
-        for(uint site_idx = 0; site_idx < get_size(); site_idx++)
-        {
-            for(uint d = 0; d < stsp.dimensions.size(); d++)
-            {
-                neighbour_indices[site_idx][2 * d] = neigh_dir(site_idx, d, true);
-                neighbour_indices[site_idx][2 * d + 1] = neigh_dir(site_idx, d, false);
-            }
-        }
-    }
 
     void initialize(std::string starting_mode)
     {        
@@ -104,14 +88,14 @@ public:
             std::copy(momenta.begin(), momenta.end(), current_momenta.begin());
 
             // Hamiltonians' equation - Leapfrog
-            for(auto n = 0; n < stsp.n; n++)
+            for(auto j = 0; j < n; j++)
             {
                 for (uint site_idx = 0; site_idx < get_size(); site_idx++)
-                    momenta[site_idx] -= stsp.dt / 2.0 * drift(site_idx);
+                    momenta[site_idx] -= dt / 2.0 * drift(site_idx);
                 for (uint site_idx = 0; site_idx < get_size(); site_idx++)
-                    lattice[site_idx] += stsp.dt * momenta[site_idx] / stsp.m;
+                    lattice[site_idx] += dt * momenta[site_idx] / m;
                 for (uint site_idx = 0; site_idx < get_size(); site_idx++)
-                    momenta[site_idx] -= stsp.dt / 2.0 * drift(site_idx);
+                    momenta[site_idx] -= dt / 2.0 * drift(site_idx);
             }
 
             auto proposal_action = action();
@@ -119,9 +103,9 @@ public:
             auto current_kinetic_term = std::inner_product(current_momenta.begin(), current_momenta.end(), current_momenta.begin(), 0.0);
             auto proposal_kinetic_term = std::inner_product(momenta.begin(), momenta.end(), momenta.begin(), 0.0);
 
-            // std::cout << proposal_action + 0.5 / stsp.m * proposal_kinetic_term << " == " << current_action + 0.5 / stsp.m * current_kinetic_term << std::endl;
+            // std::cout << proposal_action + 0.5 / m * proposal_kinetic_term << " == " << current_action + 0.5 / m * current_kinetic_term << std::endl;
 
-            auto energy_difference = 1.0 * (proposal_action - current_action) + 0.5 * (proposal_kinetic_term - current_kinetic_term) / stsp.m;
+            auto energy_difference = 1.0 * (proposal_action - current_action) + 0.5 * (proposal_kinetic_term - current_kinetic_term) / m;
 
             energy_violation_ += std::abs(energy_difference);
             exponential_energy_violation_ += std::exp(-1.0 * energy_difference);
@@ -141,7 +125,7 @@ public:
 
     uint16_t get_size() const
     {
-        return stsp.n_sites;
+        return n_sites;
     }
 
     auto at(int i) const
@@ -170,10 +154,10 @@ public:
         for(uint site_idx = 0; site_idx < get_size(); site_idx++)
         {
             double kinetic_term = 0;
-            for(uint d = 0; d < stsp.dimensions.size(); d++)
+            for(uint d = 0; d < dimensions.size(); d++)
                 kinetic_term += lattice[neighbour_indices[site_idx][2 * d]];
-            action_ += -2.0 * stsp.kappa * lattice[site_idx] * kinetic_term + \
-                (1.0 - 2.0 * stsp.lambda) * std::pow(lattice[site_idx], 2.0) + stsp.lambda * std::pow(lattice[site_idx], 4.0);
+            action_ += -2.0 * kappa * lattice[site_idx] * kinetic_term + \
+                (1.0 - 2.0 * lambda) * std::pow(lattice[site_idx], 2.0) + lambda * std::pow(lattice[site_idx], 4.0);
         }
         return action_;
     }
@@ -181,10 +165,10 @@ public:
     double drift(const uint site_idx)
     {
         double drift_ = 0;
-        for(uint d = 0; d < stsp.dimensions.size(); d++)
+        for(uint d = 0; d < dimensions.size(); d++)
             drift_ += lattice[neighbour_indices[site_idx][2 * d]] + lattice[neighbour_indices[site_idx][2 * d + 1]];
-        drift_ = -2.0 * stsp.kappa * drift_  + \
-            2.0 * (1.0 - 2.0 * stsp.lambda) * lattice[site_idx] + 4.0 * stsp.lambda * std::pow(lattice[site_idx], 3.0);
+        drift_ = -2.0 * kappa * drift_  + \
+            2.0 * (1.0 - 2.0 * lambda) * lattice[site_idx] + 4.0 * lambda * std::pow(lattice[site_idx], 3.0);
         return drift_;
     }
 
@@ -194,7 +178,7 @@ public:
     auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        for(const auto measure_name: get_measure_names())
+        for(const auto measure_name: this->measure_names())
         {
             if(measure_name == "Mean")
                 results.push_back(mean());
@@ -221,16 +205,19 @@ public:
     void finalize_measurements(std::string starting_mode, uint rep=1)
     {}
 
-    std::vector<std::string> get_measure_names()
-    {
-        return stsp.get_measures();
-    }
-
 private:
+    double kappa;
+    double lambda;
+    double dt;
+    int n;
+    double m;
+
+    uint16_t n_sites; // Total number of sites
+    std::vector<int> dimensions; // Different dimensions
+    std::vector<int> dim_mul; // Accumulated different dimensions (by product)
+
     std::vector<double> lattice;
     std::vector<std::vector<int>> neighbour_indices;
-
-    const ScalarTheoryParameters &stsp;
 
     std::vector<double> momenta;
     std::vector<double> current_momenta;
@@ -273,11 +260,11 @@ private:
     }
 
     //site, moving dimension, direction
-    int neigh_dir(int n, int d, bool dir) const {
+    int neigh_dir(int i, int d, bool dir) const {
         if(dir)
-            return n-n%(stsp.dim_mul[d]*stsp.dimensions[d])+(n+stsp.dim_mul[d])%(stsp.dim_mul[d]*stsp.dimensions[d]);
+            return i-i%(dim_mul[d]*dimensions[d])+(i+dim_mul[d])%(dim_mul[d]*dimensions[d]);
         else
-            return n-n%(stsp.dim_mul[d]*stsp.dimensions[d])+(n-stsp.dim_mul[d]+stsp.dim_mul[d]*stsp.dimensions[d])%(stsp.dim_mul[d]*stsp.dimensions[d]);
+            return i-i%(dim_mul[d]*dimensions[d])+(i-dim_mul[d]+dim_mul[d]*dimensions[d])%(dim_mul[d]*dimensions[d]);
     }
 };
 

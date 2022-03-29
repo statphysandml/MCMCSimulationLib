@@ -3,57 +3,44 @@
 
 
 #include <mcmc_simulation/header.hpp>
+#include <mcmc_simulation/util/random.hpp>
 
 
 // Template implementation for a MCMC system
 
 
-class MCMCSystem;
-
-
-struct MCMCSystemParameters : public mcmc::simulation::SystemBaseParameters {
-    explicit MCMCSystemParameters(const json params):
-            SystemBaseParameters(params),
+class MCMCSystem : public mcmc::simulation::SystemBase<MCMCSystem>
+{
+public:
+    explicit MCMCSystem(const json params):
+            SystemBase(params),
+            // Configuration parameters
             mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
             sigma(get_entry<double>("sigma", 0.4)),
-            dt(get_entry<double>("dt", 0.01))
+            dt(get_entry<double>("dt", 0.01)),
+            
+            // Further member variables
+            normal(std::normal_distribution<double>(0.0, 1.0))
     {}
 
-    MCMCSystemParameters(const std::vector<double> mu_, const double sigma_, const double dt_) : MCMCSystemParameters(json{
+    MCMCSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCSystem(json{
             {"mu", mu_},
             {"sigma", sigma_},
             {"dt", dt_}
     })
     {}
 
-    std::unique_ptr<MCMCSystem> generate() { return std::make_unique<MCMCSystem>(*this); }
-
-    const std::vector<double> mu;
-    const double sigma;
-    const double dt;
-};
-
-
-// Define which ones are optional...
-class MCMCSystem : public mcmc::simulation::SystemBase<MCMCSystem>
-{
-public:
-    explicit MCMCSystem(const MCMCSystemParameters &sp_) :
-        sp(sp_),
-        normal(std::normal_distribution<double>(0.0, 1.0))
-    {}
-
     void initialize(std::string starting_mode)
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
-        std::transform(sp.mu.begin(), sp.mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
+        std::transform(mu.begin(), mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
     }
 
     void update_step(uint measure_interval=1)
     {
         // Called every MCMC step
         for(auto i = 0; i < get_size(); i++)
-            system[i] = system[i] - sp.dt * (system[i] - sp.mu[i]) / std::pow(sp.sigma, 2.0) + std::sqrt(2.0 * sp.dt) * normal(mcmc::util::gen);
+            system[i] = system[i] - dt * (system[i] - mu[i]) / std::pow(sigma, 2.0) + std::sqrt(2.0 * dt) * normal(mcmc::util::gen);
         
     }
 
@@ -92,7 +79,7 @@ public:
     auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        for(const auto measure_name: get_measure_names())
+        for(const auto measure_name: this->measure_names())
         {
             if(measure_name == "Mean")
             {
@@ -112,17 +99,14 @@ public:
     
     void finalize_measurements(std::string starting_mode, uint rep=1)
     {}
-
-    std::vector<std::string> get_measure_names()
-    {
-        return sp.get_measures();
-    }
-
+    
 private:
+    std::vector<double> mu;
+    double sigma;
+    double dt;
+    
     std::vector<double> system; // Or any other system representation
     std::normal_distribution<double> normal;
-
-    const MCMCSystemParameters &sp;
 };
 
 #endif //MCMCSYSTEM_HPP

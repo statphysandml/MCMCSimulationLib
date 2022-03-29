@@ -49,6 +49,9 @@ https://jalammar.github.io/illustrated-transformer/
 - Fix cmake install prefix in setup.py...
 pip install --use-feature=in-tree-build . --install-option='--mcmcsimulationlib-cmake-prefix-path=~/MCMCSimulationLib/install/' -v
 
+pip install --use-feature=in-tree-build --install-option="--mcmcsimulationlib-cmake-prefix-path='~/MCMCSimulationLib/install/'" .
+
+
 - Credits to tqdm hinzufügen!!!
 
 - Set Git to ON in CmakeLists.txt...

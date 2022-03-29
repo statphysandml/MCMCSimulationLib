@@ -13,8 +13,8 @@ namespace mcmc {
             const std::string mode_type,
             const mcmc::cmdint::PathParameters path_parameters,
             const std::string executable_name,
-            const bool eval = true,
             const bool run = true,
+            const bool eval = true,
             const std::vector<std::string> additional_args = {}
         );
         

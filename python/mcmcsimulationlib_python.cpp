@@ -14,7 +14,7 @@ using namespace pybind11::literals;
 #include <mcmc_simulation/header.hpp>
 #include <mcmc_simulation/util/python_integration.hpp>
 #include <modes/mode_header.hpp>
-#include <mcmc_simulation/measurement/readable_measure.hpp>
+#include <measure_processors/readable_measure.hpp>
 
 namespace mcmc {
     namespace pybind {
@@ -25,23 +25,20 @@ namespace mcmc {
 
         void init_measurement_systems(py::module &m)
         {
-            py::class_<mcmc::measures::ReadableMeasureParameters>(m, "ReadableMeasureParameters")
-                .def(py::init<const std::string>(), "rel_data_path"_a);
-            
             py::class_<mcmc::measures::ReadableMeasure>(m, "ReadableMeasure")
-                .def(py::init<mcmc::measures::ReadableMeasureParameters&>(), "rmp"_a);
+                .def(py::init<const std::string>(), "rel_data_path"_a);
         }
 
         void init_execution_modes(py::module &m)
         {
             // Equilibrium Time
-            py::class_<mcmc::mode::EquilibriumTimeParameters>(m, "EquilibriumTimeParameters")
+            py::class_<mcmc::mode::EquilibriumTime>(m, "EquilibriumTime")
                 .def(py::init<uint, uint, double, double, std::string>(),
                     "sample_size"_a=100, "number_of_steps"_a=1000, "confidence_range"_a=0.1,
                     "confidence_window"_a=10, "measure"_a="Mean");
 
             // Correlation Time
-            py::class_<mcmc::mode::CorrelationTimeParameters>(m, "CorrelationTimeParameters")
+            py::class_<mcmc::mode::CorrelationTime>(m, "CorrelationTime")
                 .def(py::init<uint, uint, uint, std::string, std::string>(),
                     "minimum_sample_size"_a=100, "maximum_correlation_time"_a=1000, "start_measuring"_a=0,
                     "measure"_a="Mean", "starting_mode"_a="hot")
@@ -50,7 +47,7 @@ namespace mcmc {
                     "measure"_a="Mean", "starting_mode"_a="hot");
 
             // Expectation Value
-            py::class_<mcmc::mode::ExpectationValueParameters>(m, "ExpectationValueParameters")
+            py::class_<mcmc::mode::ExpectationValue>(m, "ExpectationValue")
                 .def(py::init<uint, uint, uint, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
                     "measure_interval"_a=1, "number_of_measurements"_a=1000, "start_measuring"_a=0,
                     "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},

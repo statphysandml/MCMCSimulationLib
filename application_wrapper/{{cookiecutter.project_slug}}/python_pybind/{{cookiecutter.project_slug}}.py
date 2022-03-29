@@ -1,8 +1,8 @@
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}EquilibriumTimeParameters
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}EquilibriumTime
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}CorrelationTimeParameters
+from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}EquilibriumTime
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}CorrelationTime
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}ExpectationValueParameters
+from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}CorrelationTime
+from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}ExpectationValue
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}ExpectationValue
 
 
@@ -11,11 +11,11 @@ from mcmc.mcmc_system import MCMCSystem
 
 class {{ cookiecutter.project_name }}(MCMCSystem):
     # Static variables used by parent classmethods for mode simulation
-    EquiTimeSimParams = {{ cookiecutter.project_name }}EquilibriumTimeParameters
+    EquiTimeSimParams = {{ cookiecutter.project_name }}EquilibriumTime
     EquiTimeSim = {{ cookiecutter.project_name }}EquilibriumTime
-    CorrTimeSimParams = {{ cookiecutter.project_name }}CorrelationTimeParameters
+    CorrTimeSimParams = {{ cookiecutter.project_name }}CorrelationTime
     CorrTimeSim = {{ cookiecutter.project_name }}CorrelationTime
-    ExpValSimParams = {{ cookiecutter.project_name }}ExpectationValueParameters
+    ExpValSimParams = {{ cookiecutter.project_name }}ExpectationValue
     ExpValSim = {{ cookiecutter.project_name }}ExpectationValue
 
     def __init__(self, mu, sigma, dt, **kwargs):

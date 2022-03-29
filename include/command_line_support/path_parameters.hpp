@@ -21,7 +21,7 @@ namespace mcmc {
             PathParameters(const std::string target_name_, // 
                            const std::string sim_root_dir_ = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
                            const bool rel_path_ = true) :
-                    target_name(target_name_), rel_path(rel_path_),
+                    target_name(target_name_), sim_root_dir(sim_root_dir_), rel_path(rel_path_),
                     rel_config_path(sim_root_dir_ + "/configs/" + target_name + "/"),
                     rel_data_path(sim_root_dir_ + "/data/" + target_name + "/"),
                     rel_results_path(sim_root_dir_ + "/results/" + target_name + "/"),
@@ -99,6 +99,7 @@ namespace mcmc {
             }
 
             const std::string target_name;
+            const std::string sim_root_dir;
             const bool rel_path;
 
             std::string rel_config_path;

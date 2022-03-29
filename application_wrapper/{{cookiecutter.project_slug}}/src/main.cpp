@@ -24,13 +24,13 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
             system_params, readable_measures,
             "systembase_params", "sigma", sigma_intervals);
 
-        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
 
-        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
         CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
 
-        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
             this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"Config", "Mean"}, {}, "hot", "statistical");
 
@@ -89,7 +89,7 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     void prepare() override
     {
         // Prepare equilibrium time simulation
-        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.05, 10, "Mean");
         equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
@@ -108,7 +108,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     void prepare() override
     {
         // Prepare correlation time simulation
-        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
         CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "Mean");
         correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
@@ -127,7 +127,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
     void prepare() override
     {
         // Prepare correlation time simulation
-        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
                 this->path_parameters.get_rel_results_path(), 200, this->path_parameters.get_rel_results_path(),
                 {"Config", "Mean"}, {}, "hot", "statistical");
@@ -197,7 +197,7 @@ int main(int argc, char **argv) {
 
     //[ Equilibrium time
     
-    /* typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+    /* typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
     EquilibriumTimeParams equilibrium_time_parameters(40, 500, 0.005, 10, "SecondMoment");
 
     auto simulation_params_equilibrium_time = mcmc::simulation::SimulationParameters<
@@ -219,7 +219,7 @@ int main(int argc, char **argv) {
     // - Maximum possible correlation time
     // - Number of sweeps before configurations for the computation of the correlation time are evaluated
     // - Observable to evaluate the correlation time
-    /* typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+    /* typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
     CorrelationTimeParams correlation_time_parameters(1000, 400, 10000 *//*equilibrium_time_results_path*//*, {"SecondMoment"}, "cold");
     
     // Setting up the simulation
@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
     // - Observables that are computed afterwards in Python
     // The observables: "AbsMean", "SecondMoment", "Mean"  are computed within C++ during the
     // simulation. The "Energy" is computed in Python afterwards based on the configurations ("Config") 
-    typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+    typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     /* ExpectationValueParams expectation_value_parameters(
         correlation_time_results_path, 1000, equilibrium_time_results_path,
         {"Mean", "AbsMean", "SecondMoment", "MagenticSusceptibility", "BinderCumulant", "Action", "Config"}, {}, "hot", "statistical"); */

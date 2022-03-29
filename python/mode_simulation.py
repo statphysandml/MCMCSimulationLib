@@ -37,7 +37,6 @@ Todo:
 from mcmctools.mcmc.evaluation_module import EvaluationModule
 
 
-# ToDo: Implement simulation with non_equal rp_values
 class ModeSimulation(EvaluationModule):
     def __init__(self,
                  model,
@@ -59,19 +58,17 @@ class ModeSimulation(EvaluationModule):
             self.python_modules_path = python_modules_path
 
         self.model = model
-        self.model.initialize_model_parameters()
+        self.model.initialize_mcmc_system()
 
-    def _run_and_evaluate(self, SimParamClass, SimClass, run, eval, simulation_mode_parameters):
+    def _run_and_evaluate(self, SimClass, run, eval, simulation_mode_parameters):
         # Call constructor of Simulation Class
-        from mcmcsimulation import ReadableMeasureParameters
-        measurement_system = ReadableMeasureParameters(self.rel_data_path)
+        from mcmcsimulation import ReadableMeasure
+        measurement_system = ReadableMeasure(self.rel_data_path)
 
-        simulation_parameters = SimParamClass.generate_simulation(
-            self.model.model_parameters, simulation_mode_parameters, measurement_system,
+        simulation = SimClass.generate_simulation(
+            self.model._mcmc_system, simulation_mode_parameters, measurement_system,
             self.running_parameter_kind, self.running_parameter, self.rp_values
-        )
-        
-        simulation = SimClass(simulation_parameters)        
+        )   
         if run:
             simulation.run()
         if eval:
@@ -104,24 +101,24 @@ class ModeSimulation(EvaluationModule):
         
 
         """
-        from mcmcsimulation import EquilibriumTimeParameters
-        equilibrium_time_parameters = EquilibriumTimeParameters(
+        from mcmcsimulation import EquilibriumTime
+        equilibrium_time_parameters = EquilibriumTime(
             sample_size, number_of_steps, eval_confidence_range, eval_confidence_window, measure)
-        self._run_and_evaluate(*self.model._equilibrium_time_simulation_classes(), run, eval, equilibrium_time_parameters)
+        self._run_and_evaluate(self.model._equilibrium_time_simulation_class(), run, eval, equilibrium_time_parameters)
 
     def correlation_time_simulation(self, run, eval,
                                     minimum_sample_size=100, maximum_correlation_time=1000, start_measuring=0,
                                     measure="Mean", starting_mode="hot",
                                     equilibrium_time_rel_results_path="None"):
-        from mcmcsimulation import CorrelationTimeParameters
+        from mcmcsimulation import CorrelationTime
         if equilibrium_time_rel_results_path is "None":
-            correlation_time_parameters = CorrelationTimeParameters(
+            correlation_time_parameters = CorrelationTime(
                 minimum_sample_size, maximum_correlation_time, start_measuring, measure, starting_mode)
         else:
-            correlation_time_parameters = CorrelationTimeParameters(
+            correlation_time_parameters = CorrelationTime(
                 minimum_sample_size, maximum_correlation_time, equilibrium_time_rel_results_path, measure, starting_mode)
 
-        self._run_and_evaluate(*self.model._correlation_time_simulation_classes(), run, eval, correlation_time_parameters)
+        self._run_and_evaluate(self.model._correlation_time_simulation_class(), run, eval, correlation_time_parameters)
 
     def expectation_value_simulation(self, run, eval,
                                     measure_interval=100, number_of_measurements=1000, start_measuring=0,
@@ -130,21 +127,21 @@ class ModeSimulation(EvaluationModule):
                                     equilibrium_time_rel_results_path="None",
                                     correlation_time_rel_results_path="None"):
 
-        from mcmcsimulation import ExpectationValueParameters
+        from mcmcsimulation import ExpectationValue
         if equilibrium_time_rel_results_path is "None" and correlation_time_rel_results_path is "None":
-            expectation_value_parameters = ExpectationValueParameters(
+            expectation_value_parameters = ExpectationValue(
                 measure_interval, number_of_measurements, start_measuring, measures, eval_post_measures,
                 starting_mode, eval_error_type, eval_n_means_bootstrap)
         elif equilibrium_time_rel_results_path is "None":
-            expectation_value_parameters = ExpectationValueParameters(
+            expectation_value_parameters = ExpectationValue(
                 correlation_time_rel_results_path, number_of_measurements, start_measuring, measures,
                 eval_post_measures, starting_mode, eval_error_type, eval_n_means_bootstrap)
         elif correlation_time_rel_results_path is "None":
-            expectation_value_parameters = ExpectationValueParameters(
+            expectation_value_parameters = ExpectationValue(
                 measure_interval, number_of_measurements, equilibrium_time_rel_results_path, measures,
                 eval_post_measures, starting_mode, eval_error_type, eval_n_means_bootstrap)
         else:
-            expectation_value_parameters = ExpectationValueParameters(
+            expectation_value_parameters = ExpectationValue(
                 correlation_time_rel_results_path, number_of_measurements, equilibrium_time_rel_results_path, measures,
                 eval_post_measures, starting_mode, eval_error_type, eval_n_means_bootstrap)
-        self._run_and_evaluate(*self.model._expectation_value_simulation_classes(), run, eval, expectation_value_parameters)
+        self._run_and_evaluate(self.model._expectation_value_simulation_class(), run, eval, expectation_value_parameters)

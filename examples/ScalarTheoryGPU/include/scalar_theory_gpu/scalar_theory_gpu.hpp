@@ -5,19 +5,21 @@
 #include "scalar_theory_gpu_helper.hpp"
 
 
-class ScalarTheoryGPU;
-
-
-struct ScalarTheoryGPUParameters : public mcmc::simulation::SystemBaseParameters {
+class ScalarTheoryGPU : public mcmc::simulation::SystemBase<ScalarTheoryGPU>
+{
 public:
-    explicit ScalarTheoryGPUParameters(const json params_):
-            SystemBaseParameters(params_),
+    explicit ScalarTheoryGPU(const json params_):
+            SystemBase(params_),
+            // Configuration parameters
             kappa(get_entry<double>("kappa", 0.4)),
             lambda(get_entry<double>("lambda", 1.0)),
-            dt(get_entry<double>("dt", 0.01)),
-            n(get_entry<int>("n", 20)),
+            dt(get_entry<double>("dt", 0.1)),
+            n(get_entry<int>("n", 10)),
             m(get_entry<double>("m", 1.0)),
-            dimensions(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4}))
+            dimensions(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4})),
+
+            // Further member variables
+            rand(std::uniform_real_distribution<double> (0,1))
     {
         n_sites = 1;
         dim_mul.push_back(n_sites);
@@ -25,42 +27,7 @@ public:
             n_sites *= dim;
             dim_mul.push_back(n_sites);
         }
-    }
 
-    ScalarTheoryGPUParameters(const double kappa_, const double lambda_, std::vector<int> dimensions_,
-        const double dt_, const int n_, const double m_=1.0) : ScalarTheoryGPUParameters(json{
-            {"kappa", kappa_},
-            {"lambda", lambda_},
-            {"dimensions", dimensions_},
-            {"dt", dt_},
-            {"n",  n_},
-            {"m", m_}
-    })
-    {}
-
-    std::unique_ptr<ScalarTheoryGPU> generate() { return std::make_unique<ScalarTheoryGPU>(*this); }
-
-    typedef ScalarTheoryGPU Model;
-
-    const double kappa;
-    const double lambda;
-    const double dt;
-    const int n;
-    const double m;
-
-    uint n_sites; // Total number of sites
-    std::vector<int> dimensions; // Different dimensions
-    std::vector<int> dim_mul; // Accumulated different dimensions (by product)
-};
-
-
-class ScalarTheoryGPU : public mcmc::simulation::SystemBase<ScalarTheoryGPU>
-{
-public:
-    explicit ScalarTheoryGPU(const ScalarTheoryGPUParameters &mp_) :
-            mp(mp_),
-            rand(std::uniform_real_distribution<double> (0,1))
-    {
         lattice = gen_dev_vec(get_size());
         current_lattice = gen_dev_vec(get_size());
         momenta = gen_dev_vec(get_size());
@@ -69,6 +36,17 @@ public:
         identity_scalar_product = gen_dev_vec(get_size());
         neighbour_indices = set_nearest_neighbours(set_nearest_neighbours_helper());
     }
+
+    ScalarTheoryGPU(const double kappa_=0.4, const double lambda_=1.0, std::vector<int> dimensions_={4, 4},
+        const double dt_=0.1, const int n_=10, const double m_=1.0) : ScalarTheoryGPU(json{
+            {"kappa", kappa_},
+            {"lambda", lambda_},
+            {"dimensions", dimensions_},
+            {"dt", dt_},
+            {"n",  n_},
+            {"m", m_}
+    })
+    {}
 
     void initialize(std::string starting_mode)
     {
@@ -79,13 +57,13 @@ public:
     {
         // Hamiltonian Monte Carlo
         update_step_helper(measure_interval, lattice, current_lattice, momenta, current_momenta, drift,
-                           identity_scalar_product, s, neighbour_indices, rand, rnd_offset, mp.dt,
-                           mp.n, mp.m, mp.kappa, mp.lambda);
+                           identity_scalar_product, s, neighbour_indices, rand, rnd_offset, dt,
+                           n, m, kappa, lambda);
     }
 
     uint get_size() const
     {
-        return mp.n_sites;
+        return n_sites;
     }
 
     double at(int i) const
@@ -111,16 +89,16 @@ public:
 
     auto action()
     {
-        return action_helper(lattice, drift, identity_scalar_product, neighbour_indices, mp.kappa, mp.lambda);
+        return action_helper(lattice, drift, identity_scalar_product, neighbour_indices, kappa, lambda);
     }
 
-    /* void initialize_measurements(std::string starting_mode, uint rep=1)
-    {} */
+    void initialize_measurements(std::string starting_mode, uint rep=1)
+    {}
 
     auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        for(const auto measure_name: get_measure_names())
+        for(const auto measure_name: this->measure_names())
         {
             if(measure_name == "Mean")
                 results.push_back(mean());
@@ -138,19 +116,22 @@ public:
         return results;
     }
 
-    /* void finalize_measurements(std::string starting_mode, uint rep=1)
-    {} */
-
-    std::vector<std::string> get_measure_names()
-    {
-        return mp.get_measures();
-    }
+    void finalize_measurements(std::string starting_mode, uint rep=1)
+    {}
 
 private:
+    double kappa;
+    double lambda;
+    double dt;
+    int n;
+    double m;
+
+    uint n_sites; // Total number of sites
+    std::vector<int> dimensions; // Different dimensions
+    std::vector<int> dim_mul; // Accumulated different dimensions (by product)
+
     dev_vec lattice;
     dev_vec_vec_int neighbour_indices; // n_neighbours x n_lattice_sites
-
-    const ScalarTheoryGPUParameters &mp;
 
     dev_vec current_lattice;
     dev_vec momenta;
@@ -189,19 +170,19 @@ private:
     }
 
     //site, moving dimension, direction
-    int neigh_dir(int n, int d, bool dir) const {
+    int neigh_dir(int i, int d, bool dir) const {
         if (dir)
-            return (n - n % (mp.dim_mul[d] * mp.dimensions[d]) +
-                    (n + mp.dim_mul[d]) % (mp.dim_mul[d] * mp.dimensions[d]));
+            return (i - i % (dim_mul[d] * dimensions[d]) +
+                    (i + dim_mul[d]) % (dim_mul[d] * dimensions[d]));
         else
-            return (n - n % (mp.dim_mul[d] * mp.dimensions[d]) +
-                    (n - mp.dim_mul[d] + mp.dim_mul[d] * mp.dimensions[d]) % (mp.dim_mul[d] * mp.dimensions[d]));
+            return (i - i % (dim_mul[d] * dimensions[d]) +
+                    (i - dim_mul[d] + dim_mul[d] * dimensions[d]) % (dim_mul[d] * dimensions[d]));
     }
 
     thrust::host_vector< thrust::host_vector<int> > set_nearest_neighbours_helper()
     {
         thrust::host_vector< thrust::host_vector<int> > neighbour_indices_;
-        for (uint d = 0; d < mp.dimensions.size(); d++)
+        for (uint d = 0; d < dimensions.size(); d++)
         {
             thrust::host_vector<int> nn_of_site_right;
             for (uint i = 0; i < get_size(); i++)

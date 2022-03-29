@@ -16,13 +16,11 @@ namespace mcmc {
         template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
         template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
-        struct ReadableMeasure;
-
         /** @brief Class taking care of initalizing and writing measurements to file.
          */
-
-        struct ReadableMeasureParameters : public param_helper::params::Parameters {
-            explicit ReadableMeasureParameters(const json params_) : Parameters(params_),
+        struct ReadableMeasure : public param_helper::params::Parameters
+        {
+            explicit ReadableMeasure(const json params_) : Parameters(params_),
                 rel_data_dir(get_entry<std::string>("rel_data_dir", "./data/"))
             {
                 // *** DIRECTORIES ***
@@ -38,8 +36,8 @@ namespace mcmc {
              * 
              *  @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
              */
-            ReadableMeasureParameters(std::string rel_data_dir_) :
-                ReadableMeasureParameters(
+            ReadableMeasure(std::string rel_data_dir_="./data/") :
+                ReadableMeasure(
                     json{{"rel_data_dir", rel_data_dir_}}
                 )
             {}
@@ -67,17 +65,6 @@ namespace mcmc {
                 return rel_data_dir;
             }
 
-            std::string rel_data_dir;
-
-            typedef ReadableMeasure Measure;
-        };
-
-        struct ReadableMeasure
-        {
-            explicit ReadableMeasure(ReadableMeasureParameters &rmp_):
-                rmp(rmp_)
-            {}
-
             const std::string get_setting_filename() const
             {
                 return gen_filename();
@@ -90,7 +77,7 @@ namespace mcmc {
                 rp_value = rp_value_;
 
                 // Prepare file os
-                os_ptr = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + rmp.get_rel_data_dir() + "/" + gen_filename() + ".dat");
+                os_ptr = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + get_rel_data_dir() + "/" + gen_filename() + ".dat");
             }
 
             void initialize_measurements(const std::string starting_mode, const std::vector<std::string> measure_names, const uint rep)
@@ -133,7 +120,10 @@ namespace mcmc {
             }
 
             void finalize_measurements()
-            {}
+            {
+                auto &os = os_ptr->get();
+                os.flush();
+            }
 
             const std::string gen_filename() const
             {
@@ -143,7 +133,9 @@ namespace mcmc {
                     return mode + "_" + running_parameter + "=" + std::to_string(rp_value);
             }
 
-            ReadableMeasureParameters &rmp;
+            typedef ReadableMeasure Measure;
+
+            std::string rel_data_dir;
 
             std::string mode;
             std::string running_parameter;

@@ -3,41 +3,31 @@
 
 
 #include <mcmc_simulation/header.hpp>
+#include <mcmc_simulation/util/random.hpp>
 
 
 // Template implementation for a MCMC measure system
 
 
-class MCMCMeasureSystem;
-
-
-struct MCMCMeasureSystemParameters : public mcmc::simulation::SystemBaseParameters {
-    explicit MCMCMeasureSystemParameters(const json params):
-            SystemBaseParameters(params),
+class MCMCMeasureSystem : public mcmc::simulation::MeasureSystemBase<MCMCMeasureSystem>
+{
+public:
+    explicit MCMCMeasureSystem(const json params):
+            MeasureSystemBase(params),
+            // Configuration parameters
             mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
             sigma(get_entry<double>("sigma", 0.4)),
-            dt(get_entry<double>("dt", 0.01))
+            dt(get_entry<double>("dt", 0.01)),
+            
+            // Further member variables
+            normal(std::normal_distribution<double>(0.0, 1.0))
     {}
 
-    MCMCMeasureSystemParameters(const std::vector<double> mu_, const double sigma_, const double dt_) : MCMCMeasureSystemParameters(json{
+    MCMCMeasureSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCMeasureSystem(json{
             {"mu", mu_},
             {"sigma", sigma_},
             {"dt", dt_}
     })
-    {}
-
-    std::unique_ptr<MCMCMeasureSystem> generate() { return std::make_unique<MCMCMeasureSystem>(*this); }
-
-    const std::vector<double> mu;
-    const double sigma;
-    const double dt;
-};
-class MCMCMeasureSystem : public mcmc::simulation::MeasureSystemBase<MCMCMeasureSystem>
-{
-public:
-    explicit MCMCMeasureSystem(const MCMCMeasureSystemParameters &sp_) :
-        sp(sp_),
-        normal(std::normal_distribution<double>(0.0, 1.0))
     {}
 
     void initialize(std::string starting_mode)
@@ -84,16 +74,13 @@ public:
         return system;
     }
 
-    std::vector<std::string> get_measure_names()
-    {
-        return sp.get_measures();
-    }
-
 private:
+    std::vector<double> mu;
+    double sigma;
+    double dt;
+    
     std::vector<double> system; // Or any other system representation
     std::normal_distribution<double> normal;
-
-    const MCMCMeasureSystemParameters &sp;
 };
 
 #endif //MCMCMEASURESYSTEM_HPP

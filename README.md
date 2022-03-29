@@ -129,7 +129,7 @@ SystemParameters system_params(0.4, 1.0, 0.0, {4, 4});
 
 /* Setting up execution parameters (number of equilibrium steps, number of measurements,
 * correlation time, measures, optional measures that are computed in python) */
-typedef mcmc::execution::ExpectationValueParameters ExpectationValueParams;
+typedef mcmc::execution::ExpectationValue ExpectationValueParams;
 ExpectationValueParams execution_parameters(
     100, 10000, 100, {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}
 );
@@ -147,7 +147,7 @@ simulation_params.write_to_file("/configs/" + target_name + "/");
 
 // Run the simulation
 mcmc::execution::execute<SystemParameters>(
-    mcmc::execution::ExpectationValueParameters::name(), target_name);
+    mcmc::execution::ExpectationValue::name(), target_name);
 );
 simulation.run();
 ```

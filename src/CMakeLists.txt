@@ -2,14 +2,12 @@ add_library(mcmcsimulationlib STATIC
   mcmc_simulation/simulation.cpp
   mcmc_simulation/util/random.cpp
   mcmc_simulation/util/python_integration.cpp
-  mcmc_simulation/sampler/gaussian_sampler.cpp
-  mcmc_simulation/sampler/hat_function_sampler.cpp
-  mcmc_simulation/sampler/uniform_sampler.cpp
   cluster_support/cluster_integration.cpp
   cluster_support/gpu_cluster_integration.cpp
   cluster_support/cpu_cluster_integration.cpp
   cluster_support/virtual_env_integration.cpp
-  command_line_support/cmdint.cpp)
+  command_line_support/cmdint.cpp
+  )
   
 
 if (RUN_WITH_PYTHON_BACKEND)

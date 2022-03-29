@@ -2,9 +2,6 @@
 #define ONMODELGPU_SCALAR_THEORY_GPU_HPP
 
 
-#include <mcmc_simulation/systembase_parameters.hpp>
-#include <mcmc_simulation/systembase.hpp>
-
 #include "on.hpp"
 
 #include "../thrust/thrust_header.hpp"

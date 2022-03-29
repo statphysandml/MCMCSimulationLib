@@ -29,19 +29,19 @@ namespace mcmc {
 
         /** @brief Todo
          */
-        template<typename ExecutionParams, typename SBP, typename MS>
+        template<typename ExecutionParams, typename SB, typename MS>
         void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
             ExecutionParams expectation_value_parameters(json{});
             expectation_value_parameters.write_to_file(path_parameters.get_rel_config_path());
 
-            mcmc::simulation::SimulationParameters <SBP, ExecutionParams, MS> simparams = mcmc::simulation::SimulationParameters<SBP, ExecutionParams, MS>::generate_simulation_from_file(
+            mcmc::simulation::Simulation<SB, ExecutionParams, MS> simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::generate_simulation_from_file(
                     path_parameters.get_rel_config_path(),
                     path_parameters.get_rel_config_path());
         }
 
         /** @brief Todo
          */
-        template<typename SBP, typename MS>
+        template<typename SB, typename MS>
         void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const bool run = true, const bool eval = true
         )
@@ -73,65 +73,58 @@ namespace mcmc {
             switch (mode) {
                 case expectation_value: {
                     if (in_preparation) {
-                        prep_default_execution<mcmc::mode::ExpectationValueParameters, SBP, MS>(path_parameters);
+                        prep_default_execution<mcmc::mode::ExpectationValue, SB, MS>(path_parameters);
                     } else {
-                        mcmc::simulation::SimulationParameters <SBP, mcmc::mode::ExpectationValueParameters, MS> simparams = mcmc::simulation::SimulationParameters<SBP, mcmc::mode::ExpectationValueParameters, MS>::generate_simulation_from_file(
-                                path_parameters.get_rel_config_path()); // ToDo: Insert mode_type params path!!
-                        mcmc::simulation::Simulation <SBP, mcmc::mode::ExpectationValueParameters, MS> sim(simparams);
-
+                        auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::ExpectationValue, MS>::generate_simulation_from_file(
+                            path_parameters.get_rel_config_path()
+                        ); // ToDo: Insert mode_type params path!!
+                        
                         if(run)
-                            sim.run();
+                            simulation.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 }
                 case correlation_time: {
                     if (in_preparation) {
-                        prep_default_execution<mcmc::mode::CorrelationTimeParameters, SBP, MS>(path_parameters);
+                        prep_default_execution<mcmc::mode::CorrelationTime, SB, MS>(path_parameters);
                     } else {
-                        mcmc::simulation::SimulationParameters <SBP, mcmc::mode::CorrelationTimeParameters, MS> simparams = mcmc::simulation::SimulationParameters<SBP, mcmc::mode::CorrelationTimeParameters, MS>::generate_simulation_from_file(
-                                path_parameters.get_rel_config_path());
-                        mcmc::simulation::Simulation <SBP, mcmc::mode::CorrelationTimeParameters, MS> sim(simparams);
+                        auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::CorrelationTime, MS>::generate_simulation_from_file(
+                            path_parameters.get_rel_config_path()
+                        );
 
                         if(run)
-                            sim.run();
+                            simulation.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 }
                 case equilibrium_time: {
                     if (in_preparation) {
-                        prep_default_execution<mcmc::mode::EquilibriumTimeParameters, SBP, MS>(path_parameters);
+                        prep_default_execution<mcmc::mode::EquilibriumTime, SB, MS>(path_parameters);
                     } else {
-                        mcmc::simulation::SimulationParameters <SBP, mcmc::mode::EquilibriumTimeParameters, MS> simparams = mcmc::simulation::SimulationParameters<SBP, mcmc::mode::EquilibriumTimeParameters, MS>::generate_simulation_from_file(
-                                path_parameters.get_rel_config_path());
-                        mcmc::simulation::Simulation <SBP, mcmc::mode::EquilibriumTimeParameters, MS> sim(simparams);
+                        auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::EquilibriumTime, MS>::generate_simulation_from_file(
+                            path_parameters.get_rel_config_path()
+                        );
                             
                         if(run)
-                            sim.run();
+                            simulation.run();
                         if(eval)
-                            sim.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_path());
                     }
                     break;
                 };
                 default:
                     std::cerr << "mode not known..." << std::endl;
                     break;
-
-                /* std::variant<ModelA, ModelB, ModelC> myModel;
-                    ModelA.call(config);
-                    ModelB.call(config);
-                    ModelC.call(config)
-
-                    std::visit([&](const auto& model){ model.call(); }); */
             }
         }
 
         /** @brief Todo
          */
-        template<typename SBP, typename MS>
+        template<typename SB, typename MS>
         struct CmdIntSim
         {
             CmdIntSim(const std::string target_name, // 
@@ -183,7 +176,7 @@ namespace mcmc {
                 std::cout << "rp: " << rel_path << "\n\n" << std::endl; */
 
                 mcmc::cmdint::PathParameters path_parameters_(target_name, sim_root_dir, rel_path);
-                mcmc::cmdint::execute<SBP, MS>(mode_type, path_parameters_, run, eval);
+                mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters_, run, eval);
             }
 
             virtual void prepare() = 0;

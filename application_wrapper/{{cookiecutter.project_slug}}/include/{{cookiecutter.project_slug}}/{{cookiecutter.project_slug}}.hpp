@@ -3,35 +3,14 @@
 
 
 #include <mcmc_simulation/header.hpp>
+#include <mcmc_simulation/util/random.hpp>
 
 
+{%- if cookiecutter.use_predefined_measures == "No" %}
 // Template implementation for a MCMC system
-
-
-class {{ cookiecutter.project_name }};
-
-
-struct {{ cookiecutter.project_name }}Parameters : public mcmc::simulation::SystemBaseParameters {
-    explicit {{ cookiecutter.project_name }}Parameters(const json params):
-            SystemBaseParameters(params),
-            mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
-            sigma(get_entry<double>("sigma", 0.4)),
-            dt(get_entry<double>("dt", 0.01))
-    {}
-
-    {{ cookiecutter.project_name }}Parameters(const std::vector<double> mu_, const double sigma_, const double dt_) : {{ cookiecutter.project_name }}Parameters(json{
-            {"mu", mu_},
-            {"sigma", sigma_},
-            {"dt", dt_}
-    })
-    {}
-
-    std::unique_ptr<{{ cookiecutter.project_name }}> generate() { return std::make_unique<{{ cookiecutter.project_name }}>(*this); }
-
-    const std::vector<double> mu;
-    const double sigma;
-    const double dt;
-};
+{%- else %}
+// Template implementation for a MCMC measure system
+{%- endif %}
 
 
 {%- if cookiecutter.use_predefined_measures == "No" %}
@@ -41,10 +20,28 @@ class {{ cookiecutter.project_name }} : public mcmc::simulation::MeasureSystemBa
 {%- endif %}
 {
 public:
-    explicit {{ cookiecutter.project_name }}(const {{ cookiecutter.project_name }}Parameters &sp_) :
-        sp(sp_),
-        normal(std::normal_distribution<double>(0.0, 1.0))
+    explicit {{ cookiecutter.project_name }}(const json params):
+{%- if cookiecutter.use_predefined_measures == "No" %}
+            SystemBase(params),
+{%- else %}
+            MeasureSystemBase(params),
+{%- endif %}
+            // Configuration parameters
+            mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
+            sigma(get_entry<double>("sigma", 0.4)),
+            dt(get_entry<double>("dt", 0.01)),
+            
+            // Further member variables
+            normal(std::normal_distribution<double>(0.0, 1.0))
     {}
+
+    {{ cookiecutter.project_name }}(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCMeasureSystem(json{
+            {"mu", mu_},
+            {"sigma", sigma_},
+            {"dt", dt_}
+    })
+    {}
+
 
     void initialize(std::string starting_mode)
     {
@@ -97,7 +94,7 @@ public:
     auto perform_measurements()
     {
         std::vector<std::variant<int, double, std::string>> results;
-        for(const auto measure_name: get_measure_names())
+        for(const auto measure_name: this->measure_names())
         {
             if(measure_name == "Mean")
             {
@@ -119,16 +116,13 @@ public:
     {}
 {%- endif %}
 
-    std::vector<std::string> get_measure_names()
-    {
-        return sp.get_measures();
-    }
-
 private:
+    std::vector<double> mu;
+    double sigma;
+    double dt;
+
     std::vector<double> system; // Or any other system representation
     std::normal_distribution<double> normal;
-
-    const {{ cookiecutter.project_name }}Parameters &sp;
 };
 
 #endif //{{ cookiecutter.project_slug.upper() }}_HPP

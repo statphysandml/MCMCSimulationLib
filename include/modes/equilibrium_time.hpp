@@ -11,7 +11,6 @@ using json = nlohmann::json;
 
 namespace mcmc {
     namespace mode {
-
         /** @brief Prepares the computation of the necessary number of Monte Carlo sweeps for the system to be in equilibrium
          *
          * This class defines necessary parameters for running a MCMC simulation
@@ -25,9 +24,9 @@ namespace mcmc {
          * perform a smoothening of the averaged evolution based on a local convolution. The reduces the maximum number
          * of Monte Carlo sweeps to be in equillibrium to ``max(confidence_window, number_of_steps) - min(confidence_window, , number_of_steps) + 1``
          */
-        class EquilibriumTimeParameters : public param_helper::params::Parameters {
+        class EquilibriumTime : public param_helper::params::Parameters {
         public:
-            explicit EquilibriumTimeParameters(const json params_) : Parameters(params_) {
+            explicit EquilibriumTime(const json params_) : Parameters(params_) {
                 sample_size = get_entry<uint>("sample_size", 100);
                 number_of_steps = get_entry<uint>("number_of_steps", 1000);
                 confidence_range = get_entry<double>("confidence_range", 0.1);
@@ -43,13 +42,13 @@ namespace mcmc {
              * @param confidence_window_ Size of the window in computer time (MCMC sweeps) used to smoothing the measured observable over time
              * @param measure_ Measure used to evalute the time to equilibrium
              */
-            EquilibriumTimeParameters(
-                    uint sample_size_,
-                    uint number_of_steps_,
-                    double confidence_range_,
-                    uint confidence_window_,
-                    std::string measure_="Mean"
-            ) : EquilibriumTimeParameters(
+            EquilibriumTime(
+                    uint sample_size_ = 100,
+                    uint number_of_steps_ = 1000,
+                    double confidence_range_ = 0.1,
+                    uint confidence_window_ = 10,
+                    std::string measure_ = "Mean"
+            ) : EquilibriumTime(
                     json{{"sample_size",    sample_size_},
                          {"number_of_steps", number_of_steps_},
                          {"confidence_range", confidence_range_},
@@ -107,14 +106,9 @@ namespace mcmc {
                 #endif
             }
 
-            std::unique_ptr<mcmc::simulation::MarkovChainParameters>
-            generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
-                return std::make_unique<mcmc::simulation::MarkovChainParameters>(
-                        1,
-                        number_of_steps,
-                        2 * sample_size,
-                        0,
-                        "alternating");
+            mcmc::simulation::MarkovChain
+            generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
+                return mcmc::simulation::MarkovChain(1, number_of_steps, 2 * sample_size, 0, "alternating");
             }
 
             std::vector<std::string> get_measures() {

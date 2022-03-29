@@ -1,26 +1,23 @@
 class MCMCSystem:
     def __init__(self, **kwargs):
-        # Required for mode simulation
-        self._parameters = None
-
         # Required for mcmc simulation
         self.measure_names = [] # Default used for mode simulations <-> measures will be set automatically by the mode simulators
         self._mcmc_system = None
 
     @classmethod
-    def _equilibrium_time_simulation_classes(cls):
+    def _equilibrium_time_simulation_class(cls):
         # Required for mode simulation
-        return cls.EquiTimeSimParams, cls.EquiTimeSim
+        return cls.EquiTimeSim
 
     @classmethod
-    def _correlation_time_simulation_classes(cls):
+    def _correlation_time_simulation_class(cls):
         # Required for mode simulation
-        return cls.CorrTimeSimParams, cls.CorrTimeSim
+        return cls.CorrTimeSim
 
     @classmethod
-    def _expectation_value_simulation_classes(cls):
+    def _expectation_value_simulation_class(cls):
         # Required for mode simulation
-        return cls.ExpValSimParams, cls.ExpValSim
+        return cls.ExpValSim
 
     @property
     def model_parameters(self):

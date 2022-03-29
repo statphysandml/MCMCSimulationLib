@@ -5,7 +5,7 @@ namespace mcmc {
     namespace cluster {
         void prepare_execution_on_cpu_cluster(
             const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
-            const std::string executable_name, const bool eval, const bool run, const std::vector<std::string> additional_args) {
+            const std::string executable_name, const bool run, const bool eval, const std::vector<std::string> additional_args) {
             if (executable_name == "None") {
                 std::cerr << "Executable name not properly set";
                 std::exit(EXIT_FAILURE);
@@ -28,7 +28,7 @@ namespace mcmc {
             os << "cd " << param_helper::proj::project_root() << "build/" << "\n";
             // os << param_helper::proj::project_root() << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.target_name << std::endl;
             os << param_helper::proj::project_root() << "build/" << executable_name
-               << " "  << mode_type << " " << path_parameters.target_name << " "
+               << " "  << mode_type << " " << path_parameters.target_name << " " << path_parameters.sim_root_dir
                << " "  << path_parameters.rel_path << " " << run << " " << eval;
             if (additional_args.size() != 0)
                 for (auto additional_arg: additional_args)

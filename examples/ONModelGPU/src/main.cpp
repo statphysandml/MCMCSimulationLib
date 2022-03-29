@@ -20,33 +20,33 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
 
     auto kappa_intervals = mcmc::util::linspace(0.22, 0.3, 9);
 
-    // Setting up system parameters
-    ONModelGPUParameters<N> system_params(0.3, 0.02, {4, 4}, 0.01);
-    mcmc::measures::ReadableMeasureParameters readable_measures(path_parameters.get_rel_data_path());
+    // Setting up the system
+    ONModelGPU<N> system(0.3, 0.02, {4, 4}, 0.01);
+    mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_path());
 
-    auto simulation_parameters = mcmc::simulation::SimulationParameters<ONModelGPUParameters<N>>::prepare_simulation_from_file(
-            system_params, readable_measures,
+    auto simulation = mcmc::simulation::Simulation<ONModelGPU<N>>::prepare_simulation_from_file(
+            system, readable_measures,
             "systembase_params", "kappa", kappa_intervals);
 
     // Store simulation parameters
-    simulation_parameters.write_to_file(path_parameters.get_rel_config_path());
+    simulation.write_to_file(path_parameters.get_rel_config_path());
 }
 
 
 template<uint N>
-struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
+struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>
 {
-    using mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+    using mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>::CmdIntSim;
 
     void prepare() override
     {
         // Prepare equilibrium time simulation
-        typedef mcmc::mode::EquilibriumTimeParameters EquilibriumTimeParams;
+        typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.05, 10, "SecondMoment");
         equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
-        mcmc::cluster::execute<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>(
+        mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
                 "equilibrium_time", this->path_parameters, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
@@ -54,19 +54,19 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<
 
 
 template<uint N>
-struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
+struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>
 {
-    using mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+    using mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>::CmdIntSim;
 
     void prepare() override
     {
         // Prepare correlation time simulation
-        typedef mcmc::mode::CorrelationTimeParameters CorrelationTimeParams;
+        typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
         CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "SecondMoment");
         correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
-        mcmc::cluster::execute<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>(
+        mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
                 "correlation_time", this->path_parameters, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
@@ -74,21 +74,21 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<
 
 
 template<uint N>
-struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>
+struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>
 {
-    using mcmc::cmdint::CmdIntSim<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>::CmdIntSim;
+    using mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::measures::ReadableMeasure>::CmdIntSim;
 
     void prepare() override
     {
         // Prepare correlation time simulation
-        typedef mcmc::mode::ExpectationValueParameters ExpectationValueParams;
+        typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
                 this->path_parameters.get_rel_results_path(), 200, this->path_parameters.get_rel_results_path(),
                 {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical");
         expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare expectation value simulation on a cluster and submit the job with one function call
-        mcmc::cluster::execute<ONModelGPUParameters<N>, mcmc::measures::ReadableMeasureParameters>(
+        mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
                 "expectation_value", this->path_parameters, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }

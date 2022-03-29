@@ -11,7 +11,6 @@ using json = nlohmann::json;
 
 namespace mcmc {
     namespace mode {
-            
         /** @brief Prepares the computation of expectation values
          *
          * This class defines necessary parameters for running a MCMC simulation
@@ -19,16 +18,16 @@ namespace mcmc {
          * only needed for the respective evaluation which is executed afterwards
          * in Python.
          */
-        class ExpectationValueParameters : public param_helper::params::Parameters {
+        class ExpectationValue : public param_helper::params::Parameters {
         public:
-            explicit ExpectationValueParameters(const json params_) : Parameters(params_) {
+            explicit ExpectationValue(const json params_) : Parameters(params_) {
                 correlation_time_rel_results_path = get_entry<std::string>("correlation_time_rel_results_path", "None");
                 equilibrium_time_rel_results_path = get_entry<std::string>("equilibrium_time_rel_results_path", "None");
                 measure_interval = get_entry<uint>("measure_interval", 1);
                 number_of_measurements = get_entry<uint>("number_of_measurements", 1000);
                 start_measuring = get_entry<uint>("start_measuring", 0);
 
-                measures = get_entry<std::vector<std::string>>("measures");
+                measures = get_entry<std::vector<std::string>>("measures", {"Mean"});
                 if(measures.empty())
                 {
                     std::cerr << "Measures cannot be empty" << std::endl;
@@ -55,16 +54,16 @@ namespace mcmc {
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
              */
-            ExpectationValueParameters(
-                    uint measure_interval_,
-                    uint number_of_measurements_,
-                    uint start_measuring_,
-                    std::vector<std::string> measures_,
+            ExpectationValue(
+                    uint measure_interval_ = 1,
+                    uint number_of_measurements_ = 1000,
+                    uint start_measuring_= 0,
+                    std::vector<std::string> measures_ = {"Mean"},
                     std::vector<std::string> post_measures_ = {},
                     std::string starting_mode_ = "hot",
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
-            ) : ExpectationValueParameters(
+            ) : ExpectationValue(
                     json{{"measure_interval",       measure_interval_},
                          {"number_of_measurements", number_of_measurements_},
                          {"start_measuring",        start_measuring_},
@@ -75,7 +74,7 @@ namespace mcmc {
                          {"n_means_bootstrap",      n_means_bootstrap_}}) {}
 
             /** @brief Same as above with the exception that the autocorrelation time,
-             * which can be computed by the CorrelationTimeParameters mode, is loaded from file.
+             * which can be computed by the CorrelationTime mode, is loaded from file.
              *
              * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json file
              * @param number_of_measurements_ Total number of measurements
@@ -89,7 +88,7 @@ namespace mcmc {
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
              */
-            ExpectationValueParameters(
+            ExpectationValue(
                     std::string correlation_time_rel_results_path_,
                     uint number_of_measurements_,
                     uint start_measuring_,
@@ -98,7 +97,7 @@ namespace mcmc {
                     std::string starting_mode_ = "hot",
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
-            ) : ExpectationValueParameters(
+            ) : ExpectationValue(
                     json{{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
                          {"measure_interval",                  0},
                          {"number_of_measurements",            number_of_measurements_},
@@ -110,7 +109,7 @@ namespace mcmc {
                          {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
 
             /** @brief Same as above with the exception that the time to equilibrium before the first measurement,
-             * which can be computed by the EquilibriumTimeParameters mode, is loaded from file.
+             * which can be computed by the EquilibriumTime mode, is loaded from file.
              *
              * @param measure_interval_ Number of Monte Carlo sweeps between measurements (autocorrelation time)
              * @param number_of_measurements_ Total number of measurements
@@ -124,7 +123,7 @@ namespace mcmc {
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
              */
-            ExpectationValueParameters(
+            ExpectationValue(
                     uint measure_interval_,
                     uint number_of_measurements_,
                     std::string equilibrium_time_rel_results_path_,
@@ -133,7 +132,7 @@ namespace mcmc {
                     std::string starting_mode_ = "hot",
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
-            ) : ExpectationValueParameters(
+            ) : ExpectationValue(
                     json{{"measure_interval",                  measure_interval_},
                          {"number_of_measurements",            number_of_measurements_},
                          {"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
@@ -145,7 +144,7 @@ namespace mcmc {
                          {"n_means_bootstrap",                 n_means_bootstrap_}}) {}
             
             /** @brief Same as above with the exception that the time to equilibrium before the first measurement as well as the autocorrelation time are loaded from file.
-             * Both need to be computed beforhand with the EquilibriumTimeParameters and CorrelationTimeParameters mode.
+             * Both need to be computed beforhand with the EquilibriumTime and CorrelationTime mode.
              *
              * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json results file
              * @param number_of_measurements_ Total number of measurements
@@ -159,7 +158,7 @@ namespace mcmc {
              * @param n_means_bootstrap_ Number of bootstrap samples to compute the mean and the error of the measurements, if
              * it is set to zero, the error is computed according to the standard error
              */
-            ExpectationValueParameters(
+            ExpectationValue(
                     std::string correlation_time_rel_results_path_,
                     uint number_of_measurements_,
                     std::string equilibrium_time_rel_results_path_,
@@ -168,7 +167,7 @@ namespace mcmc {
                     std::string starting_mode_ = "hot",
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
-            ) : ExpectationValueParameters(
+            ) : ExpectationValue(
                     json{{"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
                          {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
                          {"measure_interval",                  0},
@@ -232,8 +231,8 @@ namespace mcmc {
                 #endif
             }
 
-            std::unique_ptr<mcmc::simulation::MarkovChainParameters>
-            generate_markovchain_params(std::string running_parameter = "None", double rp = 0) {
+            mcmc::simulation::MarkovChain
+            generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
                 uint correlation_time = measure_interval; // default
                 if (correlation_time_rel_results_path != "None") {
                     auto correlation_time_results = param_helper::fs::read_parameter_file(
@@ -264,12 +263,7 @@ namespace mcmc {
                             equilibrium_time_results["EquilibriumTime"], rp_key);
                 }
 
-                return std::make_unique<mcmc::simulation::MarkovChainParameters>(
-                        correlation_time,
-                        number_of_measurements,
-                        1,
-                        equililbrium_time,
-                        "hot");
+                return mcmc::simulation::MarkovChain(correlation_time, number_of_measurements, 1, equililbrium_time, "hot");
             }
 
             std::vector<std::string> get_measures() {
