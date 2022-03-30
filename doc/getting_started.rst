@@ -172,7 +172,7 @@ Installing the python wrapper
 
 The support for python bindings of the generated project can be installed by running::
 
-    pip install --use-feature=in-tree-build . --install-option='--mcmcsimulationlib-cmake-prefix-path=~/MCMCSimulationLib/install/'  
+    pip install --use-feature=in-tree-build --install-option="--mcmcsimulationlib-cmake-prefix-path='~/MCMCSimulationLib/install/'" .
 
 allowing for running simulations from Python. Note that it is only necessary to additionally provide the installation path of the
 MCMCSimulation in case of a local installation.

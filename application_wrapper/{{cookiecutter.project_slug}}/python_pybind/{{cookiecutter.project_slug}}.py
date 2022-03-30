@@ -1,8 +1,5 @@
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}EquilibriumTime
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}EquilibriumTime
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}CorrelationTime
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}CorrelationTime
-from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}ExpectationValue
 from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}ExpectationValue
 
 
@@ -11,11 +8,8 @@ from mcmc.mcmc_system import MCMCSystem
 
 class {{ cookiecutter.project_name }}(MCMCSystem):
     # Static variables used by parent classmethods for mode simulation
-    EquiTimeSimParams = {{ cookiecutter.project_name }}EquilibriumTime
     EquiTimeSim = {{ cookiecutter.project_name }}EquilibriumTime
-    CorrTimeSimParams = {{ cookiecutter.project_name }}CorrelationTime
     CorrTimeSim = {{ cookiecutter.project_name }}CorrelationTime
-    ExpValSimParams = {{ cookiecutter.project_name }}ExpectationValue
     ExpValSim = {{ cookiecutter.project_name }}ExpectationValue
 
     def __init__(self, mu, sigma, dt, **kwargs):
@@ -25,17 +19,15 @@ class {{ cookiecutter.project_name }}(MCMCSystem):
         self.sigma = sigma
         self.dt = dt
 
-    def initialize_model_parameters(self):
+    def initialize_mcmc_system(self):
         # Required for mode simulation and mcmc simulation
-        from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}SystemParameters
-        self._parameters = {{ cookiecutter.project_name }}SystemParameters(
+        from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}System
+        self._mcmc_system = {{ cookiecutter.project_name }}System(
             mu=self.mu, sigma=self.sigma, dt=self.dt
         )
-        self._parameters.set_measures(measures=self.measure_names)
+        self._mcmc_system.set_measures(measures=self.measure_names)
 
     def initialize(self, starting_mode):
         # Required for mcmc simulation
-        from {{ cookiecutter.project_slug }}simulation import {{ cookiecutter.project_name }}System
-        self.initialize_model_parameters()
-        self._mcmc_system = {{ cookiecutter.project_name }}System(self._parameters)
+        self.initialize_mcmc_system()
         self._mcmc_system.init(starting_mode=starting_mode)

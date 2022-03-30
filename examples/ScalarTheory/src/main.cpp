@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
     // Directory for storing the simulation data
     std::string rel_data_path = "/data/" + target_name + "/";
 
-    // Setting up system parameters
+    // Setting up the system
     ScalarTheory system(0.3, 0.02, {32, 32}, 0.14, 10, 1.0);
 
-    // Setting up measurement processing parameters
+    // Setting up measurement processor
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
     ReadableMeasureProcessor readable_measures(rel_data_path);
 

@@ -35,7 +35,7 @@ public:
             normal(std::normal_distribution<double>(0.0, 1.0))
     {}
 
-    {{ cookiecutter.project_name }}(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCMeasureSystem(json{
+    {{ cookiecutter.project_name }}(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : {{ cookiecutter.project_name }}(json{
             {"mu", mu_},
             {"sigma", sigma_},
             {"dt", dt_}
@@ -46,14 +46,14 @@ public:
     void initialize(std::string starting_mode)
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
-        std::transform(sp.mu.begin(), sp.mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
+        std::transform(mu.begin(), mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
     }
 
     void update_step(uint measure_interval=1)
     {
         // Called every MCMC step
         for(auto i = 0; i < get_size(); i++)
-            system[i] = system[i] - sp.dt * (system[i] - sp.mu[i]) / std::pow(sp.sigma, 2.0) + std::sqrt(2.0 * sp.dt) * normal(mcmc::util::gen);
+            system[i] = system[i] - dt * (system[i] - mu[i]) / std::pow(sigma, 2.0) + std::sqrt(2.0 * dt) * normal(mcmc::util::gen);
         
     }
 
