@@ -1,6 +1,30 @@
 Advanced Features
 =================
 
+Tutorials
+---------
+
+Running simulations from file / Command line support
+****************************************************
+
+Based on the example of the Ising model (3/4)
+
+C++
+- prepare_simulation_from_file / generate_simulation_from_file
+- command line interface
+
+Running simulations on a CPU / GPU cluster
+******************************************
+
+Based on the example of the ON model (5-GPU) and again scalar theory (6-CPU)
+
+Cmake
+- Define config.h file
+
+C++
+- Use cmdi and mcmc cluster execute
+
+
 Command line support
 --------------------
 

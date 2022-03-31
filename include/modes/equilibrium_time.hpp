@@ -60,7 +60,7 @@ namespace mcmc {
              * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
              * @returns None
              */
-            void write_to_file(const std::string &rel_root_dir) {
+            void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, "equilibrium_time_params");
             }
 
@@ -96,7 +96,7 @@ namespace mcmc {
                     measure='" + measure + "',\
                     confidence_range=" + std::to_string(confidence_range) + ",\
                     confidence_window=" + std::to_string(confidence_window) + ",\
-                    running_parameter='" + running_parameter + "',\
+                    running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\

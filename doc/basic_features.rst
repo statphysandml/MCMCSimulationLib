@@ -1,11 +1,171 @@
 Basic Features
 ==============
 
-Markov Chain Monte Carlo systems
---------------------------------
+The basic features of the MCMCSimulationLib are covered by the following modules and allow to set up,
+to run and to evaluate a Markov chain Monte Carlo (MCMC) simulation:
+
+- :ref:`Markov chain Monte Carlo systems`: Two CRTP base classes, :cpp:class:`mcmc::simulation::SystemBase` and :cpp:class:`mcmc::simulation::MeasureSystemBase`,
+  provide all necessary functions for running a MCMC simulation. The directory ``templates/`` contains child classes which can be used to set
+  up your own system.
+- :ref:`Execution modes`: Modules to specify details of the simulation. The library features a computation of expectation values,
+  of the autocorrelation time and of the time the system needs to be in equilibrium (to reach a steady state distribution).
+  Results of previously executed simulations can be passed as an input to subsequent simulations.
+- :ref:`Measurement processing`: Modules to handle the collection and processing of measurements during the MCMC simulation. At the moment, there is
+  only one class, :cpp:class:`mcmc::measures::ReadableMeasure`, which writes the simulation data in a readable format into a .txt file.
+- :ref:`Simulation`: Core class of the MCMC simulation providing the possibilities to run and evaluate a simulation in different settings.
+- :ref:`Predefined measures`: Standard measures on MCMC configurations, which can be used in combination with the :func:`mcmc::simulation::MeasureSystemBase`.
+
+Note that all classes inherit from :cpp:class:`param_helper::params::Parameters` providing the possibility to store all
+parameters of the respective class in json files. This property allows for an automatic tracking of the simulation parameters
+and enables to rerun the simulation at a later point.
+
+Additionally, it is straightforward to bind the C++ modules into Python via pybind11.
+This gives the possibility to execute the entire simulation solely from Python.
+
+Tutorials
+---------
+
+Setting up a simulation
+***********************
+
+The ``main.cpp`` program for running a Markov chain Monte Carlo simulation consists of the following building blocks:
+
+- Include important header files, define the relative path to the project root dir (in our case from the build directory) and initalize Python
+  if the CMake variable ``RUN_WITH_PYTHON_BACKEND`` has been set to ``ON``. The latter is required for evaluations of the MCMC simulation
+  directly from C++ code:
+
+.. code-block:: c++
+
+   #include "../include/mcmcsystem/config.h"
+
+   #include <mcmc_simulation/header.hpp>
+   #include <mcmc_simulation/util/intervals.hpp>
+   #include <modes/mode_header.hpp>
+   #include <mcmc_simulation/util/random.hpp>
+
+   #include "../include/mcmcsystem/mcmcsystem.hpp"
+
+
+   int main(int argc, char **argv) {
+      // Initialize project dependent parameters
+      param_helper::proj::set_relative_path_to_project_root_dir("../");
+
+   #ifdef PYTHON_BACKEND
+      mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
+   #endif
+
+- Define directories for storing the data and the results of the simulation, set up the MCMC system and initialize a measurement processor
+  and an execution mode:
+
+.. code-block:: c++
+
+   // Name of the simulation
+   const std::string target_name = "MCMCSystemSimulation";
+
+   // Directory for storing the results
+   std::string rel_results_path = "/results/" + target_name + "/";
+   // Directory for storing the simulation data
+   std::string rel_data_path = "/data/" + target_name + "/";
+
+   // Setting up the system
+   MCMCSystem system({1.0, 2.0, -1.5}, 1.0, 0.01);
+
+   // Setting up measurement processor
+   typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
+   ReadableMeasureProcessor readable_measures(rel_data_path);
+
+   // Setting up the execution mode
+   typedef mcmc::mode::ExpectationValue ExpectationValueParams;
+   ExpectationValueParams expectation_value_parameters(
+      10, // measure_interval
+      1000, //  number_of_measurements
+      100, // start_measuring
+      {"Config", "Mean"}, // measures
+      {}, // post_measures
+      "hot", // starting_mode
+      "statistical" // error_type
+   );
+
+- Initialize the simulation class and use it to run and/or evaluate the MCMC simulation. The definition of a running parameter, specified by
+  the variables ``running_parameter_kind`` and ``running_parameter`` provides the possibility to execute the same simulation for different values
+  of this parameter, defined by the vector ``rp_intervals``. If these variables are omitted, the simulation only runs for the parameters defined
+  when the system was initialized. Note that it is not possible to mix these to running modes in the same output directions:
+
+.. code-block:: c++
+
+   // Prepare the simulation
+   auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+   auto expectation_value_simulation = mcmc::simulation::Simulation<
+            MCMCSystem, ExpectationValueParams, ReadableMeasureProcessor>::generate_simulation(
+            system,
+            expectation_value_parameters,
+            readable_measures,
+            "systembase_params", // running_parameter_kind
+            "sigma", // running parameter (rp)
+            sigma_intervals // rp_intervals
+   );
+      
+   // Run and evaluate the simulation
+   expectation_value_simulation.run();
+   expectation_value_simulation.eval(rel_results_path);
+
+- Finalize the program:
+
+.. code-block:: c++
+
+   // Finalization
+   #ifdef PYTHON_BACKEND
+      mcmc::util::finalize_python();
+   #endif
+      return 0;
+   }
+
+A full example with a simulation of the scalar theory including the computation of the time the system needs to be in equilibrium,
+of the autocorrelation time and of expectation values can be found here <link to scalar theory>.
+
+Note that each class implements a ``write_to_file(const std::string rel_root_dir)`` function, which outputs .json file in the provided directory.
+The simulation class provides several overloaded static constructors providing the possibility to load simulations partially from configuration
+parameters stored in these .json files. This feature is heavily used by the advanced features of the library allowing for a simulation solely
+from the command line.
+
+Writing your first Markov chain Monte Carlo system
+**************************************************
+
+The two files ``system.hpp`` and ``measures_system.hpp`` in the ``templates/`` directory can be used as a starting point to implement your
+own MCMC system. The declaration of the classes can also be found :ref:`here<MCMC system without the usage of predefined measures>` and
+:ref:`here<MCMC system with the usage of predefined measures>`.
+
+Note that these templates are also used by the ``generate_application.py`` script.
+
+Evaluating the results in Python
+********************************
+
+ToDo ...Short remark on EvaluationModule... and the possiblity to load the data in pytorch!
+
+Integrating pybind11
+********************
+
+ToDo: In particular, one needs to adapt the files in python_pybind to the respective new constructor
+
+<-> Reinclude code for both types of simulation
+
+- Mode simulation
+- Custom simulation
+
+Doing Stuff in Python
+- Pytorch
+
+.. _Markov chain Monte Carlo systems:
+
+Markov chain Monte Carlo systems
+********************************
+
+Possible declarations of Markov chain Monte Carlo systems without and with the usage of predefined measures.
+
+.. _MCMC system without the usage of predefined measures:
 
 MCMC system without the usage of predefined measures
-****************************************************
+""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. code-block:: c++
 
@@ -31,7 +191,8 @@ MCMC system without the usage of predefined measures
                dt(get_entry<double>("dt", 0.01)),
                
                // Further member variables
-               normal(std::normal_distribution<double>(0.0, 1.0))
+               normal(std::normal_distribution<double>(0.0, 1.0)),
+               system(std::vector<double>(mu.size(), 0.0))
       {}
 
       MCMCSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCSystem(json{
@@ -44,7 +205,10 @@ MCMC system without the usage of predefined measures
       void initialize(std::string starting_mode)
       {
          // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
-         std::transform(mu.begin(), mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
+         if(starting_mode == "hot")
+               std::transform(mu.begin(), mu.end(), system.begin(), [this] (const double param) -> double { return param + this->sigma * this->normal(mcmc::util::gen); });
+         else
+               std::fill(system.begin(), system.end(), 0);
       }
 
       void update_step(uint measure_interval=1)
@@ -123,8 +287,10 @@ MCMC system without the usage of predefined measures
    #endif //MCMCSYSTEM_HPP
 
 
+.. _MCMC system with the usage of predefined measures:
+
 MCMC system with the usage of predefined measures
-*************************************************
+"""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. code-block:: c++
 
@@ -150,7 +316,8 @@ MCMC system with the usage of predefined measures
                dt(get_entry<double>("dt", 0.01)),
                
                // Further member variables
-               normal(std::normal_distribution<double>(0.0, 1.0))
+               normal(std::normal_distribution<double>(0.0, 1.0)),
+               system(std::vector<double>(mu.size(), 0.0))
       {}
 
       MCMCMeasureSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCMeasureSystem(json{
@@ -163,7 +330,10 @@ MCMC system with the usage of predefined measures
       void initialize(std::string starting_mode)
       {
          // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
-         std::transform(sp.mu.begin(), sp.mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
+         if(starting_mode == "hot")
+               std::transform(mu.begin(), mu.end(), system.begin(), [this] (const double param) -> double { return param + this->sigma * this->normal(mcmc::util::gen); });
+         else
+               std::fill(system.begin(), system.end(), 0);
       }
 
       void update_step(uint measure_interval=1)
@@ -215,9 +385,12 @@ MCMC system with the usage of predefined measures
 
    #endif //MCMCMEASURESYSTEM_HPP
 
+.. _Execution modes:
 
 Execution modes
 ---------------
+
+The library features the following execution modes.
 
 EquilibriumTime
 ***************
@@ -234,21 +407,35 @@ ExpectationValue
 .. doxygenclass:: mcmc::mode::ExpectationValue
    :members: ExpectationValue, write_to_file, evaluate
 
+.. _Measurement processing:
+
 Measurement processing
 ----------------------
 
+So far, there is only one class to process measurements.
+
 Readable measures
 *****************
+
+.. _ReadableMeasure:
 .. doxygenstruct:: mcmc::measures::ReadableMeasure
+
+.. _Simulation:
 
 Simulation
 ----------
 
+The simulation class represents the main module for preparing, running and evaluating simulations.
+
 .. doxygenclass:: mcmc::simulation::Simulation
     :members: Simulation, generate_simulation, prepare_simulation_from_file, generate_simulation_from_file, write_to_file, run, eval
 
+.. _Predefined measures:
+
 Predefined measures
 -------------------
+
+List of predefined measures, which can be used in combination with a the :cpp:class:`mcmc::simulation::MeasureSystemBase`.
 
 Measure base class
 ******************

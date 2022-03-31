@@ -1,4 +1,5 @@
 #include "../../../include/mcmc_simulation/util/random.hpp"
+#include <iostream>
 
 namespace mcmc {
     namespace util {
@@ -9,6 +10,7 @@ namespace mcmc {
 
         void set_random_seed(uint32_t seed_val)
         {
+            std::cout << "Setting random seed" << std::endl;
             gen.seed(seed_val);
         }
 

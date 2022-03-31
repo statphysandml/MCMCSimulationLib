@@ -416,7 +416,7 @@ namespace mcmc
              * 
              * @param rel_config_path Reltive path to the project_root define by param_helper::proj::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_path, respectively.
              */
-            void write_to_file(std::string rel_config_path) {
+            void write_to_file(const std::string rel_config_path) {
                 // Create folder in config directory if not present
                 if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_config_path))
                 {

@@ -22,7 +22,7 @@ namespace mcmc {
                 return "systembase_params";
             }
 
-            virtual void write_to_file(const std::string &rel_root_dir) {
+            virtual void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, name());
             }
 
@@ -31,13 +31,6 @@ namespace mcmc {
                 Parameters parameters(params);
                 return parameters;
             }
-
-            /* // Implement this function with your respective "SystemClass" as "std::unique_ptr<SystemClass> generate() { return std::make_unique<SystemClass>(*this); }"
-            template<typename System>
-            std::unique_ptr<System> generate() {
-                std::cerr << "This function needs to be defined for your associate system class." << std::endl;
-                std::exit(EXIT_FAILURE);
-            } */
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
             void set_measures(const std::vector<std::string> measures_)

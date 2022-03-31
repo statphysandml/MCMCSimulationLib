@@ -47,7 +47,7 @@ namespace mcmc {
              * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
              * @returns None
              */
-            void write_to_file(const std::string &rel_root_dir) {
+            void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, "readable_measure_params");
             }
 

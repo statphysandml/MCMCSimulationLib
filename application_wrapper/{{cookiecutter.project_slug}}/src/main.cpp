@@ -34,14 +34,14 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
             "systembase_params", "sigma", sigma_intervals);
 
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
-        EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
+        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
 
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
         CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
 
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-            this->path_parameters.get_rel_results_path(), 20000, this->path_parameters.get_rel_results_path(), {"Config", "Mean"}, {}, "hot", "statistical");
+            this->path_parameters.get_rel_results_path(), 1000, this->path_parameters.get_rel_results_path(), {"Config", "Mean"}, {}, "hot", "statistical");
 
         // Store simulation parameters
         simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
@@ -99,7 +99,7 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     {
         // Prepare equilibrium time simulation
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
-        EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.05, 10, "Mean");
+        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
         equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
@@ -138,7 +138,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
         // Prepare correlation time simulation
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-                this->path_parameters.get_rel_results_path(), 200, this->path_parameters.get_rel_results_path(),
+                this->path_parameters.get_rel_results_path(), 1000, this->path_parameters.get_rel_results_path(),
                 {"Config", "Mean"}, {}, "hot", "statistical");
         expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
@@ -216,7 +216,7 @@ int main(int argc, char **argv) {
     typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
     EquilibriumTimeParams equilibrium_time_parameters(
         20, // sample_size
-        100, // number_of_steps
+        2000, // number_of_steps
         0.005, // confidence_range
         10, // confidence_window
         "Mean" // measure
@@ -284,10 +284,9 @@ int main(int argc, char **argv) {
         rel_correlation_time_results_path, // correlation_time_rel_results_path
         1000, //  number_of_measurements
         rel_equilibrium_time_results_path, // equilibrium_time_rel_results_path
-        {"Config", "Mean", "AbsMean", "SecondMoment", "Action", "AcceptanceRate", "EnergyViolation",
-         "ExponentialEnergyViolation"}, // measures
+        {"Config", "Mean"}, // measures
          {}, // post_measures
-         "cold", // starting_mode
+         "hot", // starting_mode
          "statistical" // error_type
     );
 

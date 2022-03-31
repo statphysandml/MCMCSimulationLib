@@ -86,7 +86,7 @@ namespace mcmc {
              * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
              * @returns None
              */
-            void write_to_file(const std::string &rel_root_dir) {
+            void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, "correlation_time_params");
             }
 
@@ -119,7 +119,7 @@ namespace mcmc {
                     minimum_sample_size=" + std::to_string(minimum_sample_size) + ",\
                     maximum_correlation_time=" + std::to_string(maximum_correlation_time) + ",\
                     measure='" + measure + "',\
-                    running_parameter='" +running_parameter + "',\
+                    running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     rel_results_dir='" + rel_results_dir + "',\
@@ -137,13 +137,16 @@ namespace mcmc {
                             equilibrium_time_rel_results_path, "equilibrium_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
+                    {
                         rp_key = "default";
+                        std::cout << " -- Looking for the equilibrium time in equilibrium_time_results.json --" << std::endl;
+                    }
                     else
+                    {
                         rp_key = std::to_string(rp);
-                    std::cout << " -- Looking for equilibrium time for rp=" << rp << " in equilibrium_time_results.json --" /*(in: "
-                              << param_helper::proj::get_path_to(equilibrium_time_rel_results_path)
-                              << ") --"*/
-                              << std::endl;
+                        std::cout << " -- Looking for the equilibrium time for rp=" << rp << " in equilibrium_time_results.json --"
+                            << std::endl;
+                    }
                     equilibrium_time = param_helper::params::entry_by_key<uint>(
                             equilibrium_time_results["EquilibriumTime"], rp_key);
                 }

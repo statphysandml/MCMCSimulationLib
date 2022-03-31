@@ -20,7 +20,8 @@ public:
             dt(get_entry<double>("dt", 0.01)),
             
             // Further member variables
-            normal(std::normal_distribution<double>(0.0, 1.0))
+            normal(std::normal_distribution<double>(0.0, 1.0)),
+            system(std::vector<double>(mu.size(), 0.0))
     {}
 
     MCMCMeasureSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCMeasureSystem(json{
@@ -33,7 +34,10 @@ public:
     void initialize(std::string starting_mode)
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
-        std::transform(sp.mu.begin(), sp.mu.end(), std::back_inserter(system), [this] (const double param) -> double { return this->normal(mcmc::util::gen); });
+        if(starting_mode == "hot")
+            std::transform(mu.begin(), mu.end(), system.begin(), [this] (const double param) -> double { return param + this->sigma * this->normal(mcmc::util::gen); });
+        else
+            std::fill(system.begin(), system.end(), 0);
     }
 
     void update_step(uint measure_interval=1)

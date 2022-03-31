@@ -18,7 +18,7 @@ namespace mcmc {
             FromFilePreparation() : FromFilePreparation(json{})
             {}
 
-            void write_to_file(const std::string &rel_root_dir) {
+            void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, "from_file_preparation_params");
             }
 

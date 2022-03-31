@@ -23,7 +23,7 @@ Prerequisites
 
 Building MCMCSimulationLib requires the following software installed:
 
-* A C++14-compliant compiler
+* A C++17-compliant compiler
 * CMake `>= 3.15`
 * Cookiecutter, e.g. by doing pip install cookiecutter, for auto-generating new projects
 * Doxygen (optional, documentation building is skipped if missing) (not present, yet)

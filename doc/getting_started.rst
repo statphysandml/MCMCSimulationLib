@@ -6,7 +6,7 @@ Prerequisites
 
 Building MCMCSimulationLib requires the following software installed:
 
-* A C++14-compliant compiler
+* A C++17-compliant compiler
 * CMake >= 3.15
 * Python >= 3.6 for building Python bindings and for running the evaluation scripts of the library
 * Cookiecutter, e.g. by doing "pip install cookiecutter" (needed for auto-generating new projects)
@@ -154,7 +154,8 @@ The example code can be executed aftwards by running::
     ./YourFirstProject
 
 in the ``build/`` directory of your project. After the simulation, you should find a ``data/`` directory containing the numerical data
-of the MCMC simualtion and a ``results/`` directory containing computed expectation values.
+of the MCMC simualtion and a ``results/`` directory containing computed expectation values. To be able to properly relate the numerical data
+with the utitlized simulation parameters, a .json file is automatically generated containing all these parameters.
 
 Processing and accessing the results from Python
 ************************************************

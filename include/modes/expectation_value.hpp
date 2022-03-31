@@ -184,7 +184,7 @@ namespace mcmc {
              * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
              * @returns None
              */
-            void write_to_file(const std::string &rel_root_dir) {
+            void write_to_file(const std::string rel_root_dir) {
                 Parameters::write_to_file(rel_root_dir, "expectation_value_params");
             }
 
@@ -218,7 +218,7 @@ namespace mcmc {
                     py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func; get_custom_measures_func = lambda: None;");
                 py::exec(("expectation_value(\
                     measures=" + param_helper::params::merge_list_like<std::string>(measures, post_measures).dump() + ",\
-                    running_parameter='" + running_parameter + "',\
+                    running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
                     number_of_measurements=" + std::to_string(number_of_measurements) + ",\
@@ -239,11 +239,16 @@ namespace mcmc {
                             correlation_time_rel_results_path + "/", "correlation_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
+                    {
                         rp_key = "default";
+                        std::cout << " -- Looking for the correlation time in correlation_time_results.json --" << std::endl;
+                    }
                     else
+                    {
                         rp_key = std::to_string(rp);
-                    std::cout << " -- Looking for correlation time for rp=" << rp << " in correlation_time_results.json --"
-                              << std::endl;
+                        std::cout << " -- Looking for the correlation time for rp=" << rp << " in correlation_time_results.json --"
+                            << std::endl;
+                    }                    
                     correlation_time = param_helper::params::entry_by_key<uint>(
                             correlation_time_results["CorrelationTime"], rp_key);
                 }
@@ -254,11 +259,16 @@ namespace mcmc {
                             equilibrium_time_rel_results_path, "equilibrium_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
+                    {
                         rp_key = "default";
+                        std::cout << " -- Looking for the equilibrium time in equilibrium_time_results.json --" << std::endl;
+                    }
                     else
+                    {
                         rp_key = std::to_string(rp);
-                    std::cout << " -- Looking for equilibrium time for rp=" << rp << " in equilibrium_time_results.json --"
-                              << std::endl;
+                        std::cout << " -- Looking for the equilibrium time for rp=" << rp << " in equilibrium_time_results.json --"
+                            << std::endl;
+                    }
                     equililbrium_time = param_helper::params::entry_by_key<uint>(
                             equilibrium_time_results["EquilibriumTime"], rp_key);
                 }
