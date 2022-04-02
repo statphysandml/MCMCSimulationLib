@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     std::string rel_data_path = "/data/" + target_name + "/";
 
     // Setting up system parameters
-    ScalarTheoryGPU system(0.3, 0.02, {32, 32}, 0.14, 10, 1.0);
+    ScalarTheoryGPU system(0.23, 0.02, {32, 32}, 0.14, 10, 1.0);
 
     // Setting up measurement processing parameters
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;

@@ -27,19 +27,26 @@ namespace mcmc {
 
         std::string mode_to_string(ExecutionMode mode_);
 
-        /** @brief Todo
+        /** @brief Helper function for preparing a simulation based on the default arguments of the respective template class arguments
+         * 
+         * @param path_parameters Path parameters containing all important paths for finding the necessary config files and for storing data and results
          */
         template<typename ExecutionParams, typename SB, typename MS>
         void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
-            ExecutionParams expectation_value_parameters(json{});
-            expectation_value_parameters.write_to_file(path_parameters.get_rel_config_path());
-
-            mcmc::simulation::Simulation<SB, ExecutionParams, MS> simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::generate_simulation_from_file(
-                    path_parameters.get_rel_config_path(),
-                    path_parameters.get_rel_config_path());
+            SB system();
+            MS measurement_processor(path_parameters.get_rel_data_path());
+            mcmc::simulation::Simulation<SB, ExecutionParams, MS> simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::prepare_simulation_from_file(
+                system,
+                measurement_processor
+            );
         }
 
-        /** @brief Todo
+        /** @brief Helper function for preparing and exeuction simulations based on a mode type and path parameters
+         * 
+         * @param mode_type The execution mode used for the simulation ("equilibrium_time", "correlation_time" or "expectation_value")
+         * @param path_paramers Path parameters containing all important paths for finding the necessary config files and for storing data and results
+         * @param run Indicate whether the MCMC simulation is performed (true) or not (false)
+         * @param eval Indicate whether the evaluation should be performed in the same run (true) or not (false)
          */
         template<typename SB, typename MS>
         void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
@@ -57,13 +64,13 @@ namespace mcmc {
                                                                  mode_type + "_params",
                                                                  path_parameters.rel_path)) {
                 std::cout << " -- Mode = " << mode_type
-                          << " will be executed based on provided json file -- "
+                          << " will be executed based on the provided json files -- "
                           << std::endl;
                 mode = mode_resolver.at(mode_type);
                 in_preparation = false;
             } else {
                 std::cout << " -- A default " << mode_type
-                          << "_params.json file will be generated in " << path_parameters.get_rel_config_path()
+                          << "_params.json file is generated in " << path_parameters.get_rel_config_path()
                           << "/ together with other parameter files. Adapt them and run the execution command again. --"
                           << std::endl;
                 mode = mode_resolver.at(mode_type);
@@ -77,7 +84,7 @@ namespace mcmc {
                     } else {
                         auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::ExpectationValue, MS>::generate_simulation_from_file(
                             path_parameters.get_rel_config_path()
-                        ); // ToDo: Insert mode_type params path!!
+                        );
                         
                         if(run)
                             simulation.run();
@@ -117,21 +124,27 @@ namespace mcmc {
                     break;
                 };
                 default:
-                    std::cerr << "mode not known..." << std::endl;
+                    std::cerr << "execution mode not known..." << std::endl;
                     break;
             }
         }
 
-        /** @brief Todo
+        /** @brief Base class for preparing and executin a simulation from the command line.
          */
         template<typename SB, typename MS>
         struct CmdIntSim
         {
+            /** @brief Constructor for providing all important path variables
+             * 
+            */
             CmdIntSim(const std::string target_name, // 
                       const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
                       const bool rel_path = true) : path_parameters(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
             {}
 
+            /** @brief Main function for executing or preparing the simulation from file. If no argc=0, the overloaded ``prepare`` function is called,
+             * otherwise the simulation is executed with the help of the mcmc::cmdint::execute function.
+             * */
             void main(int argc, char **argv)
             {
                 if(argc > 1)
@@ -140,7 +153,6 @@ namespace mcmc {
                 }
                 else
                 {
-                    // Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
                     prepare();
                 }
             }
@@ -179,7 +191,9 @@ namespace mcmc {
                 mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters_, run, eval);
             }
 
-            virtual void prepare() = 0;
+            /** @brief Virtual method which is supposed to be overloaded. Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
+             */
+            virtual void prepare();
 
             mcmc::cmdint::PathParameters path_parameters;
         };

@@ -31,6 +31,8 @@
 #include <pybind11/embed.h>
 namespace py = pybind11;
 
+#include <param_helper/params.hpp>
+
 namespace mcmc {
     namespace util {
         

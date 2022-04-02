@@ -1,7 +1,6 @@
 class MCMCSystem:
     def __init__(self, **kwargs):
         # Required for mcmc simulation
-        self.measure_names = [] # Default used for mode simulations <-> measures will be set automatically by the mode simulators
         self._mcmc_system = None
 
     @classmethod
@@ -18,19 +17,24 @@ class MCMCSystem:
     def _expectation_value_simulation_class(cls):
         # Required for mode simulation
         return cls.ExpValSim
+    
+    def initialize_mcmc_system(self):
+        # Needs to be implemented by the child class
+        # Required for mode simulation and mcmc simulation
+        assert False, "member function initalize_mcmc_system() needs to be implemented"
 
-    @property
-    def model_parameters(self):
-        # Required for mode simulation
-        return self._parameters
+    def initialize(self, starting_mode):
+        # Required for mcmc simulation
+        self.initialize_mcmc_system()
+        self._mcmc_system.init(starting_mode=starting_mode)
 
     @property
     def measure_names(self):
-        return self._measures
+        return self._mcmc_system.measure_names()
 
     @measure_names.setter
     def measure_names(self, measures):
-        self._measures = measures
+        self._mcmc_system.set_measures(measures=measures)
         
     def update(self, n_step):
         self._mcmc_system.update(n_step)

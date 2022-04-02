@@ -1,27 +1,33 @@
 import os
 
 
+""" Example for loading and storing MCMC configurations as a PyTorch dataset.
+
+After processing all MCMC configurations,
+the data is stored as .pt file and can be loaded afterwards as a standard PyTorch dataset. """
+
+
 if __name__ == '__main__':
     # To ensure to run code from this file
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     # Path to data
-    path = "./data/Test/"
-
+    rel_data_path = "../data/ScalarTheorySimulation/"
     # Path to where to store
-    root = "./datapt/"
+    rel_gen_data_path = "../data/ScalarTheorySimulation/pytorch_in_memory_dataset/"
 
     ''' Data generation with storage of a permament file '''
 
     data_generator_args = {
         # BatchConfigDataGenerator Args
         "data_type": "target_param",
+        "labels": ["Kappa", "Mean"],
         "complex_config": False,
         # Args for ConfigurationLoader
-        "path": path,
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_path),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "kappa",
+        "running_parameter": "kappa",  # Can also be a list of other computed quantities..stored in the file
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
@@ -29,32 +35,34 @@ if __name__ == '__main__':
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import prepare_in_memory_dataset
     from mcmctools.pytorch.data_generation.datagenerationroutines import data_generator_factory
 
+    # Prepare in memory dataset - write a config.json file providing all necessary information for generating the
+    # dataset
     prepare_in_memory_dataset(
-        root=root,
-        batch_size=89,
+        root=rel_gen_data_path,
+        batch_size=120,
         data_generator_args=data_generator_args,
         data_generator_name="BatchConfigDataGenerator",
         data_generator_factory=data_generator_factory
     )
 
-    # Load in memory dataset
+    # Load the in memory dataset (when this function is called the first time, the dataset is generated, otherwise,
+    # only loaded)
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_dataset
     dataset = load_in_memory_dataset(
-        root=root,
-        data_generator_factory=data_generator_factory,
-        rebuild=False
-        # sample_data_generator_name="ConfigDataGenerator"  # optional: for a generation of new samples
+        root=rel_gen_data_path, data_generator_factory=data_generator_factory,
+        rebuild=False,
+        sample_data_generator_name=None  # "ConfigDataGenerator"  # optional: for a generation of new samples
     )
 
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_data_loader
-    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(0, 3000), shuffle=True,
+    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(0, 4000), shuffle=True,
                                                       num_workers=0)
 
     # Load training data
     for batch_idx, batch in enumerate(training_data_loader):
         data, target = batch
         print(batch_idx, len(data))
-        if batch_idx == 0: # Useful for verifying the shuffle parameter of the data loader
+        if batch_idx == 0:  # Useful for verifying the shuffle parameter of the data loader
             print(data)
 
     # Load training data - Second epoch

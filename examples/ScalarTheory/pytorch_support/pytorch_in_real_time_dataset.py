@@ -1,30 +1,41 @@
 import os
 
 
+""" Examples for loading MCMC configurations as a PyTorch dataset and a respective PyTorch dataloader directly from
+the stored MCMC configurations
+
+We only recommend to use this if the dataset is to large to be loaded at once. Otherwise the generation of an
+InMemoryDataset is much faster.
+
+The file contains different possible approaches to load the data. """
+
+
 if __name__ == '__main__':
     # To ensure to run code from this file
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-    ''' Normal DataLoader and ConfigDataGenerator with an InRealTimeDataset '''
+    # Path to data
+    rel_data_path = "../data/ScalarTheorySimulation/"
+
+    ''' Normal DataLoader and ConfigDataGenerator with an InRealTimeDataset (without storing the data again somehwere
+    else'''
 
     from mcmctools.pytorch.data_generation.configdatagenerator import ConfigDataGenerator
 
     data_generator_args = {
-        "path": "./data/Test/",
+        # ConfigDataGenerator Args
+        "data_type": "target_param",
+        "labels": "running_parameter",
+        "complex_config": False,
+        # Args for ConfigurationLoader
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_path),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "kappa",
-        "chunksize": 400
+        "running_parameter": "kappa",  # Can also be a list of other computed quantities..stored in the file
+        "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
-    data_generator = ConfigDataGenerator(
-        # ConfigDataGenerator Args
-        data_type="target_param",
-        # DataGeneratoreBaseClass Args
-        seed=None,
-        set_seed=True,
-        # ConfigurationLoader Args
-        **data_generator_args)
+    data_generator = ConfigDataGenerator(**data_generator_args)
 
     # Possible usage:
     # sample = data_generator.sampler()
@@ -34,7 +45,7 @@ if __name__ == '__main__':
 
     from pystatplottools.pytorch_data_generation.pytorch_data_utils.dataloaders import DataLoader
     data_loader_params = {
-        'batch_size': 89,
+        'batch_size': 120,
         'shuffle': True,
         'num_workers': 0
     }
@@ -60,22 +71,21 @@ if __name__ == '__main__':
     from mcmctools.pytorch.data_generation.batchconfigdatagenerator import BatchConfigDataGenerator
 
     data_generator_args = {
-        "path": "./data/Test/",
+        # ConfigDataGenerator Args
+        "data_type": "target_param",
+        "labels": "running_parameter",
+        "complex_config": False,
+        # Args for ConfigurationLoader
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_path),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "kappa",
+        "running_parameter": "kappa",  # Can also be a list of other computed quantities..stored in the file
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
     data_generator = BatchConfigDataGenerator(
         # BatchConfigDataGenerator Args
-        batch_size=89,
-        # ConfigDataGenerator Args
-        data_type="target_param",
-        # DataGeneratoreBaseClass Args
-        seed=None,
-        set_seed=True,
-        # ConfigurationLoader Args
+        batch_size=120,
         **data_generator_args)
 
     # Possible usage:
@@ -108,11 +118,13 @@ if __name__ == '__main__':
     data_generator_args = {
         # ConfigDataGenerator Args
         "data_type": "target_param",
+        "labels": "running_parameter",
+        "complex_config": False,
         # Args for ConfigurationLoader
-        "path": "./data/Test/",
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_path),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "running_parameter": "kappa",
+        "running_parameter": "kappa",  # Can also be a list of other computed quantities..stored in the file
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
@@ -125,7 +137,7 @@ if __name__ == '__main__':
     from mcmctools.pytorch.data_generation.datagenerationroutines import data_generator_factory
     dataset = load_in_real_time_dataset(
         data_generator_args=data_generator_args,
-        batch_size=89,
+        batch_size=120,
         data_generator_name="BatchConfigDataGenerator",
         data_generator_factory=data_generator_factory,
         seed=None,

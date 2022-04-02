@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     std::string rel_data_path = "/data/" + target_name + "/";
 
     // Setting up the system
-    ScalarTheory system(0.3, 0.02, {32, 32}, 0.14, 10, 1.0);
+    ScalarTheory system(0.23, 0.02, {32, 32}, 0.14, 10, 1.0);
 
     // Setting up measurement processor
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;

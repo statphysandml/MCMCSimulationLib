@@ -127,7 +127,6 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Assert if EP = PrepareFromFile
                 return Simulation(
                         json {
                                 {"measurement", measurement_.get_json()},
@@ -151,7 +150,6 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Check also for others? (in other constructors?), yes, also execution params <-> recheck with main constructor
                 if(!param_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SB::name(), true))
                 {
                     std::cerr << "Systembase parameters have not been found" << std::endl;
@@ -182,7 +180,12 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Assert if rel_exeuction_params_path not found
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_execution_mode_path_, SB::name(), true))
+                {
+                    std::cerr << "Execution mode parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
                 return Simulation(
                         json {
                                 {"measurement", measurement_.get_json()},
@@ -207,10 +210,15 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Check also for others? (in other constructors?), yes, also execution params <-> recheck with main constructor
                 if(!param_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SB::name(), true))
                 {
                     std::cerr << "Systembase parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_execution_mode_path_, SB::name(), true))
+                {
+                    std::cerr << "Execution mode parameters have not been found" << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
 
@@ -240,7 +248,12 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Assert if EP = PrepareFromFile
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_measurement_path_, SB::name(), true))
+                {
+                    std::cerr << "Measurement processor parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
                 return Simulation(
                         json {
                                 {"measurement_path", rel_measurement_path_},
@@ -265,10 +278,15 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Check also for others? (in other constructors?), yes, also execution params <-> recheck with main constructor
                 if(!param_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SB::name(), true))
                 {
                     std::cerr << "Systembase parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_measurement_path_, SB::name(), true))
+                {
+                    std::cerr << "Measurement processor parameters have not been found" << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
 
@@ -296,7 +314,18 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Assert if EP = PrepareFromFile
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_execution_mode_path_, SB::name(), true))
+                {
+                    std::cerr << "Execution mode parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_measurement_path_, SB::name(), true))
+                {
+                    std::cerr << "Measurement processor parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
                 return Simulation(
                         json {
                                 {"measurement_path", rel_measurement_path_},
@@ -321,10 +350,21 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Check also for others? (in other constructors?), yes, also execution params <-> recheck with main constructor
                 if(!param_helper::fs::check_if_parameter_file_exists(rel_systembase_params_path_, SB::name(), true))
                 {
                     std::cerr << "Systembase parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_execution_mode_path_, SB::name(), true))
+                {
+                    std::cerr << "Execution mode parameters have not been found" << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+
+                if(!param_helper::fs::check_if_parameter_file_exists(rel_measurement_path_, SB::name(), true))
+                {
+                    std::cerr << "Measurement processor parameters have not been found" << std::endl;
                     std::exit(EXIT_FAILURE);
                 }
 
@@ -342,8 +382,6 @@ namespace mcmc
 
             /** @brief Prepare a simulation that will be executed from file
              * 
-             * ToDo: Explain what kind of EP need to be used in this case..
-             * 
              * @param systembase_params_ Object of a systembase parameter class
              * @param measurement_ Object of a measure parameter class handling gathering and writing the simulation data to file
              * @param running_parameter_kind_ Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
@@ -358,7 +396,6 @@ namespace mcmc
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
-                // Assert if EP != PrepareFromFile
                 EP execution_mode_;
 
                 return Simulation(
@@ -368,23 +405,21 @@ namespace mcmc
                                 {"running_parameter", running_parameter_},
                                 {"rp_intervals", rp_intervals_},
                                 {SB::name(), systembase_.get_json()},
-                                {"execution_mode", execution_mode_.get_json()} // Remove when writing to file??
+                                {"execution_mode", execution_mode_.get_json()}
                         }
                 );
             }
 
             /** @brief Generate a simulation solely from file
-             *
-             * ToDo!!
              *  
              * Uses the given paths to load an entire simulation - It is important that the template parameters are in
              * concordance with the simulation parameter file.
-             * If the rel_execution_mode_path == "" the execution path will be loaded from the simulation parameter file
-             * Otherwise the execution file will be loaded from the provided path
              * 
              * @param rel_sim_params_path_ Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_mode_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file
-
+             * @param rel_execution_mode_path_ Relative path to the project_dir of the simulation pointing to the execution params .json file. if
+             *  no path is provided, the default path is the one provided in sim_params.json
+             * @param rel_measurement_path_ Relative path to the project_dir of the simulation pointing to the measurement processing params .json file. if
+             *  no path is provided, the default path is the one provided in sim_params.json.
              */
             static Simulation generate_simulation_from_file(
                     const std::string& rel_sim_params_path_,

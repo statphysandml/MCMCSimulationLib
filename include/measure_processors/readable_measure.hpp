@@ -22,15 +22,7 @@ namespace mcmc {
         {
             explicit ReadableMeasure(const json params_) : Parameters(params_),
                 rel_data_dir(get_entry<std::string>("rel_data_dir", "./data/"))
-            {
-                // *** DIRECTORIES ***
-                // Create folder in data directory if not present
-                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_dir))
-                {
-                    // std::cout << "Create data directory" << std::endl;
-                    param_helper::fs::generate_directory_if_not_present(rel_data_dir);
-                }
-            }
+            {}
 
             /** @brief Prepare directory for writing simulation data to file.
              * 
@@ -62,6 +54,12 @@ namespace mcmc {
 
             std::string get_rel_data_dir() const
             {
+                // Create folder if not present
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_dir))
+                {
+                    // std::cout << "Create data directory" << std::endl;
+                    param_helper::fs::generate_directory_if_not_present(rel_data_dir);
+                }
                 return rel_data_dir;
             }
 

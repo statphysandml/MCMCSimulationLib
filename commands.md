@@ -40,7 +40,19 @@ https://jalammar.github.io/illustrated-transformer/
 
 # Next ToDo:
 
-- Finalize appiction wrapper for measure_system, command line support, cluster support and cuda support (currently only pybind and scalar theory like exmaple is working)
+- Install pytorch geometric and run example files
+- Adapt changes made in ScalarTheory to Application wrapper
+- Recheck jupyter noteboks in ScalarTheory and IsingModel
+
+- Recheck examples of pystatplottools
+- Recheck example of MCMCEValuationLib
+
+- Finish python related documentation in basic features
+- Write documentation for advanced features
+
+- Recheck all comments on functions in C++
+
+- Update ParamHelper
 
 - Include table of how examples are generated
 - Recheck the python part (in particular python_examples and respective data loaders) in the application wrapper

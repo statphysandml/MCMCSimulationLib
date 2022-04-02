@@ -55,7 +55,8 @@ The ``main.cpp`` program for running a Markov chain Monte Carlo simulation consi
    #endif
 
 - Define directories for storing the data and the results of the simulation, set up the MCMC system and initialize a measurement processor
-  and an execution mode:
+  and an execution mode. In addition to the ``measures`` variable, there is the possibility to compute measures over the configurations by
+  the ``post_measures`` variable, further details on that can be found in the :ref:`Custom measure and data loading functions` section:
 
 .. code-block:: c++
 
@@ -89,7 +90,7 @@ The ``main.cpp`` program for running a Markov chain Monte Carlo simulation consi
 - Initialize the simulation class and use it to run and/or evaluate the MCMC simulation. The definition of a running parameter, specified by
   the variables ``running_parameter_kind`` and ``running_parameter`` provides the possibility to execute the same simulation for different values
   of this parameter, defined by the vector ``rp_intervals``. If these variables are omitted, the simulation only runs for the parameters defined
-  when the system was initialized. Note that it is not possible to mix these to running modes in the same output directions:
+  when the system was initialized:
 
 .. code-block:: c++
 
@@ -137,10 +138,64 @@ own MCMC system. The declaration of the classes can also be found :ref:`here<MCM
 
 Note that these templates are also used by the ``generate_application.py`` script.
 
-Evaluating the results in Python
-********************************
+Evaluating results in Python
+****************************
 
-ToDo ...Short remark on EvaluationModule... and the possiblity to load the data in pytorch!
+Evaluation module
+"""""""""""""""""
+
+MCMCEvaluationLib provides support for loading and computing/recomputing measures and simulation data generated with the help of
+the MCMCSimulationLib. Possible evaluation tools are summarized in the ``EvaluationModule`` class. Examples for using this class can be found,
+for example, in <link to examples>.
+
+The examples also demonstrate how the MCMC configurations can be processed in the Deep Learning framework PyTorch.
+
+.. _Custom measure and data loading functions:
+
+Custom measure and data loading functions
+"""""""""""""""""""""""""""""""""""""""""
+
+There is the possibility to define custom functions for loading data from file and for defining custom measure functions. The former is useful
+if your data is stored in a different format than the support ones. The latter can be helpful if you want to compute expectation values for
+a measure that have not been tracked by the C++ implementation (based on the ``measure`` parameters).
+
+The support for this functionality is implemented in the ``mcmctools.loading.custom_function_support.py`` file of the MCMCEvaluationLib.
+In particular, it looks for a module named ``custom_modules.py`` with the declaration of the following two signatures:
+
+.. code-block:: python
+
+   """ Input:
+      data: pandas dataframe containing the MCMC configurations
+      measure_name: Name of the measure
+      custom_measures_args: Optional additional arguments; when called from C++ this refers to the serialized simulation parameters
+   """
+   def compute_measures(data, measure_name, custom_measures_args):
+      import json
+      sim_params = json.loads(custom_measures_args)
+      from scalar_theory_measures import compute_scalar_theory_measures
+      return compute_scalar_theory_measures(data=data, measure_name=measure_name, sim_params=sim_params)
+
+   """ Input:
+      rel_data_dir: rel_data_dir to sim_base_dir
+      running_parameter: running_parameter
+      identifier: string indicating the type of performed exectution mode ("equilibrium_time",
+         "correlationtime" or "expectation_value"),
+      sim_base_dir: when called from C++, this refers to the project_root_dir
+      rp_values: list of values for the running_parameter
+      custom_load_data_args: Optional additional arguments; when called from C++ this refers
+         to the serialized simulation parameters
+   """
+   def custom_load_data(rel_data_dir, running_parameter, identifier, sim_base_dir,
+         rp_values, custom_load_data_args):
+      pass
+
+For an evaluation based on the ``post_measures`` to work, one needs to store the data the measures are supposed to be evaluated on,
+for example the MCMC configurations.
+
+Additionally, the path to the ``custom_modules.py`` needs to be appended to the Python ``sys.path``. When running from C++, this can be
+done by passing the CMake variable ``PYTHON_SCRIPTS_PATH`` to cmake, for more details see also: :ref:`Building the application`.
+
+Examples can be found in the ``examples/`` directory or in the template projected generated with ``generate_application.py`` file.
 
 Integrating pybind11
 ********************

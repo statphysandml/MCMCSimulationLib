@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    CmdIntSimulation cmdint_simulation("IsingModelSimulation", "./", true);
+    mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::ReadableMeasure> cmdint_simulation("IsingModelSimulation", "./", true);
     cmdint_simulation.main(argc, argv);
 
     // Finalization

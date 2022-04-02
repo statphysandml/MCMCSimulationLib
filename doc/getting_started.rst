@@ -119,7 +119,9 @@ to start simulations based on configuration files from the command line or to su
 choosing a different setting is how the ``main.cpp`` is structured. Additionally, the ``examples/`` directory contains examples for all the different
 settings, allowing for a better exploration of the features of the libary.
 
-Buidling the application
+.. _Building the application:
+
+Building the application
 ************************
 
 After navigating to the project directory, the application can be built with a similar sequence of commands as above
