@@ -13,7 +13,7 @@ if __name__ == '__main__':
     import sys
     sys.path.append("../python_scripts/")
 
-    evaluation_module = EvaluationModule(sim_base_dir="../", rel_data_path="data/{{ cookiecutter.project_name }}Simulation/", rel_results_path="results/{{ cookiecutter.project_name }}Simulation/",
+    evaluation_module = EvaluationModule(sim_base_dir="../", rel_data_dir="data/{{ cookiecutter.project_name }}Simulation/", rel_results_dir="results/{{ cookiecutter.project_name }}Simulation/",
                                          running_parameter_kind=None,
                                          running_parameter="sigma",
                                          rp_values=linspace_rp_intervals(0.5, 1.5, 9))

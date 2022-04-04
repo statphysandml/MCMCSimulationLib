@@ -27,7 +27,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
         auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
 
         {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
-        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters.get_rel_data_path());
+        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters.get_rel_data_dir());
 
         auto simulation_parameters = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
             system, readable_measures,
@@ -37,11 +37,11 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
         EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
 
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), {"Mean"});
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), {"Mean"});
 
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-            this->path_parameters.get_rel_results_path(), 1000, this->path_parameters.get_rel_results_path(), {"Config", "Mean"}, {}, "hot", "statistical");
+            this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(), {"Config", "Mean"}, {}, "hot", "statistical");
 
         // Store simulation parameters
         simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
@@ -80,7 +80,7 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
 
     // Setting up the system
     {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
-    mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_path());
+    mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_dir());
 
     auto simulation = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
             system, readable_measures,
@@ -118,7 +118,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     {
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "Mean");
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "Mean");
         correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
@@ -138,7 +138,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
         // Prepare correlation time simulation
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-                this->path_parameters.get_rel_results_path(), 1000, this->path_parameters.get_rel_results_path(),
+                this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(),
                 {"Config", "Mean"}, {}, "hot", "statistical");
         expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
@@ -196,16 +196,16 @@ int main(int argc, char **argv) {
     const std::string target_name = "{{ cookiecutter.project_name }}Simulation";
 
     // Directory for storing the results
-    std::string rel_results_path = "/results/" + target_name + "/";
+    std::string rel_results_dir = "/results/" + target_name + "/";
     // Directory for storing the simulation data
-    std::string rel_data_path = "/data/" + target_name + "/";
+    std::string rel_data_dir = "/data/" + target_name + "/";
 
     // Setting up the system
     {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
 
     // Setting up measurement processor
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
-    ReadableMeasureProcessor readable_measures(rel_data_path);
+    ReadableMeasureProcessor readable_measures(rel_data_dir);
 
     //]
 
@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
     
     // Run and evaluate the simulation
     equilibrium_time_simulation.run();
-    equilibrium_time_simulation.eval(rel_results_path);
+    equilibrium_time_simulation.eval(rel_results_dir);
 
     //]
 
@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
     CorrelationTimeParams correlation_time_parameters(
         1000, // minimum_sample_size
         400, // maximum_correlation_time
-        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_path
+        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         "Mean", // measure
         "hot" // starting_mode
     );
@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
 
     // Run and evaluate the simulation
     correlation_time_simulation.run();
-    correlation_time_simulation.eval(rel_results_path);
+    correlation_time_simulation.eval(rel_results_dir);
 
     //]
 
@@ -281,9 +281,9 @@ int main(int argc, char **argv) {
 
     typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     ExpectationValueParams expectation_value_parameters(
-        rel_correlation_time_results_path, // correlation_time_rel_results_path
+        rel_correlation_time_results_path, // correlation_time_rel_results_dir
         1000, //  number_of_measurements
-        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_path
+        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         {"Config", "Mean"}, // measures
          {}, // post_measures
          "hot", // starting_mode
@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
     
     // Run and evaluate the simulation
     expectation_value_simulation.run();
-    expectation_value_simulation.eval(rel_results_path);
+    expectation_value_simulation.eval(rel_results_dir);
 
     //]
 

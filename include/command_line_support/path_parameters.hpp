@@ -23,8 +23,8 @@ namespace mcmc {
                            const bool rel_path_ = true) :
                     target_name(target_name_), sim_root_dir(sim_root_dir_), rel_path(rel_path_),
                     rel_config_path(sim_root_dir_ + "/configs/" + target_name + "/"),
-                    rel_data_path(sim_root_dir_ + "/data/" + target_name + "/"),
-                    rel_results_path(sim_root_dir_ + "/results/" + target_name + "/"),
+                    rel_data_dir(sim_root_dir_ + "/data/" + target_name + "/"),
+                    rel_results_dir(sim_root_dir_ + "/results/" + target_name + "/"),
                     rel_cpu_bash_script_path(sim_root_dir_ + "/cpu_cluster_runs/" + target_name + "/"),
                     rel_gpu_bash_script_path(sim_root_dir_ + "/gpu_cluster_runs/" + target_name + "/")
                     {}
@@ -34,14 +34,14 @@ namespace mcmc {
                 rel_config_path = rel_config_path_;
             }
 
-            void set_rel_data_path(const std::string rel_data_path_)
+            void set_rel_data_dir(const std::string rel_data_dir_)
             {
-                rel_data_path = rel_data_path_;
+                rel_data_dir = rel_data_dir_;
             }
 
-            void set_rel_results_path(const std::string rel_results_path_)
+            void set_rel_results_dir(const std::string rel_results_dir_)
             {
-                rel_results_path = rel_results_path_;
+                rel_results_dir = rel_results_dir_;
             }
 
             void set_rel_cpu_bash_script_path(const std::string rel_cpu_bash_script_path_)
@@ -62,20 +62,20 @@ namespace mcmc {
                 return rel_config_path; 
             }
 
-            /** @brief Returns the rel_data_path and creates the directory if not present
+            /** @brief Returns the rel_data_dir and creates the directory if not present
              */
-            std::string get_rel_data_path() const {
+            std::string get_rel_data_dir() const {
                 // std::cout << "Create " << target_name << " directory in data/ for config files if not existing" << std::endl;
-                param_helper::fs::generate_directory_if_not_present(rel_data_path, rel_path);
-                return rel_data_path;
+                param_helper::fs::generate_directory_if_not_present(rel_data_dir, rel_path);
+                return rel_data_dir;
             }
 
-            /** @brief Returns the rel_results_path and creates the directory if not present
+            /** @brief Returns the rel_results_dir and creates the directory if not present
              */
-            std::string get_rel_results_path() const {
+            std::string get_rel_results_dir() const {
                 // std::cout << "Create " << target_name << " directory in results/ for config files if not existing" << std::endl;
-                param_helper::fs::generate_directory_if_not_present(rel_results_path, rel_path);
-                return rel_results_path;
+                param_helper::fs::generate_directory_if_not_present(rel_results_dir, rel_path);
+                return rel_results_dir;
             }
 
             /** @brief Returns the rel_cpu_bash_script_path and creates the directory if not present
@@ -103,8 +103,8 @@ namespace mcmc {
             const bool rel_path;
 
             std::string rel_config_path;
-            std::string rel_data_path;
-            std::string rel_results_path;
+            std::string rel_data_dir;
+            std::string rel_results_dir;
             std::string rel_cpu_bash_script_path;
             std::string rel_gpu_bash_script_path;
         };

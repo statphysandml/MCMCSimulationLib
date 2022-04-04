@@ -178,7 +178,7 @@ OutputIterator expand(InputIterator1 first1,
 // from https://github.com/thrust/thrust/blob/master/examples/stream_compaction.cu
 
 template <typename Iterator>
-void print_range(const std::string& name, Iterator first, Iterator last)
+void print_range(const std::string name, Iterator first, Iterator last)
 {
     typedef typename std::iterator_traits<Iterator>::value_type T;
 

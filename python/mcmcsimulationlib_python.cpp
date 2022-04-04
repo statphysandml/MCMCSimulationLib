@@ -26,7 +26,7 @@ namespace mcmc {
         void init_measurement_systems(py::module &m)
         {
             py::class_<mcmc::measures::ReadableMeasure>(m, "ReadableMeasure")
-                .def(py::init<const std::string>(), "rel_data_path"_a);
+                .def(py::init<const std::string>(), "rel_data_dir"_a);
         }
 
         void init_execution_modes(py::module &m)
@@ -43,7 +43,7 @@ namespace mcmc {
                     "minimum_sample_size"_a=100, "maximum_correlation_time"_a=1000, "start_measuring"_a=0,
                     "measure"_a="Mean", "starting_mode"_a="hot")
                 .def(py::init<uint, uint, std::string, std::string, std::string>(),
-                    "minimum_sample_size"_a=100, "maximum_correlation_time"_a=1000, "equilibrium_time_rel_results_path"_a,
+                    "minimum_sample_size"_a=100, "maximum_correlation_time"_a=1000, "equilibrium_time_rel_results_dir"_a,
                     "measure"_a="Mean", "starting_mode"_a="hot");
 
             // Expectation Value
@@ -53,15 +53,15 @@ namespace mcmc {
                     "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
                     "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
                 .def(py::init<std::string, uint, uint, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
-                    "correlation_time_rel_results_path"_a, "number_of_measurements"_a=1000, "start_measuring"_a=0,
+                    "correlation_time_rel_results_dir"_a, "number_of_measurements"_a=1000, "start_measuring"_a=0,
                     "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
                     "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
                 .def(py::init<uint, uint, std::string, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
-                    "measure_interval"_a=1, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_path"_a,
+                    "measure_interval"_a=1, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_dir"_a,
                     "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
                     "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0)
                 .def(py::init<std::string, uint, std::string, std::vector<std::string>, std::vector<std::string>, std::string, std::string, uint>(),
-                    "correlation_time_rel_results_path"_a, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_path"_a,
+                    "correlation_time_rel_results_dir"_a, "number_of_measurements"_a=1000, "equilibrium_time_rel_results_dir"_a,
                     "measures"_a=std::vector<std::string>{}, "post_measures"_a=std::vector<std::string>{},
                     "starting_mode"_a="hot", "error_type"_a="statistical", "n_means_bootstrap"_a=0);
         }

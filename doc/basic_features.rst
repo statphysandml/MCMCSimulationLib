@@ -64,16 +64,16 @@ The ``main.cpp`` program for running a Markov chain Monte Carlo simulation consi
    const std::string target_name = "MCMCSystemSimulation";
 
    // Directory for storing the results
-   std::string rel_results_path = "/results/" + target_name + "/";
+   std::string rel_results_dir = "/results/" + target_name + "/";
    // Directory for storing the simulation data
-   std::string rel_data_path = "/data/" + target_name + "/";
+   std::string rel_data_dir = "/data/" + target_name + "/";
 
    // Setting up the system
    MCMCSystem system({1.0, 2.0, -1.5}, 1.0, 0.01);
 
    // Setting up measurement processor
    typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
-   ReadableMeasureProcessor readable_measures(rel_data_path);
+   ReadableMeasureProcessor readable_measures(rel_data_dir);
 
    // Setting up the execution mode
    typedef mcmc::mode::ExpectationValue ExpectationValueParams;
@@ -108,7 +108,7 @@ The ``main.cpp`` program for running a Markov chain Monte Carlo simulation consi
       
    // Run and evaluate the simulation
    expectation_value_simulation.run();
-   expectation_value_simulation.eval(rel_results_path);
+   expectation_value_simulation.eval(rel_results_dir);
 
 - Finalize the program:
 
@@ -185,8 +185,8 @@ In particular, it looks for a module named ``custom_modules.py`` with the declar
       custom_load_data_args: Optional additional arguments; when called from C++ this refers
          to the serialized simulation parameters
    """
-   def custom_load_data(rel_data_dir, running_parameter, identifier, sim_base_dir,
-         rp_values, custom_load_data_args):
+   def custom_load_data(rel_data_dir, identifier, running_parameter, rp_values, sim_base_dir,
+         custom_load_data_args):
       pass
 
 For an evaluation based on the ``post_measures`` to work, one needs to store the data the measures are supposed to be evaluated on,

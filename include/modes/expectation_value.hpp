@@ -21,8 +21,8 @@ namespace mcmc {
         class ExpectationValue : public param_helper::params::Parameters {
         public:
             explicit ExpectationValue(const json params_) : Parameters(params_) {
-                correlation_time_rel_results_path = get_entry<std::string>("correlation_time_rel_results_path", "None");
-                equilibrium_time_rel_results_path = get_entry<std::string>("equilibrium_time_rel_results_path", "None");
+                correlation_time_rel_results_dir = get_entry<std::string>("correlation_time_rel_results_dir", "None");
+                equilibrium_time_rel_results_dir = get_entry<std::string>("equilibrium_time_rel_results_dir", "None");
                 measure_interval = get_entry<uint>("measure_interval", 1);
                 number_of_measurements = get_entry<uint>("number_of_measurements", 1000);
                 start_measuring = get_entry<uint>("start_measuring", 0);
@@ -76,7 +76,7 @@ namespace mcmc {
             /** @brief Same as above with the exception that the autocorrelation time,
              * which can be computed by the CorrelationTime mode, is loaded from file.
              *
-             * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json file
+             * @param correlation_time_rel_results_dir_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json file
              * @param number_of_measurements_ Total number of measurements
              * @param start_measuring_ Number of Monte Carlo sweeps before starting with the first measurement
              * @param measures_ Measures to be made during the simulation
@@ -89,7 +89,7 @@ namespace mcmc {
              * it is set to zero, the error is computed according to the standard error
              */
             ExpectationValue(
-                    std::string correlation_time_rel_results_path_,
+                    std::string correlation_time_rel_results_dir_,
                     uint number_of_measurements_,
                     uint start_measuring_,
                     std::vector<std::string> measures_,
@@ -98,7 +98,7 @@ namespace mcmc {
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValue(
-                    json{{"correlation_time_rel_results_path", correlation_time_rel_results_path_},
+                    json{{"correlation_time_rel_results_dir", correlation_time_rel_results_dir_},
                          {"measure_interval",                  0},
                          {"number_of_measurements",            number_of_measurements_},
                          {"start_measuring",                   start_measuring_},
@@ -113,7 +113,7 @@ namespace mcmc {
              *
              * @param measure_interval_ Number of Monte Carlo sweeps between measurements (autocorrelation time)
              * @param number_of_measurements_ Total number of measurements
-             * @param equilibrium_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
+             * @param equilibrium_time_rel_results_dir_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
              * @param measures_ Measures to be made during the simulation
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
@@ -126,7 +126,7 @@ namespace mcmc {
             ExpectationValue(
                     uint measure_interval_,
                     uint number_of_measurements_,
-                    std::string equilibrium_time_rel_results_path_,
+                    std::string equilibrium_time_rel_results_dir_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
                     std::string starting_mode_ = "hot",
@@ -135,7 +135,7 @@ namespace mcmc {
             ) : ExpectationValue(
                     json{{"measure_interval",                  measure_interval_},
                          {"number_of_measurements",            number_of_measurements_},
-                         {"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
+                         {"equilibrium_time_rel_results_dir", equilibrium_time_rel_results_dir_},
                          {"start_measuring",                   0},
                          {"measures",                          measures_},
                          {"post_measures",                     post_measures_},
@@ -146,9 +146,9 @@ namespace mcmc {
             /** @brief Same as above with the exception that the time to equilibrium before the first measurement as well as the autocorrelation time are loaded from file.
              * Both need to be computed beforhand with the EquilibriumTime and CorrelationTime mode.
              *
-             * @param correlation_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json results file
+             * @param correlation_time_rel_results_dir_ Relative path (with respect to the top-level directory of the project) to the correlation_time_results.json results file
              * @param number_of_measurements_ Total number of measurements
-             * @param equilibrium_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
+             * @param equilibrium_time_rel_results_dir_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
              * @param measures_ Measures to be made during the simulation
              * @param post_measures Measures which should be computed afterwards in Python.
              *  Note that for this work the configurations have to be stored as well which can be achieved
@@ -159,17 +159,17 @@ namespace mcmc {
              * it is set to zero, the error is computed according to the standard error
              */
             ExpectationValue(
-                    std::string correlation_time_rel_results_path_,
+                    std::string correlation_time_rel_results_dir_,
                     uint number_of_measurements_,
-                    std::string equilibrium_time_rel_results_path_,
+                    std::string equilibrium_time_rel_results_dir_,
                     std::vector<std::string> measures_,
                     std::vector<std::string> post_measures_ = {},
                     std::string starting_mode_ = "hot",
                     std::string error_type_ = "statistical",
                     uint n_means_bootstrap_ = 0
             ) : ExpectationValue(
-                    json{{"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
-                         {"correlation_time_rel_results_path", correlation_time_rel_results_path_},
+                    json{{"equilibrium_time_rel_results_dir", equilibrium_time_rel_results_dir_},
+                         {"correlation_time_rel_results_dir", correlation_time_rel_results_dir_},
                          {"measure_interval",                  0},
                          {"number_of_measurements",            number_of_measurements_},
                          {"start_measuring",                   0},
@@ -234,9 +234,9 @@ namespace mcmc {
             mcmc::simulation::MarkovChain
             generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
                 uint correlation_time = measure_interval; // default
-                if (correlation_time_rel_results_path != "None") {
+                if (correlation_time_rel_results_dir != "None") {
                     auto correlation_time_results = param_helper::fs::read_parameter_file(
-                            correlation_time_rel_results_path + "/", "correlation_time_results");
+                            correlation_time_rel_results_dir + "/", "correlation_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
                     {
@@ -254,9 +254,9 @@ namespace mcmc {
                 }
                 
                 uint equililbrium_time = start_measuring;
-                if (equilibrium_time_rel_results_path != "None") {
+                if (equilibrium_time_rel_results_dir != "None") {
                     auto equilibrium_time_results = param_helper::fs::read_parameter_file(
-                            equilibrium_time_rel_results_path, "equilibrium_time_results");
+                            equilibrium_time_rel_results_dir, "equilibrium_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
                     {
@@ -281,8 +281,8 @@ namespace mcmc {
             }
 
         private:
-            std::string equilibrium_time_rel_results_path;
-            std::string correlation_time_rel_results_path;
+            std::string equilibrium_time_rel_results_dir;
+            std::string correlation_time_rel_results_dir;
 
             uint measure_interval;
             uint number_of_measurements;

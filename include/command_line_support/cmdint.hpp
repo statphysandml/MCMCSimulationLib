@@ -33,12 +33,13 @@ namespace mcmc {
          */
         template<typename ExecutionParams, typename SB, typename MS>
         void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
-            SB system();
-            MS measurement_processor(path_parameters.get_rel_data_path());
-            mcmc::simulation::Simulation<SB, ExecutionParams, MS> simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::prepare_simulation_from_file(
-                system,
+            SB systembase;
+            MS measurement_processor(path_parameters.get_rel_data_dir());
+            auto simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::prepare_simulation_from_file(
+                systembase,
                 measurement_processor
             );
+            simulation.write_to_file(path_parameters.get_rel_config_path());
         }
 
         /** @brief Helper function for preparing and exeuction simulations based on a mode type and path parameters
@@ -89,7 +90,7 @@ namespace mcmc {
                         if(run)
                             simulation.run();
                         if(eval)
-                            simulation.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_dir());
                     }
                     break;
                 }
@@ -104,7 +105,7 @@ namespace mcmc {
                         if(run)
                             simulation.run();
                         if(eval)
-                            simulation.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_dir());
                     }
                     break;
                 }
@@ -119,7 +120,7 @@ namespace mcmc {
                         if(run)
                             simulation.run();
                         if(eval)
-                            simulation.eval(path_parameters.get_rel_results_path());
+                            simulation.eval(path_parameters.get_rel_results_dir());
                     }
                     break;
                 };
@@ -193,7 +194,8 @@ namespace mcmc {
 
             /** @brief Virtual method which is supposed to be overloaded. Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
              */
-            virtual void prepare();
+            virtual void prepare()
+            {}
 
             mcmc::cmdint::PathParameters path_parameters;
         };

@@ -3,24 +3,26 @@ import time
 import numpy as np
 
 
+""" Same as in pytorch_in_memory_dataset but with pytorch_geometric """
+
+
 if __name__ == '__main__':
     # To ensure to run code from this file
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     # Path to data
-    path = "./data/Test/"
-
+    rel_data_dir = "../data/ScalarTheorySimulation/"
     # Path to where to store
-    root = "./datapt/"
+    rel_gen_data_path = "../data/ScalarTheorySimulation/pytorch_geometric_in_memory_dataset/"
 
     ''' Data generation with storage of a permanent file '''
 
     data_generator_args = {
-        # BatchGraphConfigDataGenerator Args
+        # GraphConfigDataGenerator Args
         "dimensions": [4, 4],
         "complex_config": False,
         # Args for ConfigurationLoader
-        "path": path,
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_dir),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
         "running_parameter": "kappa",
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     from mcmctools.pytorch.data_generation.datagenerationroutines import data_generator_factory
 
     prepare_in_memory_dataset(
-        root=root,
+        root=rel_gen_data_path,
         batch_size=128,
         data_generator_args=data_generator_args,
         data_generator_name="BatchGraphDataGenerator",
@@ -43,16 +45,16 @@ if __name__ == '__main__':
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_dataset
 
     dataset = load_in_memory_dataset(
-        root=root,
+        root=rel_gen_data_path,
         data_generator_factory=data_generator_factory,
         rebuild=False,
         dataset_type="geometric"
     )
 
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import load_in_memory_data_loader
-    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(0, 3000), shuffle=False,
+    training_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=128, slices=(0, 3000), shuffle=True,
                                                       num_workers=0)
-    test_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=120, slices=(3000, 4000), shuffle=False,
+    test_data_loader = load_in_memory_data_loader(dataset=dataset, batch_size=128, slices=(3000, 4000), shuffle=False,
                                                   num_workers=0)
 
     t = time.time()

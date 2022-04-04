@@ -2,16 +2,25 @@ import numpy as np
 import time
 
 
+""" Same as in pytorch_in_real_time_dataset but with pytorch_geometric """
+
+
 if __name__ == '__main__':
     # To ensure to run code from this file
     import os
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+    # Path to data
+    rel_data_dir = "../data/ScalarTheorySimulation/"
+
     ''' BatchDataLoader and BatchConfigDataGenerator with an InRealTimeDataset '''
 
     data_generator_args = {
+        # BatchGraphConfigDataGenerator Args
         "dimensions": [4, 4],
-        "path": "./data/Test/",
+        "complex_config": False,
+        # Args for ConfigurationLoader
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_dir),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
         "running_parameter": "kappa",
@@ -19,20 +28,9 @@ if __name__ == '__main__':
     }
 
     from mcmctools.pytorch.data_generation.batchgraphdatagenerator import BatchGraphDataGenerator
-
     data_generator = BatchGraphDataGenerator(
-        # BatchConfigDataGenerator Args
         batch_size=128,
-        # ConfigDataGenerator Args
-        # data_type="target_param",
-        # DataGeneratoreBaseClass Args
-        seed=None,
-        set_seed=True,
-        # ConfigurationLoader Args
         **data_generator_args)
-
-    # Possible usage:
-    # sample = data_generator.sampler()
 
     from pystatplottools.pytorch_data_generation.pytorch_data_utils.datasets import InRealTimeDataset
 
@@ -65,8 +63,9 @@ if __name__ == '__main__':
     data_generator_args = {
         # Args for BatchGraphDataGenerator
         "dimensions": [4, 4],
+        "complex_config": False,
         # Args for ConfigurationLoader
-        "path": "./data/Test/",
+        "path": os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/" + rel_data_dir),
         "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
         "running_parameter": "kappa",
@@ -75,7 +74,7 @@ if __name__ == '__main__':
 
     data_loader_params = {
         # 'raw_samples': True,  # Returns the sample from the BatchDataGenerator as it is. Can be used if the BatchDataGenerator produces already the correct datatype for training
-        'shuffle': True,  # Used correctly by the Dataloader??
+        'shuffle': True,
         'num_workers': 0}
 
     from pystatplottools.pytorch_data_generation.data_generation.datagenerationroutines import \

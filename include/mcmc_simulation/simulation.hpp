@@ -35,7 +35,7 @@ namespace mcmc
          * of parameters defined within in C++ or loaded from file. The list of possible parameters is as follows:
          * 
          * <b>Parameters</b>:
-         *     - <b>system_base</b> Object of a systembase parameter class
+         *     - <b>systembase</b> Object of a systembase parameter class
          *     - <b>execution_mode_</b> Object of an exeuction mode parameter class
          *     - <b>measurement_</b> Object of a measure parameter class handling gathering and writing the simulation data to file
          *     - <b>running_parameter_kind_</b> Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
@@ -122,8 +122,8 @@ namespace mcmc
                     SB& systembase_,
                     EP& execution_mode_,
                     MS& measurement_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -142,11 +142,11 @@ namespace mcmc
             /** @brief Simulation based on execution parameters and measure parameters, where systembase parameters are loaded
              * from rel_systembase_params_path_ */
             static Simulation generate_simulation(
-                    const std::string& rel_systembase_params_path_,
+                    const std::string rel_systembase_params_path_,
                     EP& execution_mode_,
                     MS& measurement_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -173,10 +173,10 @@ namespace mcmc
              * */
             static Simulation generate_simulation(
                     SB& systembase_,
-                    const std::string& rel_execution_mode_path_,
+                    const std::string rel_execution_mode_path_,
                     MS& measurement_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -202,11 +202,11 @@ namespace mcmc
              * and execution parameters from rel_execution_mode_path_
              */
             static Simulation generate_simulation(
-                    const std::string& rel_systembase_params_path_,
-                    const std::string& rel_execution_mode_path_,
+                    const std::string rel_systembase_params_path_,
+                    const std::string rel_execution_mode_path_,
                     MS& measurement_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -242,9 +242,9 @@ namespace mcmc
             static Simulation generate_simulation(
                     SB& systembase_,
                     EP& execution_mode_,
-                    const std::string& rel_measurement_path_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string rel_measurement_path_,
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -270,11 +270,11 @@ namespace mcmc
              * rel_systembase_params_path_ and measure parameters from rel_measurement_path_
              */
             static Simulation generate_simulation(
-                    const std::string& rel_systembase_params_path_,
+                    const std::string rel_systembase_params_path_,
                     EP& execution_mode_,
-                    const std::string& rel_measurement_path_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string rel_measurement_path_,
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -307,10 +307,10 @@ namespace mcmc
              */
             static Simulation generate_simulation(
                     SB& systembase_,
-                    const std::string& rel_execution_mode_path_,
-                    const std::string& rel_measurement_path_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string rel_execution_mode_path_,
+                    const std::string rel_measurement_path_,
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -342,11 +342,11 @@ namespace mcmc
              * execution parameters from rel_execution_mode_path_ and measure parameters from rel_measurement_path_
              */
             static Simulation generate_simulation(
-                    const std::string& rel_systembase_params_path_,
-                    const std::string& rel_execution_mode_path_,
-                    const std::string& rel_measurement_path_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string rel_systembase_params_path_,
+                    const std::string rel_execution_mode_path_,
+                    const std::string rel_measurement_path_,
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -391,8 +391,8 @@ namespace mcmc
             static Simulation prepare_simulation_from_file(
                     SB& systembase_,
                     MS& measurement_,
-                    const std::string& running_parameter_kind_="None",
-                    const std::string& running_parameter_="None",
+                    const std::string running_parameter_kind_="None",
+                    const std::string running_parameter_="None",
                     const std::vector<double>& rp_intervals_=std::vector<double>{0.0}
             )
             {
@@ -422,9 +422,9 @@ namespace mcmc
              *  no path is provided, the default path is the one provided in sim_params.json.
              */
             static Simulation generate_simulation_from_file(
-                    const std::string& rel_sim_params_path_,
-                    const std::string& rel_execution_mode_path="",
-                    const std::string& rel_measurement_path="")
+                    const std::string rel_sim_params_path_,
+                    const std::string rel_execution_mode_path="",
+                    const std::string rel_measurement_path="")
             {
                 // Prechecks if there exists a file at rel_sim_params_path
                 auto params_ = param_helper::fs::read_parameter_file(rel_sim_params_path_, name());
@@ -518,7 +518,7 @@ namespace mcmc
             /* explicit Simulation(Simulation<SBP, EP, MS> &sp_) : sp(sp_)
             {} */
 
-            /** @brief Runs the MCMC simulation and generates .txt file containing all the measurements in the rel_data_path of the simulation parameters
+            /** @brief Runs the MCMC simulation and generates .txt file containing all the measurements in the rel_data_dir of the simulation parameters
              */
             void run() {
                 std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
@@ -576,7 +576,7 @@ namespace mcmc
             }
 
             // To get explicit informations about the particular run
-            void write_setting_file(const std::string &rel_path, const std::string &filename) const
+            void write_setting_file(const std::string rel_path, const std::string filename) const
             {
                 auto raw_parameters = build_expanded_raw_parameters();
                 raw_parameters.write_to_file(rel_path, filename);

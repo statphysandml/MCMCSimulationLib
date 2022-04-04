@@ -30,7 +30,7 @@ namespace mcmc {
             explicit CorrelationTime(const json params_) : Parameters(params_) {
                 minimum_sample_size = get_entry<uint>("minimum_sample_size", 100);
                 maximum_correlation_time = get_entry<uint>("maximum_correlation_time", 1000);
-                equilibrium_time_rel_results_path = get_entry<std::string>("equilibrium_time_rel_results_path", "None");
+                equilibrium_time_rel_results_dir = get_entry<std::string>("equilibrium_time_rel_results_dir", "None");
                 start_measuring = get_entry<uint>("start_measuring", 0);
                 measure = get_entry<std::string>("measure", "Mean");
                 starting_mode = get_entry<std::string>("starting_mode", "hot");
@@ -63,20 +63,20 @@ namespace mcmc {
              *
              * @param minimum_sample_size_ Minimum number of Monte Carlo samples used to compute an average of the considered measure
              * @param maximum_correlation_time_ Maximum measurable correlation time
-             * @param equilibrium_time_rel_results_path_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
+             * @param equilibrium_time_rel_results_dir_ Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
              * @param measure_ Measure used to evalute the autocorrelation time
              * @param starting_mode_ Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
              */
             CorrelationTime(                    
                     uint minimum_sample_size_,
                     uint maximum_correlation_time_,
-                    std::string equilibrium_time_rel_results_path_,
+                    std::string equilibrium_time_rel_results_dir_,
                     std::string measure_="Mean",
                     std::string starting_mode_ = "hot"
             ) : CorrelationTime(
                     json{{"minimum_sample_size",      minimum_sample_size_},
                          {"maximum_correlation_time", maximum_correlation_time_},
-                         {"equilibrium_time_rel_results_path", equilibrium_time_rel_results_path_},
+                         {"equilibrium_time_rel_results_dir", equilibrium_time_rel_results_dir_},
                          {"start_measuring",          0},
                          {"measure",                 measure_},
                          {"starting_mode",          starting_mode_}}) {}
@@ -132,9 +132,9 @@ namespace mcmc {
             mcmc::simulation::MarkovChain
             generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
                 uint equilibrium_time = start_measuring;
-                if (equilibrium_time_rel_results_path != "None") {
+                if (equilibrium_time_rel_results_dir != "None") {
                     auto equilibrium_time_results = param_helper::fs::read_parameter_file(
-                            equilibrium_time_rel_results_path, "equilibrium_time_results");
+                            equilibrium_time_rel_results_dir, "equilibrium_time_results");
                     std::string rp_key;
                     if (running_parameter == "None")
                     {
@@ -159,7 +159,7 @@ namespace mcmc {
             }
 
         private:
-            std::string equilibrium_time_rel_results_path;
+            std::string equilibrium_time_rel_results_dir;
 
             uint minimum_sample_size;
             uint maximum_correlation_time;

@@ -43,7 +43,6 @@ public:
     })
     {}
 
-
     void initialize(std::string starting_mode)
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,

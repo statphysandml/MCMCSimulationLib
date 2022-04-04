@@ -22,7 +22,7 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
 
     // Setting up the system
     ONModelGPU<N> system(0.3, 0.02, {4, 4}, 0.01);
-    mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_path());
+    mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_dir());
 
     auto simulation = mcmc::simulation::Simulation<ONModelGPU<N>>::prepare_simulation_from_file(
             system, readable_measures,
@@ -62,7 +62,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::
     {
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_path(), "SecondMoment");
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "SecondMoment");
         correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 
         // Prepare simulation on a cluster and submit the job with one function call
@@ -83,7 +83,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc:
         // Prepare correlation time simulation
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-                this->path_parameters.get_rel_results_path(), 200, this->path_parameters.get_rel_results_path(),
+                this->path_parameters.get_rel_results_dir(), 200, this->path_parameters.get_rel_results_dir(),
                 {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical");
         expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
 

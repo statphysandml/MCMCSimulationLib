@@ -22,16 +22,16 @@ int main(int argc, char **argv) {
     const std::string target_name = "ScalarTheorySimulation";
 
     // Directory for storing the results
-    std::string rel_results_path = "/results/" + target_name + "/";
+    std::string rel_results_dir = "/results/" + target_name + "/";
     // Directory for storing the simulation data
-    std::string rel_data_path = "/data/" + target_name + "/";
+    std::string rel_data_dir = "/data/" + target_name + "/";
 
     // Setting up the system
     ScalarTheory system(0.23, 0.02, {32, 32}, 0.14, 10, 1.0);
 
     // Setting up measurement processor
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
-    ReadableMeasureProcessor readable_measures(rel_data_path);
+    ReadableMeasureProcessor readable_measures(rel_data_dir);
 
     //]
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     
     // Run and evaluate the simulation
     equilibrium_time_simulation.run();
-    equilibrium_time_simulation.eval(rel_results_path);
+    equilibrium_time_simulation.eval(rel_results_dir);
 
     //]
 
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     CorrelationTimeParams correlation_time_parameters(
         1000, // minimum_sample_size
         400, // maximum_correlation_time
-        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_path
+        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         "SecondMoment", // measure
         "cold" // starting_mode
     );
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 
     // Run and evaluate the simulation
     correlation_time_simulation.run();
-    correlation_time_simulation.eval(rel_results_path);
+    correlation_time_simulation.eval(rel_results_dir);
 
     //]
 
@@ -107,9 +107,9 @@ int main(int argc, char **argv) {
 
     typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     ExpectationValueParams expectation_value_parameters(
-        rel_correlation_time_results_path, // correlation_time_rel_results_path
+        rel_correlation_time_results_path, // correlation_time_rel_results_dir
         1000, //  number_of_measurements
-        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_path
+        rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         {"Config", "Mean", "AbsMean", "SecondMoment", "Action", "AcceptanceRate", "EnergyViolation",
          "ExponentialEnergyViolation"}, // measures
          {}, // post_measures
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
     
     // Run and evaluate the simulation
     expectation_value_simulation.run();
-    expectation_value_simulation.eval(rel_results_path);
+    expectation_value_simulation.eval(rel_results_dir);
 
     //]
 

@@ -19,8 +19,8 @@ if __name__ == "__main__":
 
     mode_simulation = ModeSimulation(model={{ cookiecutter.project_slug }},
                                      sim_base_dir="./",
-                                     rel_data_path="./data/Test/",
-                                     rel_results_path="./data/Test/results/",
+                                     rel_data_dir="./data/Test/",
+                                     rel_results_dir="./data/Test/results/",
                                      running_parameter_kind="systembase_params", running_parameter="sigma",
                                      rp_values=rp_values
                                      )
@@ -31,15 +31,15 @@ if __name__ == "__main__":
 
     mode_simulation.correlation_time_simulation(run=True, eval=False, minimum_sample_size=10,
                                                 maximum_correlation_time=200,
-                                                equilibrium_time_rel_results_path="./data/Test/results/", measure="Mean"
+                                                equilibrium_time_rel_results_dir="./data/Test/results/", measure="Mean"
                                                 )
 
     mode_simulation.compute_correlation_time(from_file=True, fma=fma)
 
     mode_simulation.expectation_value_simulation(run=True, eval=False,
-                                                 correlation_time_rel_results_path="./data/Test/results/",
+                                                 correlation_time_rel_results_dir="./data/Test/results/",
                                                  number_of_measurements=1000,
-                                                 equilibrium_time_rel_results_path="./data/Test/results/",
+                                                 equilibrium_time_rel_results_dir="./data/Test/results/",
                                                  measures=["Mean", "Config"]
                                                  )
 

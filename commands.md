@@ -40,15 +40,12 @@ https://jalammar.github.io/illustrated-transformer/
 
 # Next ToDo:
 
-- Install pytorch geometric and run example files
-- Adapt changes made in ScalarTheory to Application wrapper
-- Recheck jupyter noteboks in ScalarTheory and IsingModel
-
-- Recheck examples of pystatplottools
-- Recheck example of MCMCEValuationLib
+- Adapt changes made in ScalarTheory to Application wrapper and other pybind modules
 
 - Finish python related documentation in basic features
 - Write documentation for advanced features
+
+- Remove asd_ variables?
 
 - Recheck all comments on functions in C++
 
@@ -56,9 +53,9 @@ https://jalammar.github.io/illustrated-transformer/
 
 - Include table of how examples are generated
 - Recheck the python part (in particular python_examples and respective data loaders) in the application wrapper
-- Clearify ParamHelper support
 - Fix correct pybinding of .cu files...
 - Fix cmake install prefix in setup.py...
+
 pip install --use-feature=in-tree-build . --install-option='--mcmcsimulationlib-cmake-prefix-path=~/MCMCSimulationLib/install/' -v
 
 pip install --use-feature=in-tree-build --install-option="--mcmcsimulationlib-cmake-prefix-path='~/MCMCSimulationLib/install/'" .
@@ -96,7 +93,7 @@ Note that data directory is not cleaned before any run, allowing for running sev
     - simulation_parameters.write_to_file(), execution_parameters.write_to_file() (#3 Loading and Saving example for simple simulation)
     - SimulationParameters::perpare_simulation_from_file (allows for an easy simulation with different running parameters, more naturally) (#4 Full simulation, used by Ising Model example) - Useful for running simulation at a different time, can also be used to run simulation with different running parameters at different times..as long as the number of samples doesn't change...
     - ### Loading ###
-    - mcmc::SimulationParamaters::generate_simulation() with path_parameters allows for rerunning the same simulation with different parameters (note that the rel_data_path needs to be set) (#2 More generic simulation from file)
+    - mcmc::SimulationParamaters::generate_simulation() with path_parameters allows for rerunning the same simulation with different parameters (note that the rel_data_dir needs to be set) (#2 More generic simulation from file)
     - mcmc::SimulationParameters::generate_simulation_from_file() solely based on parameters (3# Loading and Saving example for simple simulation, #4 Full simulation, used by Ising Model example)
 
 - Command line interface

@@ -9,6 +9,11 @@ import json
 
 
 if __name__ == '__main__':
+    # Ensure to be in the same directory as the file
+    import os
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path)
+
     import sys
     # Append the path to custom_modules.py module to sys.path; required if measures are computed in Python (with the
     # post_measures parameter of the expectation value simulation mode) or, if a custom data loader is used.
@@ -16,8 +21,8 @@ if __name__ == '__main__':
 
     from mcmctools.mcmc.evaluation_module import EvaluationModule
     from mcmctools.utils.utils import linspace_rp_intervals
-    evaluation_module = EvaluationModule(sim_base_dir="../", rel_data_path="data/ScalarTheorySimulation/",
-                                         rel_results_path="results/ScalarTheorySimulation/",
+    evaluation_module = EvaluationModule(sim_base_dir="../", rel_data_dir="data/ScalarTheorySimulation/",
+                                         rel_results_dir="results/ScalarTheorySimulation/",
                                          running_parameter_kind=None,
                                          running_parameter="kappa",
                                          rp_values=linspace_rp_intervals(0.22, 0.3, 9))

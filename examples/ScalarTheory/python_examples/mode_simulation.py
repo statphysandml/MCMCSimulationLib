@@ -29,8 +29,8 @@ if __name__ == "__main__":
     from mcmc.mode_simulation import ModeSimulation
     mode_simulation = ModeSimulation(model=scalar_theory,
                                      sim_base_dir="./../",
-                                     rel_data_path="data/" + target_name + "/",
-                                     rel_results_path="results/" + target_name + "/",
+                                     rel_data_dir="data/" + target_name + "/",
+                                     rel_results_dir="results/" + target_name + "/",
                                      running_parameter_kind="systembase_params", running_parameter="kappa",
                                      rp_values=rp_values
                                      )
@@ -43,15 +43,15 @@ if __name__ == "__main__":
     # Correlation time simulation
     mode_simulation.correlation_time_simulation(run=True, eval=True, minimum_sample_size=1000,
                                                 maximum_correlation_time=400,
-                                                equilibrium_time_rel_results_path="results/" + target_name + "/",
+                                                equilibrium_time_rel_results_dir="results/" + target_name + "/",
                                                 measure="SecondMoment",
                                                 starting_mode="cold")
 
     # Expectation value simulation
     mode_simulation.expectation_value_simulation(run=True, eval=True,
-                                                 correlation_time_rel_results_path="results/" + target_name + "/",
+                                                 correlation_time_rel_results_dir="results/" + target_name + "/",
                                                  number_of_measurements=1000,
-                                                 equilibrium_time_rel_results_path="results/" + target_name + "/",
+                                                 equilibrium_time_rel_results_dir="results/" + target_name + "/",
                                                  measures=["Mean", "Config"],
                                                  starting_mode="cold"
                                                  )
