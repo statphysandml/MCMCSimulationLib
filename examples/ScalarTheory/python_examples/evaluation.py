@@ -25,7 +25,7 @@ if __name__ == '__main__':
                                          rel_results_dir="results/ScalarTheorySimulation/",
                                          running_parameter_kind=None,
                                          running_parameter="kappa",
-                                         rp_values=linspace_rp_intervals(0.22, 0.3, 9))
+                                         rp_values=linspace_rp_intervals(0.22, 0.29, 8))
 
     """ Loading results """
 
@@ -64,6 +64,9 @@ if __name__ == '__main__':
     # to allow for the computation of further expectation values.
 
     from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func
+    # Alternatively, the custom_measure_func can be imported directly
+    # from custom_modules import compute_measures
+
 
     sim_params = evaluation_module.load_sim_params(identifier="expectation_value")
 

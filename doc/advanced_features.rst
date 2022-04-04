@@ -40,7 +40,7 @@ Path parameters
 ***************
 
 .. doxygenstruct:: mcmc::cmdint::PathParameters
-   :members: get_rel_config_path, get_rel_data_dir, get_rel_results_dir, get_rel_cpu_bash_script_path, get_rel_gpu_bash_script_path
+   :members: get_rel_config_dir, get_rel_data_dir, get_rel_results_dir, get_rel_cpu_bash_script_dir, get_rel_gpu_bash_script_dir
 
 Command line interface
 **********************

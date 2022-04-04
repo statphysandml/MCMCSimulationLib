@@ -35,10 +35,10 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::Re
             this->path_parameters.get_rel_results_dir(), 20000, this->path_parameters.get_rel_results_dir(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}, "hot", "statistical");
 
         // Store simulation parameters
-        simulation.write_to_file(this->path_parameters.get_rel_config_path());
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        simulation.write_to_file(this->path_parameters.get_rel_config_dir());
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
     }
 };
 

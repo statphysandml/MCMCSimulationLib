@@ -28,9 +28,3 @@ class ScalarTheoryGPU(MCMCSystem):
         self._mcmc_system = ScalarTheoryGPUSystem(
             kappa=self.kappa, lambd=self.lambd, dimensions=self.dimensions,
             dt=self.dt, n=self.n, m=self.m)
-        self._mcmc_system.set_measures(measures=self.measure_names)
-
-    def initialize(self, starting_mode):
-        # Required for mcmc simulation
-        self.initialize_mcmc_system()
-        self._mcmc_system.init(starting_mode=starting_mode)

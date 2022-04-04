@@ -449,23 +449,23 @@ namespace mcmc
 
             /** @brief Write the simulation parameters as sim_params.json to file.
              * 
-             * @param rel_config_path Reltive path to the project_root define by param_helper::proj::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_path, respectively.
+             * @param rel_config_dir Reltive path to the project_root define by param_helper::proj::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_dir, respectively.
              */
-            void write_to_file(const std::string rel_config_path) {
+            void write_to_file(const std::string rel_config_dir) {
                 // Create folder in config directory if not present
-                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_config_path))
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_config_dir))
                 {
                     // std::cout << "Create config directory" << std::endl;
-                    param_helper::fs::generate_directory_if_not_present(rel_config_path);
+                    param_helper::fs::generate_directory_if_not_present(rel_config_dir);
                 }
 
-                std::string execution_mode_path = get_entry<std::string>("execution_mode_path", rel_config_path); // First one enables loading it from somewhere else!
+                std::string execution_mode_path = get_entry<std::string>("execution_mode_path", rel_config_dir); // First one enables loading it from somewhere else!
                 execution_mode.write_to_file(execution_mode_path);
 
-                std::string measurement_path = get_entry<std::string>("measurement_path", rel_config_path); // First one enables loading it from somewhere else!
+                std::string measurement_path = get_entry<std::string>("measurement_path", rel_config_dir); // First one enables loading it from somewhere else!
                 measurement.write_to_file(measurement_path);
 
-                std::string systembase_params_path = get_entry<std::string>(SB::name() + "_path", rel_config_path);
+                std::string systembase_params_path = get_entry<std::string>(SB::name() + "_path", rel_config_dir);
                 systembase.write_to_file(systembase_params_path);
 
                 json execution_mode_ = get_entry<json>("execution_mode");
@@ -477,7 +477,7 @@ namespace mcmc
                 json systembase_params_ = systembase.get_json();
                 delete_entry(SB::name());
 
-                Parameters::write_to_file(rel_config_path, name());
+                Parameters::write_to_file(rel_config_dir, name());
 
                 add_entry("execution_mode", execution_mode_);
                 add_entry("measurement", measurement_);

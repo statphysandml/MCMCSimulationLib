@@ -22,16 +22,16 @@ namespace mcmc {
                            const std::string sim_root_dir_ = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
                            const bool rel_path_ = true) :
                     target_name(target_name_), sim_root_dir(sim_root_dir_), rel_path(rel_path_),
-                    rel_config_path(sim_root_dir_ + "/configs/" + target_name + "/"),
+                    rel_config_dir(sim_root_dir_ + "/configs/" + target_name + "/"),
                     rel_data_dir(sim_root_dir_ + "/data/" + target_name + "/"),
                     rel_results_dir(sim_root_dir_ + "/results/" + target_name + "/"),
-                    rel_cpu_bash_script_path(sim_root_dir_ + "/cpu_cluster_runs/" + target_name + "/"),
-                    rel_gpu_bash_script_path(sim_root_dir_ + "/gpu_cluster_runs/" + target_name + "/")
+                    rel_cpu_bash_script_dir(sim_root_dir_ + "/cpu_cluster_runs/" + target_name + "/"),
+                    rel_gpu_bash_script_dir(sim_root_dir_ + "/gpu_cluster_runs/" + target_name + "/")
                     {}
 
-            void set_rel_config_path(const std::string rel_config_path_)
+            void set_rel_config_dir(const std::string rel_config_dir_)
             {
-                rel_config_path = rel_config_path_;
+                rel_config_dir = rel_config_dir_;
             }
 
             void set_rel_data_dir(const std::string rel_data_dir_)
@@ -44,22 +44,22 @@ namespace mcmc {
                 rel_results_dir = rel_results_dir_;
             }
 
-            void set_rel_cpu_bash_script_path(const std::string rel_cpu_bash_script_path_)
+            void set_rel_cpu_bash_script_dir(const std::string rel_cpu_bash_script_dir_)
             {
-                rel_cpu_bash_script_path = rel_cpu_bash_script_path_;
+                rel_cpu_bash_script_dir = rel_cpu_bash_script_dir_;
             }
 
-            void set_rel_gpu_bash_script_path(const std::string rel_gpu_bash_script_path_)
+            void set_rel_gpu_bash_script_dir(const std::string rel_gpu_bash_script_dir_)
             {
-                rel_gpu_bash_script_path = rel_gpu_bash_script_path_;
+                rel_gpu_bash_script_dir = rel_gpu_bash_script_dir_;
             }
 
-            /** @brief Returns the rel_config_path and creates the directory if not present
+            /** @brief Returns the rel_config_dir and creates the directory if not present
              */
-            std::string get_rel_config_path() const {
+            std::string get_rel_config_dir() const {
                 // std::cout << "Create directory " << target_name << " in configs/ for config files if not existing" << std::endl;
-                param_helper::fs::generate_directory_if_not_present(rel_config_path, rel_path);
-                return rel_config_path; 
+                param_helper::fs::generate_directory_if_not_present(rel_config_dir, rel_path);
+                return rel_config_dir; 
             }
 
             /** @brief Returns the rel_data_dir and creates the directory if not present
@@ -78,35 +78,35 @@ namespace mcmc {
                 return rel_results_dir;
             }
 
-            /** @brief Returns the rel_cpu_bash_script_path and creates the directory if not present
+            /** @brief Returns the rel_cpu_bash_script_dir and creates the directory if not present
              */
-            std::string get_rel_cpu_bash_script_path() const {
+            std::string get_rel_cpu_bash_script_dir() const {
                 // std::cout << "Create " << target_name
                 //           << " directory in cpu_cluster_runs/ for bash scripts and output files of respective runs"
                 //          << std::endl;
-                param_helper::fs::generate_directory_if_not_present(rel_cpu_bash_script_path, rel_path);
-                return rel_cpu_bash_script_path;
+                param_helper::fs::generate_directory_if_not_present(rel_cpu_bash_script_dir, rel_path);
+                return rel_cpu_bash_script_dir;
             }
 
-            /** @brief Returns the rel_gpu_bash_script_path and creates the directory if not present
+            /** @brief Returns the rel_gpu_bash_script_dir and creates the directory if not present
              */
-            std::string get_rel_gpu_bash_script_path() const {
+            std::string get_rel_gpu_bash_script_dir() const {
                 // std::cout << "Create " << target_name
                 //           << " directory in gpu_cluster_runs/ for bash scripts and output files of respective runs"
                 //          << std::endl;
-                param_helper::fs::generate_directory_if_not_present(rel_gpu_bash_script_path, rel_path);
-                return rel_gpu_bash_script_path;
+                param_helper::fs::generate_directory_if_not_present(rel_gpu_bash_script_dir, rel_path);
+                return rel_gpu_bash_script_dir;
             }
 
             const std::string target_name;
             const std::string sim_root_dir;
             const bool rel_path;
 
-            std::string rel_config_path;
+            std::string rel_config_dir;
             std::string rel_data_dir;
             std::string rel_results_dir;
-            std::string rel_cpu_bash_script_path;
-            std::string rel_gpu_bash_script_path;
+            std::string rel_cpu_bash_script_dir;
+            std::string rel_gpu_bash_script_dir;
         };
     }
 }

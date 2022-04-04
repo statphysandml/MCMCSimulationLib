@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     );
 
     // Prepare the simulation
-    auto kappa_intervals = mcmc::util::linspace(0.22, 0.3, 9);
+    auto kappa_intervals = mcmc::util::linspace(0.22, 0.29, 8);
     auto equilibrium_time_simulation = mcmc::simulation::Simulation<
         ScalarTheoryGPU, EquilibriumTimeParams, ReadableMeasureProcessor>::generate_simulation(
             system,

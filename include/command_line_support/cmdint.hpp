@@ -39,7 +39,7 @@ namespace mcmc {
                 systembase,
                 measurement_processor
             );
-            simulation.write_to_file(path_parameters.get_rel_config_path());
+            simulation.write_to_file(path_parameters.get_rel_config_dir());
         }
 
         /** @brief Helper function for preparing and exeuction simulations based on a mode type and path parameters
@@ -61,7 +61,7 @@ namespace mcmc {
             bool in_preparation;
 
             // Load config_file from file if present
-            if (param_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_path() + "/",
+            if (param_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_dir() + "/",
                                                                  mode_type + "_params",
                                                                  path_parameters.rel_path)) {
                 std::cout << " -- Mode = " << mode_type
@@ -71,7 +71,7 @@ namespace mcmc {
                 in_preparation = false;
             } else {
                 std::cout << " -- A default " << mode_type
-                          << "_params.json file is generated in " << path_parameters.get_rel_config_path()
+                          << "_params.json file is generated in " << path_parameters.get_rel_config_dir()
                           << "/ together with other parameter files. Adapt them and run the execution command again. --"
                           << std::endl;
                 mode = mode_resolver.at(mode_type);
@@ -84,7 +84,7 @@ namespace mcmc {
                         prep_default_execution<mcmc::mode::ExpectationValue, SB, MS>(path_parameters);
                     } else {
                         auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::ExpectationValue, MS>::generate_simulation_from_file(
-                            path_parameters.get_rel_config_path()
+                            path_parameters.get_rel_config_dir()
                         );
                         
                         if(run)
@@ -99,7 +99,7 @@ namespace mcmc {
                         prep_default_execution<mcmc::mode::CorrelationTime, SB, MS>(path_parameters);
                     } else {
                         auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::CorrelationTime, MS>::generate_simulation_from_file(
-                            path_parameters.get_rel_config_path()
+                            path_parameters.get_rel_config_dir()
                         );
 
                         if(run)
@@ -114,7 +114,7 @@ namespace mcmc {
                         prep_default_execution<mcmc::mode::EquilibriumTime, SB, MS>(path_parameters);
                     } else {
                         auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::EquilibriumTime, MS>::generate_simulation_from_file(
-                            path_parameters.get_rel_config_path()
+                            path_parameters.get_rel_config_dir()
                         );
                             
                         if(run)
@@ -169,17 +169,17 @@ namespace mcmc {
                     sim_root_dir = std::string(argv[3]);
                 if (argc > 4) {
                     std::string rel_path_boolean = std::string(argv[4]);
-                    if (rel_path_boolean == "false")
+                    if (rel_path_boolean == "false" or rel_path_boolean == "0")
                         rel_path = false;
                 }
                 if (argc > 5) {
                     std::string run_boolean = std::string(argv[5]);
-                    if (run_boolean == "false")
+                    if (run_boolean == "false" or run_boolean == "0")
                         run = false;
                 }
                 if (argc > 6) {
                     std::string eval_boolean = std::string(argv[6]);
-                    if (eval_boolean == "false")
+                    if (eval_boolean == "false" or eval_boolean == "0")
                         eval = false;
                 }
 

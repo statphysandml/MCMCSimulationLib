@@ -44,10 +44,10 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
             this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(), {"Config", "Mean"}, {}, "hot", "statistical");
 
         // Store simulation parameters
-        simulation_parameters.write_to_file(this->path_parameters.get_rel_config_path());
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        simulation_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
     }
 };
 
@@ -60,8 +60,39 @@ int main(int argc, char **argv) {
     mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
+    /* Example usage of mcmc::cmdint::simulation, where the prepare() method is used to specify the simulation configuration parameters.
+    * 
+    * The simulation parameters need to be written into a first to file by running the executable without any further arguments:
+    * 
+    * ./{{ cookiecutter.project_name }}
+    * 
+    * Afterwards, additional arguments can be used to execute the respective simulation modes, where the syntax is:
+    * 
+    * ./{executable} {execution_mode} {target_name} {sim_root_dir} {rel_path} {run} {eval}
+    * 
+    * Based on the given example, the next commands for executing the simulations are respectively:
+    * 
+    * ./{{ cookiecutter.project_name }} equilibrium_time {{ cookiecutter.project_name }}Simulation "./" true true true
+    * 
+    * for a computation of the times to equilibrum,
+    * 
+    * ./{{ cookiecutter.project_name }} correlation_time {{ cookiecutter.project_name }}Simulation "./" true true true
+    * 
+    * for a computation of the correlation times, and
+    * 
+    * ./{{ cookiecutter.project_name }} expectation_value {{ cookiecutter.project_name }}Simulation "./" true true true
+    * 
+    * for a computation of the expectation values.
+    */
     CmdIntSimulation cmdint_simulation("{{ cookiecutter.project_name }}Simulation", "./", true);
     cmdint_simulation.main(argc, argv);
+
+    /* Note that is also possible to directly call mcmc::cmdint::simulation. In this case, the default constructors are used to
+    * write default configuration files to file. After adapting those to the desired settings, the simulation can be executed
+    * in the same manner as above:
+    */
+    // mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure> cmdint_simulation("{{ cookiecutter.project_name }}Simulation", "./", true);
+    // cmdint_simulation.main(argc, argv);
 
     // Finalization
 #ifdef PYTHON_BACKEND
@@ -87,7 +118,7 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
             "systembase_params", "sigma", sigma_intervals);
 
     // Store simulation parameters
-    simulation.write_to_file(path_parameters.get_rel_config_path());
+    simulation.write_to_file(path_parameters.get_rel_config_dir());
 }
 
 
@@ -100,7 +131,7 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
         // Prepare equilibrium time simulation
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
@@ -119,7 +150,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
         CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "Mean");
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
@@ -140,7 +171,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
         ExpectationValueParams expectation_value_parameters(
                 this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(),
                 {"Config", "Mean"}, {}, "hot", "statistical");
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_path());
+        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
 
         // Prepare expectation value simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(

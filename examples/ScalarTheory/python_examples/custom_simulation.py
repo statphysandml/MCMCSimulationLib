@@ -8,6 +8,7 @@ is automatically taken care of """
 
 
 if __name__ == "__main__":
+    # Setting up the system
     from scalartheory.scalar_theory import ScalarTheory
     scalar_theory = ScalarTheory(kappa=0.23, lambd=0.02, dimensions=[4, 4], dt=0.14, n=10, m=1.0)
 

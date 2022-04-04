@@ -70,4 +70,4 @@ if __name__ == '__main__':
                                          rel_data_dir="data/ScalarTheorySimulation/",
                                          rel_results_dir="results/ScalarTheorySimulation/",
                                          running_parameter="kappa",
-                                         rp_values=linspace_rp_intervals(0.22, 0.3, 9))
+                                         rp_values=linspace_rp_intervals(0.22, 0.29, 8))

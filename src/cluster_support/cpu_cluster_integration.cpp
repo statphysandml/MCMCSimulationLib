@@ -13,7 +13,7 @@ namespace mcmc {
 
             std::string filename = mode_type + "_" + path_parameters.target_name;
             param_helper::fs::Fileos fileos(param_helper::proj::project_root() + "/" +
-                                           path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename +
+                                           path_parameters.get_rel_cpu_bash_script_dir() + "run_" + filename +
                                            ".sh");
             auto &os = fileos.get();
             os << "#!/bin/bash\n";
@@ -40,12 +40,12 @@ namespace mcmc {
             std::this_thread::sleep_for(std::chrono::seconds(3));
             std::string filename = mode_type + "_" + path_parameters.target_name;
             std::string qsubfile = param_helper::proj::project_root() + "/" +
-                                   path_parameters.get_rel_cpu_bash_script_path() + "run_" + filename + ".sh";
+                                   path_parameters.get_rel_cpu_bash_script_dir() + "run_" + filename + ".sh";
             std::string progoutfile = param_helper::proj::project_root() + "/" +
-                                      path_parameters.get_rel_cpu_bash_script_path() + "output_run_" + filename +
+                                      path_parameters.get_rel_cpu_bash_script_dir() + "output_run_" + filename +
                                       ".txt";
             std::string progerrfile = param_helper::proj::project_root() + "/" +
-                                      path_parameters.get_rel_cpu_bash_script_path() + "error_run_" + filename +
+                                      path_parameters.get_rel_cpu_bash_script_dir() + "error_run_" + filename +
                                       ".txt";
             int res;
             if (cluster_mode == "on_cluster")
