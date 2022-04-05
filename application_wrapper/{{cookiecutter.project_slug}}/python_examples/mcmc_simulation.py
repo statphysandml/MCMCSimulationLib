@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # Correlation time simulation and evaluation
     simulation.run_correlation_time_simulation(measure="Mean", minimum_sample_size=100,
                                                maximum_correlation_time=200, start_measuring=1000,
-                                               starting_mode="cold")
+                                               starting_mode="hot")
     data = simulation.measurements_to_dataframe()
 
     from mcmctools.modes.correlation_time import correlation_time
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # Expectation value simulation and evaluation
     simulation.run_expectation_value_simulation(measures=["Mean", "Config"], n_measurements=100000,
                                                 n_steps_equilibrium=100, n_steps_autocorrelation=10,
-                                                starting_mode="cold")
+                                                starting_mode="hot")
     data = simulation.measurements_to_dataframe()
 
     from mcmctools.modes.expectation_value import expectation_value

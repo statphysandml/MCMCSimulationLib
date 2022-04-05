@@ -23,7 +23,7 @@ namespace mcmc {
             expectation_value, correlation_time, equilibrium_time, plot_site_distribution
         };
 
-        extern const std::map<std::string, ExecutionMode> mode_resolver;
+        extern const std::map<std::string, ExecutionMode> g_mode_resolver;
 
         std::string mode_to_string(ExecutionMode mode_);
 
@@ -63,18 +63,18 @@ namespace mcmc {
             // Load config_file from file if present
             if (param_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_dir() + "/",
                                                                  mode_type + "_params",
-                                                                 path_parameters.rel_path)) {
+                                                                 path_parameters.rel_path_)) {
                 std::cout << " -- Mode = " << mode_type
                           << " will be executed based on the provided json files -- "
                           << std::endl;
-                mode = mode_resolver.at(mode_type);
+                mode = g_mode_resolver.at(mode_type);
                 in_preparation = false;
             } else {
                 std::cout << " -- A default " << mode_type
                           << "_params.json file is generated in " << path_parameters.get_rel_config_dir()
                           << "/ together with other parameter files. Adapt them and run the execution command again. --"
                           << std::endl;
-                mode = mode_resolver.at(mode_type);
+                mode = g_mode_resolver.at(mode_type);
                 in_preparation = true;
             }
 
@@ -140,7 +140,7 @@ namespace mcmc {
             */
             CmdIntSim(const std::string target_name, // 
                       const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
-                      const bool rel_path = true) : path_parameters(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
+                      const bool rel_path = true) : path_parameters_(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
             {}
 
             /** @brief Main function for executing or preparing the simulation from file. If no argc=0, the overloaded ``prepare`` function is called,
@@ -188,8 +188,8 @@ namespace mcmc {
                 std::cout << "sim_root_dir: " << sim_root_dir << std::endl;
                 std::cout << "rp: " << rel_path << "\n\n" << std::endl; */
 
-                mcmc::cmdint::PathParameters path_parameters_(target_name, sim_root_dir, rel_path);
-                mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters_, run, eval);
+                mcmc::cmdint::PathParameters path_parameters(target_name, sim_root_dir, rel_path);
+                mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters, run, eval);
             }
 
             /** @brief Virtual method which is supposed to be overloaded. Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
@@ -197,7 +197,7 @@ namespace mcmc {
             virtual void prepare()
             {}
 
-            mcmc::cmdint::PathParameters path_parameters;
+            mcmc::cmdint::PathParameters path_parameters_;
         };
     }
 }

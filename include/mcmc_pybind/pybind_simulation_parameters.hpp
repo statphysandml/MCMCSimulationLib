@@ -60,7 +60,7 @@ namespace mcmc {
                     "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                     "running_parameter_kind"_a="None", "running_parameter"_a="None",
                     "rp_intervals"_a=std::vector<double>{0.0})
-                .def_readonly("rp_intervals", &SystemEquilibriumTime::rp_intervals)
+                .def_readonly("rp_intervals", &SystemEquilibriumTime::rp_intervals_)
                 .def("run", &SystemEquilibriumTime::run)
                 .def("eval", &SystemEquilibriumTime::eval, "rel_results_dir"_a);
 
@@ -78,7 +78,7 @@ namespace mcmc {
                     "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                     "running_parameter_kind"_a="None", "running_parameter"_a="None",
                     "rp_intervals"_a=std::vector<double>{0.0})
-                .def_readonly("rp_intervals", &SystemCorrelationTime::rp_intervals)
+                .def_readonly("rp_intervals", &SystemCorrelationTime::rp_intervals_)
                 .def("run", &SystemCorrelationTime::run)
                 .def("eval", &SystemCorrelationTime::eval, "rel_results_dir"_a);
 
@@ -96,7 +96,7 @@ namespace mcmc {
                     "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                     "running_parameter_kind"_a="None", "running_parameter"_a="None",
                     "rp_intervals"_a=std::vector<double>{0.0})
-                .def_readonly("rp_intervals", &SystemExpectationValue::rp_intervals)
+                .def_readonly("rp_intervals", &SystemExpectationValue::rp_intervals_)
                 .def("run", &SystemExpectationValue::run)
                 .def("eval", &SystemExpectationValue::eval, "rel_results_dir"_a);
         }

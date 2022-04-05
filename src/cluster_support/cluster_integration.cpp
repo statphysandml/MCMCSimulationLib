@@ -3,31 +3,31 @@
 namespace mcmc {
     namespace cluster {
         // Project dependent parameters
-        std::string executable_name = "None";
-        std::string cluster_mode = "local";
+        std::string g_executable_name = "None";
+        std::string g_cluster_mode = "local";
 
-        void initialize_cluster_params(const std::string executable_name_,
-                                       const std::string cluster_mode_) {
-            set_executable_name(executable_name_);
-            set_cluster_mode(cluster_mode_);
+        void initialize_cluster_params(const std::string executable_name,
+                                       const std::string cluster_mode) {
+            set_executable_name(executable_name);
+            set_cluster_mode(cluster_mode);
         }
 
         std::string get_executable_name() {
-            return executable_name;
+            return g_executable_name;
         }
 
-        void set_executable_name(const std::string executable_name_) {
-            executable_name = executable_name_;
-            std::cout << " -- Setting executable name to '" << executable_name << "' --" << std::endl;
+        void set_executable_name(const std::string executable_name) {
+            g_executable_name = executable_name;
+            std::cout << " -- Setting executable name to '" << g_executable_name << "' --" << std::endl;
         }
 
         std::string get_cluster_mode() {
-            return cluster_mode;
+            return g_cluster_mode;
         }
 
-        void set_cluster_mode(const std::string cluster_mode_) {
-            cluster_mode = cluster_mode_;
-            std::cout << " -- Setting cluster mode to '" << cluster_mode << "' --" << std::endl;
+        void set_cluster_mode(const std::string cluster_mode) {
+            g_cluster_mode = cluster_mode;
+            std::cout << " -- Setting cluster mode to '" << g_cluster_mode << "' --" << std::endl;
         }
     }
 }

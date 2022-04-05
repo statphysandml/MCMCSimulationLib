@@ -20,17 +20,17 @@ namespace mcmc {
          */
         struct ReadableMeasure : public param_helper::params::Parameters
         {
-            explicit ReadableMeasure(const json params_) : Parameters(params_),
-                rel_data_dir(get_entry<std::string>("rel_data_dir", "./data/"))
+            explicit ReadableMeasure(const json params) : Parameters(params),
+                rel_data_dir_(get_entry<std::string>("rel_data_dir", "./data/"))
             {}
 
             /** @brief Prepare directory for writing simulation data to file.
              * 
              *  @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
              */
-            ReadableMeasure(std::string rel_data_dir_="./data/") :
+            ReadableMeasure(std::string rel_data_dir="./data/") :
                 ReadableMeasure(
-                    json{{"rel_data_dir", rel_data_dir_}}
+                    json{{"rel_data_dir", rel_data_dir}}
                 )
             {}
 
@@ -44,7 +44,7 @@ namespace mcmc {
             }
 
             Parameters build_expanded_raw_parameters() const {
-                Parameters parameters(params);
+                Parameters parameters(params_);
                 return parameters;
             }
 
@@ -55,12 +55,12 @@ namespace mcmc {
             std::string get_rel_data_dir() const
             {
                 // Create folder if not present
-                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_dir))
+                if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_data_dir_))
                 {
                     // std::cout << "Create data directory" << std::endl;
-                    param_helper::fs::generate_directory_if_not_present(rel_data_dir);
+                    param_helper::fs::generate_directory_if_not_present(rel_data_dir_);
                 }
-                return rel_data_dir;
+                return rel_data_dir_;
             }
 
             const std::string get_setting_filename() const
@@ -68,19 +68,19 @@ namespace mcmc {
                 return gen_filename();
             }
 
-            void initialize_run(const std::string mode_, const std::string running_parameter_="None", const double rp_value_=0)
+            void initialize_run(const std::string mode, const std::string running_parameter="None", const double rp_value=0)
             {
-                mode = mode_;
-                running_parameter = running_parameter_;
-                rp_value = rp_value_;
+                mode_ = mode;
+                running_parameter_ = running_parameter;
+                rp_value_ = rp_value;
 
                 // Prepare file os
-                os_ptr = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + get_rel_data_dir() + "/" + gen_filename() + ".dat");
+                os_ptr_ = std::make_unique<param_helper::fs::Fileos>(param_helper::proj::project_root() + get_rel_data_dir() + "/" + gen_filename() + ".dat");
             }
 
             void initialize_measurements(const std::string starting_mode, const std::vector<std::string> measure_names, const uint rep)
             {
-                auto &os = os_ptr->get();
+                auto &os = os_ptr_->get();
                 // Write header of output file
                 if (rep == 0) {
                     if(measure_names.size() > 0)
@@ -108,7 +108,7 @@ namespace mcmc {
                     }
                 );
 
-                auto &os = os_ptr->get();
+                auto &os = os_ptr_->get();
                 if(measures.size() > 0)
                     os << measures[0];
                 for (uint j = 1; j < measures.size(); j++)
@@ -119,26 +119,26 @@ namespace mcmc {
 
             void finalize_measurements()
             {
-                auto &os = os_ptr->get();
+                auto &os = os_ptr_->get();
                 os.flush();
             }
 
             const std::string gen_filename() const
             {
-                if(running_parameter == "None")
-                    return mode;
+                if(running_parameter_ == "None")
+                    return mode_;
                 else
-                    return mode + "_" + running_parameter + "=" + std::to_string(rp_value);
+                    return mode_ + "_" + running_parameter_ + "=" + std::to_string(rp_value_);
             }
 
             typedef ReadableMeasure Measure;
 
-            std::string rel_data_dir;
+            std::string rel_data_dir_;
 
-            std::string mode;
-            std::string running_parameter;
-            double rp_value;
-            std::unique_ptr<param_helper::fs::Fileos> os_ptr;
+            std::string mode_;
+            std::string running_parameter_;
+            double rp_value_;
+            std::unique_ptr<param_helper::fs::Fileos> os_ptr_;
         };
     }
 }

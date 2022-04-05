@@ -11,7 +11,7 @@ namespace mcmc {
                 std::exit(EXIT_FAILURE);
             }
 
-            std::string filename = mode_type + "_" + path_parameters.target_name;
+            std::string filename = mode_type + "_" + path_parameters.target_name_;
             param_helper::fs::Fileos fileos(param_helper::proj::project_root() + "/" +
                                            path_parameters.get_rel_cpu_bash_script_dir() + "run_" + filename +
                                            ".sh");
@@ -24,12 +24,12 @@ namespace mcmc {
             os << "#PBS -l vmem=2gb\n"; // 15gb
             os << "#PBS -l walltime=72:00:00\n" << std::endl;
             if(VIRTUAL_ENV != "None")
-                os << "source " << mcmc::virtualenv::conda_activate_path << " " << mcmc::virtualenv::virtual_env << "\n" << std::endl;
+                os << "source " << mcmc::virtualenv::g_conda_activate_path << " " << mcmc::virtualenv::g_virtual_env << "\n" << std::endl;
             os << "cd " << param_helper::proj::project_root() << "build/" << "\n";
             // os << param_helper::proj::project_root() << "/" << Executer::executable_name << " " <<  mode_type << " " << path_parameters.target_name << std::endl;
             os << param_helper::proj::project_root() << "build/" << executable_name
-               << " "  << mode_type << " " << path_parameters.target_name << " " << path_parameters.sim_root_dir
-               << " "  << path_parameters.rel_path << " " << run << " " << eval;
+               << " "  << mode_type << " " << path_parameters.target_name_ << " " << path_parameters.sim_root_dir_
+               << " "  << path_parameters.rel_path_ << " " << run << " " << eval;
             if (additional_args.size() != 0)
                 for (auto additional_arg: additional_args)
                     os << " " << additional_arg;
@@ -38,7 +38,7 @@ namespace mcmc {
 
         void run_execution_on_cpu_cluster(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters, const std::string cluster_mode) {
             std::this_thread::sleep_for(std::chrono::seconds(3));
-            std::string filename = mode_type + "_" + path_parameters.target_name;
+            std::string filename = mode_type + "_" + path_parameters.target_name_;
             std::string qsubfile = param_helper::proj::project_root() + "/" +
                                    path_parameters.get_rel_cpu_bash_script_dir() + "run_" + filename + ".sh";
             std::string progoutfile = param_helper::proj::project_root() + "/" +

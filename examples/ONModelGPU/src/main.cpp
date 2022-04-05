@@ -43,11 +43,11 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::
         // Prepare equilibrium time simulation
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(20, 100, 0.05, 10, "SecondMoment");
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        equilibrium_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
-                "equilibrium_time", this->path_parameters, true, true,
+                "equilibrium_time", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -62,12 +62,12 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc::
     {
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "SecondMoment");
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters_.get_rel_results_dir(), "SecondMoment");
+        correlation_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
-                "correlation_time", this->path_parameters, true, true,
+                "correlation_time", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -83,13 +83,13 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<ONModelGPU<N>, mcmc:
         // Prepare correlation time simulation
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-                this->path_parameters.get_rel_results_dir(), 200, this->path_parameters.get_rel_results_dir(),
+                this->path_parameters_.get_rel_results_dir(), 200, this->path_parameters_.get_rel_results_dir(),
                 {"Mean", "AbsMean", "SecondMoment", "Action", "Config"}, {}, "hot", "statistical");
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare expectation value simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<ONModelGPU<N>, mcmc::measures::ReadableMeasure>(
-                "expectation_value", this->path_parameters, false, true,
+                "expectation_value", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -111,11 +111,11 @@ int main(int argc, char **argv) {
 
     prepare_simulation_parameters<N>(target_name, sim_root_dir, rel_path);
 
-    /* EquilibriumTimeSimulation<N> equilibrium_time_simulation(target_name, sim_root_dir, rel_path);
+    EquilibriumTimeSimulation<N> equilibrium_time_simulation(target_name, sim_root_dir, rel_path);
     equilibrium_time_simulation.main(argc, argv);
 
     CorrelationTimeSimulation<N> correlation_time_simulation(target_name, sim_root_dir, rel_path);
-    correlation_time_simulation.main(argc, argv); */
+    correlation_time_simulation.main(argc, argv);
 
     ExpectationValueSimulation<N> expectation_value_simulation(target_name, sim_root_dir, rel_path);
     expectation_value_simulation.main(argc, argv);

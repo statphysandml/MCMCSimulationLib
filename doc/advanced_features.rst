@@ -80,9 +80,9 @@ GPU cluster integration
 Virtual environment integration
 *******************************
 
-.. doxygenvariable:: mcmc::virtualenv::conda_activate_path
+.. doxygenvariable:: mcmc::virtualenv::g_conda_activate_path
 
-.. doxygenvariable:: mcmc::virtualenv::virtual_env
+.. doxygenvariable:: mcmc::virtualenv::g_virtual_env
 
 .. doxygenfunction:: mcmc::virtualenv::set_conda_activate_path
 

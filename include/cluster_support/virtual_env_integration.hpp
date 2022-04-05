@@ -20,18 +20,18 @@ namespace mcmc {
     namespace virtualenv {
             // Global parameters
             /** Used path to activate the virtual environment before executing the MCMC simulation in C++ on a cluster. Per default, this path is set to the cmake variable CONDA_ACTIVATE_PATH which can be set by -DCONDA_ACTIVATE_PATH when the library is built. */
-            extern std::string conda_activate_path;
+            extern std::string g_conda_activate_path;
             /** Name of the virtual environment used to execute the MCMC simulation in C++ on a cluster. Per default, this path is set to the cmake variable VIRTUAL_ENV which can be set by -DVIRTUAL_ENV when the library is built. */
-            extern std::string virtual_env;
+            extern std::string g_virtual_env;
 
             /** @brief Can be used to set the conda_activate_path to a different than the default one
-             * @param conda_activate_path_ Path to conda activate (to the binary called when source activate is executed, for example .../.miniconda3/bin)
+             * @param conda_activate_path Path to conda activate (to the binary called when source activate is executed, for example .../.miniconda3/bin)
              */
-            void set_conda_activate_path(const std::string conda_activate_path_);
+            void set_conda_activate_path(const std::string conda_activate_path);
             /** @brief Can be used to set the virtual environment to a different than the default one
-             *  @param virtual_env_ Name of the virtual environment to be activated
+             *  @param virtual_env Name of the virtual environment to be activated
              */
-            void set_virtual_env(const std::string virtual_env_);
+            void set_virtual_env(const std::string virtual_env);
     }
 }
 

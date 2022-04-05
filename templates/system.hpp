@@ -15,19 +15,19 @@ public:
     explicit MCMCSystem(const json params):
             SystemBase(params),
             // Configuration parameters
-            mu(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
-            sigma(get_entry<double>("sigma", 0.4)),
-            dt(get_entry<double>("dt", 0.01)),
+            mu_(get_entry<std::vector<double>>("mu", {0.0, 1.0})),
+            sigma_(get_entry<double>("sigma", 0.4)),
+            dt_(get_entry<double>("dt", 0.01)),
             
             // Further member variables
-            normal(std::normal_distribution<double>(0.0, 1.0)),
-            system(std::vector<double>(mu.size(), 0.0))
+            normal_(std::normal_distribution<double>(0.0, 1.0)),
+            system_(std::vector<double>(mu_.size(), 0.0))
     {}
 
-    MCMCSystem(const std::vector<double> mu_={0.0, 1.0}, const double sigma_=0.4, const double dt_=0.01) : MCMCSystem(json{
-            {"mu", mu_},
-            {"sigma", sigma_},
-            {"dt", dt_}
+    MCMCSystem(const std::vector<double> mu={0.0, 1.0}, const double sigma=0.4, const double dt=0.01) : MCMCSystem(json{
+            {"mu", mu},
+            {"sigma", sigma},
+            {"dt", dt}
     })
     {}
 
@@ -35,48 +35,48 @@ public:
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
         if(starting_mode == "hot")
-            std::transform(mu.begin(), mu.end(), system.begin(), [this] (const double param) -> double { return param + this->sigma * this->normal(mcmc::util::gen); });
+            std::transform(mu_.begin(), mu_.end(), system_.begin(), [this] (const double param) -> double { return param + this->sigma_ * this->normal_(mcmc::util::g_gen); });
         else
-            std::fill(system.begin(), system.end(), 0);
+            std::fill(system_.begin(), system_.end(), 0);
     }
 
     void update_step(uint measure_interval=1)
     {
         // Called every MCMC step
         for(auto i = 0; i < get_size(); i++)
-            system[i] = system[i] - dt * (system[i] - mu[i]) / std::pow(sigma, 2.0) + std::sqrt(2.0 * dt) * normal(mcmc::util::gen);
-        
+            system_[i] = system_[i] - dt_ * (system_[i] - mu_[i]) / std::pow(sigma_, 2.0) + std::sqrt(2.0 * dt_) * normal_(mcmc::util::g_gen);   
     }
 
     uint16_t get_size() const
     {
         // Returns the size of the system, for example,
-        return system.size();
+        return system_.size();
     }
 
     auto at(int i) const
     {
         // Read system state i of the system representation, for example,
-        return system[i];
+        return system_[i];
     }
 
     auto& at(int i)
     {
         // Return system state i of the system representation, for example,
-        return system[i];
+        return system_[i];
     }
 
     auto get_system_representation() const
     {
         // Returns the entire MCMC system representation, for example,
-        return system;
+        return system_;
     }
 
     auto& get_system_representation()
     {
         // Returns the entire MCMC system representation, for example,
-        return system;
+        return system_;
     }
+
     void initialize_measurements(std::string starting_mode, uint rep=1)
     {}
 
@@ -87,14 +87,14 @@ public:
         {
             if(measure_name == "Mean")
             {
-                auto mean = std::accumulate(system.begin(), system.end(), 0.0);
+                auto mean = std::accumulate(system_.begin(), system_.end(), 0.0);
                 results.push_back(mean / get_size());
             }
             else if(measure_name == "Config")
             {
-                std::string config = std::to_string(system[0]);
+                std::string config = std::to_string(system_[0]);
                 for (uint idx = 1; idx < get_size(); idx++)
-                    config += ", " + std::to_string(system[idx]);
+                    config += ", " + std::to_string(system_[idx]);
                 results.push_back(config);
             }
         }
@@ -105,12 +105,12 @@ public:
     {}
     
 private:
-    std::vector<double> mu;
-    double sigma;
-    double dt;
-    
-    std::vector<double> system; // Or any other system representation
-    std::normal_distribution<double> normal;
+    std::vector<double> mu_;
+    double sigma_;
+    double dt_;
+
+    std::vector<double> system_; // Or any other system representation
+    std::normal_distribution<double> normal_;
 };
 
 #endif //MCMCSYSTEM_HPP

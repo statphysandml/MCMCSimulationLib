@@ -24,30 +24,30 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
 
     void prepare() override
     {
-        auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+        auto sigma_intervals = mcmc::util::linspace(0.2, 1.0, 9);
 
-        {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
-        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters.get_rel_data_dir());
+        {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.002);
+        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters_.get_rel_data_dir());
 
         auto simulation_parameters = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
             system, readable_measures,
             "systembase_params", "sigma", sigma_intervals);
 
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
-        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
+        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.1, 10, "Mean");
 
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), {"Mean"});
+        CorrelationTimeParams correlation_time_parameters(2000, 400, this->path_parameters_.get_rel_results_dir(), {"Mean"});
 
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-            this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(), {"Config", "Mean"}, {}, "hot", "statistical");
+            this->path_parameters_.get_rel_results_dir(), 100000, this->path_parameters_.get_rel_results_dir(), {"Config", "Mean"}, {}, "hot", "statistical");
 
         // Store simulation parameters
-        simulation_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        simulation_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
+        equilibrium_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
+        correlation_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
     }
 };
 
@@ -107,10 +107,10 @@ void prepare_simulation_parameters(const std::string target_name, // Name of the
 {
     mcmc::cmdint::PathParameters path_parameters(target_name, sim_root_dir, rel_path);
 
-    auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+    auto sigma_intervals = mcmc::util::linspace(0.2, 1.0, 9);
 
     // Setting up the system
-    {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
+    {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.002);
     mcmc::measures::ReadableMeasure readable_measures(path_parameters.get_rel_data_dir());
 
     auto simulation = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
@@ -130,12 +130,12 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     {
         // Prepare equilibrium time simulation
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
-        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.05, 10, "Mean");
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.1, 10, "Mean");
+        equilibrium_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
-                "equilibrium_time", this->path_parameters, true, true,
+                "equilibrium_time", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -149,12 +149,12 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
     {
         // Prepare correlation time simulation
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "Mean");
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        CorrelationTimeParams correlation_time_parameters(2000, 400, this->path_parameters_.get_rel_results_dir(), "Mean");
+        correlation_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
-                "correlation_time", this->path_parameters, true, true,
+                "correlation_time", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -169,13 +169,13 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
         // Prepare correlation time simulation
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-                this->path_parameters.get_rel_results_dir(), 1000, this->path_parameters.get_rel_results_dir(),
+                this->path_parameters_.get_rel_results_dir(), 100000, this->path_parameters_.get_rel_results_dir(),
                 {"Config", "Mean"}, {}, "hot", "statistical");
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
 
         // Prepare expectation value simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
-                "expectation_value", this->path_parameters, true, true,
+                "expectation_value", this->path_parameters_, true, true,
                 mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
     }
 };
@@ -232,7 +232,7 @@ int main(int argc, char **argv) {
     std::string rel_data_dir = "/data/" + target_name + "/";
 
     // Setting up the system
-    {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.01);
+    {{ cookiecutter.project_name }} system({1.0, 2.0, -1.5}, 1.0, 0.002);
 
     // Setting up measurement processor
     typedef mcmc::measures::ReadableMeasure ReadableMeasureProcessor;
@@ -248,13 +248,13 @@ int main(int argc, char **argv) {
     EquilibriumTimeParams equilibrium_time_parameters(
         20, // sample_size
         2000, // number_of_steps
-        0.005, // confidence_range
+        0.1, // confidence_range
         10, // confidence_window
         "Mean" // measure
     );
 
     // Prepare the simulation
-    auto sigma_intervals = mcmc::util::linspace(0.5, 1.5, 9);
+    auto sigma_intervals = mcmc::util::linspace(0.2, 1.0, 9);
     auto equilibrium_time_simulation = mcmc::simulation::Simulation<
         {{ cookiecutter.project_name }}, EquilibriumTimeParams, ReadableMeasureProcessor>::generate_simulation(
             system,
@@ -280,7 +280,7 @@ int main(int argc, char **argv) {
     // Setting up correlation time parameters
     typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
     CorrelationTimeParams correlation_time_parameters(
-        1000, // minimum_sample_size
+        2000, // minimum_sample_size
         400, // maximum_correlation_time
         rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         "Mean", // measure
@@ -313,7 +313,7 @@ int main(int argc, char **argv) {
     typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     ExpectationValueParams expectation_value_parameters(
         rel_correlation_time_results_path, // correlation_time_rel_results_dir
-        1000, //  number_of_measurements
+        100000, //  number_of_measurements
         rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
         {"Config", "Mean"}, // measures
          {}, // post_measures

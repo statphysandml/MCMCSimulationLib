@@ -13,7 +13,7 @@ namespace mcmc {
         template<typename Derived>
         class MeasureSystemBase : public SystemBase<Derived> {
         public:
-            MeasureSystemBase(const json params_) : SystemBase<Derived>(params_)
+            MeasureSystemBase(const json params) : SystemBase<Derived>(params)
             {}
 
             void initialize_measurements(std::string starting_mode, uint rep=1)
@@ -22,7 +22,7 @@ namespace mcmc {
             // Predefined measure method
             virtual std::vector<std::variant<int, double, std::string>> perform_measurements() {
                 std::vector<std::variant<int, double, std::string>> results;
-                for (auto const &element: measurements) {
+                for (auto const &element: measurements_) {
                     results.push_back(element->measure(this->systembase()));
                 }
                 return results;
@@ -34,7 +34,7 @@ namespace mcmc {
             /* By overiding this function one can also add custom generated measures */
             virtual void generate_measures(const std::vector<std::string>& measure_names)
             {
-                measurements.clear();
+                measurements_.clear();
                 auto common_defined_measures = generate_systembase_measures(measure_names);
                 this->concat_measures(common_defined_measures);
             }
@@ -42,39 +42,39 @@ namespace mcmc {
         protected:
             virtual std::vector< std::unique_ptr<measures::Measure<Derived>> > generate_systembase_measures(const std::vector<std::string>& measure_names);
 
-            void concat_measures(std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements_);
+            void concat_measures(std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements);
 
             // Stores all measure objects - these objects need to created by the derived class by calling generate_measures in void initialize()
-            std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements;
+            std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements_;
         };
 
         template<typename Derived>
         std::vector< std::unique_ptr<measures::Measure<Derived>> > MeasureSystemBase<Derived>::generate_systembase_measures(const std::vector<std::string>& measure_names)
         {
-            std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements_{};
+            std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements{};
             for (auto &measure_name :  measure_names) {
                 if (measure_name == "Mean")
-                    measurements_.push_back(std::make_unique<measures::Mean<Derived>>());
+                    measurements.push_back(std::make_unique<measures::Mean<Derived>>());
                 else if (measure_name == "AbsMean")
-                    measurements_.push_back(std::make_unique<measures::AbsMean<Derived>>());
+                    measurements.push_back(std::make_unique<measures::AbsMean<Derived>>());
                 else if (measure_name == "Abs")
-                    measurements_.push_back(std::make_unique<measures::Abs<Derived>>());
+                    measurements.push_back(std::make_unique<measures::Abs<Derived>>());
                 else if (measure_name == "Variance")
-                    measurements_.push_back(std::make_unique<measures::Variance<Derived>>());
+                    measurements.push_back(std::make_unique<measures::Variance<Derived>>());
                 else if (measure_name == "SecondMoment")
-                    measurements_.push_back(std::make_unique<measures::SecondMoment<Derived>>());
+                    measurements.push_back(std::make_unique<measures::SecondMoment<Derived>>());
                 else if (measure_name == "FourthMoment")
-                    measurements_.push_back(std::make_unique<measures::FourthMoment<Derived>>());
+                    measurements.push_back(std::make_unique<measures::FourthMoment<Derived>>());
                 else if (measure_name == "Config")
-                    measurements_.push_back(std::make_unique<measures::Config<Derived>>());
+                    measurements.push_back(std::make_unique<measures::Config<Derived>>());
             }
-            return measurements_;
+            return measurements;
         }
 
         template<typename Derived>
         void  MeasureSystemBase<Derived>::concat_measures(
-                std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements_) {
-            std::move(begin(measurements_), end(measurements_), std::inserter(measurements, end(measurements)));
+                std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements) {
+            std::move(begin(measurements), end(measurements), std::inserter(measurements_, end(measurements_)));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace mcmc {
     namespace mode {
         class FromFilePreparation : public param_helper::params::Parameters {
         public:
-            explicit FromFilePreparation(const json params_) : Parameters(params_) {}
+            explicit FromFilePreparation(const json params) : Parameters(params) {}
 
             FromFilePreparation() : FromFilePreparation(json{})
             {}
@@ -23,7 +23,7 @@ namespace mcmc {
             }
 
             Parameters build_expanded_raw_parameters() const {
-                Parameters parameters(params);
+                Parameters parameters(params_);
                 return parameters;
             }
 

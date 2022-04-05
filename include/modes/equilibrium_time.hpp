@@ -26,34 +26,34 @@ namespace mcmc {
          */
         class EquilibriumTime : public param_helper::params::Parameters {
         public:
-            explicit EquilibriumTime(const json params_) : Parameters(params_) {
-                sample_size = get_entry<uint>("sample_size", 100);
-                number_of_steps = get_entry<uint>("number_of_steps", 1000);
-                confidence_range = get_entry<double>("confidence_range", 0.1);
-                confidence_window = get_entry<uint>("confidence_window", 10);
-                measure = get_entry<std::string>("measure", "Mean");
+            explicit EquilibriumTime(const json params) : Parameters(params) {
+                sample_size_ = get_entry<uint>("sample_size", 100);
+                number_of_steps_ = get_entry<uint>("number_of_steps", 1000);
+                confidence_range_ = get_entry<double>("confidence_range", 0.1);
+                confidence_window_ = get_entry<uint>("confidence_window", 10);
+                measure_ = get_entry<std::string>("measure", "Mean");
             }
 
             /** @brief Constructor defining all important parameters for a computation of the time to equilibrium
              *
-             * @param sample_size_ Number of independent Monte Carlo simulations used to compute the ensemble average evolution from a cold and a hot initial configuration
-             * @param number_of_steps_ Number of performed Monte Carlo sweeps
-             * @param confidence_range_ Confidence range between the hot and the cold ensemble average
-             * @param confidence_window_ Size of the window in computer time (MCMC sweeps) used to smoothing the measured observable over time
-             * @param measure_ Measure used to evalute the time to equilibrium
+             * @param sample_size Number of independent Monte Carlo simulations used to compute the ensemble average evolution from a cold and a hot initial configuration
+             * @param number_of_steps Number of performed Monte Carlo sweeps
+             * @param confidence_range Confidence range between the hot and the cold ensemble average
+             * @param confidence_window Size of the window in computer time (MCMC sweeps) used to smoothing the measured observable over time
+             * @param measure Measure used to evalute the time to equilibrium
              */
             EquilibriumTime(
-                    uint sample_size_ = 100,
-                    uint number_of_steps_ = 1000,
-                    double confidence_range_ = 0.1,
-                    uint confidence_window_ = 10,
-                    std::string measure_ = "Mean"
+                    uint sample_size = 100,
+                    uint number_of_steps = 1000,
+                    double confidence_range = 0.1,
+                    uint confidence_window = 10,
+                    std::string measure = "Mean"
             ) : EquilibriumTime(
-                    json{{"sample_size",    sample_size_},
-                         {"number_of_steps", number_of_steps_},
-                         {"confidence_range", confidence_range_},
-                         {"confidence_window", confidence_window_},
-                         {"measure",        measure_}}) {}
+                    json{{"sample_size",    sample_size},
+                         {"number_of_steps", number_of_steps},
+                         {"confidence_range", confidence_range},
+                         {"confidence_window", confidence_window},
+                         {"measure",        measure}}) {}
 
             /** @brief Write the equilibrium time parameters as equilibrium_time_params.json into rel_root_dir
              *
@@ -65,7 +65,7 @@ namespace mcmc {
             }
 
             Parameters build_expanded_raw_parameters() const {
-                Parameters parameters(params);
+                Parameters parameters(params_);
                 return parameters;
             }
 
@@ -80,7 +80,7 @@ namespace mcmc {
              * @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
              * @param rel_results_dir Relative path to the project_root_dir for storing the results
              * @param running_parameter Name of the running parameter (default: "None")
-             * @param rp_intervals_ List of values for the running parameter
+             * @param rp_intervals List of values for the running parameter
              * @returns None
              */
             void evaluate(const std::string rel_data_dir, const std::string rel_results_dir,
@@ -91,11 +91,11 @@ namespace mcmc {
                 py::exec("from mcmctools.modes.equilibrium_time import equilibrium_time");
                 py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func");
                 py::exec(("equilibrium_time(\
-                    sample_size=" + std::to_string(sample_size) + ",\
-                    number_of_steps=" + std::to_string(number_of_steps) + ",\
-                    measure='" + measure + "',\
-                    confidence_range=" + std::to_string(confidence_range) + ",\
-                    confidence_window=" + std::to_string(confidence_window) + ",\
+                    sample_size=" + std::to_string(sample_size_) + ",\
+                    number_of_steps=" + std::to_string(number_of_steps_) + ",\
+                    measure='" + measure_ + "',\
+                    confidence_range=" + std::to_string(confidence_range_) + ",\
+                    confidence_window=" + std::to_string(confidence_window_) + ",\
                     running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
                     rp_values=" + json(rp_intervals).dump() + ",\
                     rel_data_dir='" + rel_data_dir + "',\
@@ -108,19 +108,19 @@ namespace mcmc {
 
             mcmc::simulation::MarkovChain
             generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
-                return mcmc::simulation::MarkovChain(1, number_of_steps, 2 * sample_size, 0, "alternating");
+                return mcmc::simulation::MarkovChain(1, number_of_steps_, 2 * sample_size_, 0, "alternating");
             }
 
             std::vector<std::string> get_measures() {
-                return std::vector<std::string>{measure};
+                return std::vector<std::string>{measure_};
             }
 
         private:
-            uint sample_size;
-            uint number_of_steps;
-            double confidence_range;
-            uint confidence_window;
-            std::string measure;
+            uint sample_size_;
+            uint number_of_steps_;
+            double confidence_range_;
+            uint confidence_window_;
+            std::string measure_;
         };
 
     }

@@ -1,3 +1,5 @@
+/* Credits to aminnj - tqdm single header c++ pretty progress bar (https://github.com/aminnj/cpptqdm) */
+
 #ifndef TQDM_H
 #define TQDM_H
 #include <unistd.h>

@@ -14,13 +14,13 @@ namespace mcmc {
         /**
          * Random device engine, usually based on /dev/random on UNIX-like systems
          */
-        extern std::random_device rd;
+        extern std::random_device g_rd;
         /** 
          * Mersenne Twister pseudo-random generator used throughout the entire project
          */
-        extern std::mt19937 gen;
+        extern std::mt19937 g_gen;
 
-        /** @brief Sets the random seet for mcmc::util::gen used throughout the entire project
+        /** @brief Sets the random seet for mcmc::util::g_gen used throughout the entire project
          *
          * @param seed_val Random seed
          * @returns None

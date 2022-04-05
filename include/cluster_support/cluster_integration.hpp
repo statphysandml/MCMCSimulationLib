@@ -28,25 +28,25 @@ namespace mcmc {
          * \endcode
          * Note that it is import to include the local config.h file of your the generated project for this to work.
          * 
-         * @param executable_name_ Name of the executable - Used to execute the correct executable when jobs are submitted to the cluster
-         * @param cluster_mode_ ("local" or "on_cluster") Variable for testing the simulation locally by setting cluster_mode="local".
+         * @param executable_name Name of the executable - Used to execute the correct executable when jobs are submitted to the cluster
+         * @param cluster_mode ("local" or "on_cluster") Variable for testing the simulation locally by setting cluster_mode="local".
          * The job will be started by executing
          * \code{.sh}
          * nice -n 17 bash <name_of_the_job_file>.sh.
          * \endcode
          * By setting cluster_mode="on_cluster", the job will be submitted to the cluster (see mcmc::cluster::run_execution_on_cpu_cluster and mcmc::cluster::run_execution_on_gpu_cluster for more details)
          */
-        void initialize_cluster_params(const std::string executable_name_, const std::string cluster_mode_);
+        void initialize_cluster_params(const std::string executable_name, const std::string cluster_mode);
 
         // Global parameters
-        extern std::string executable_name;
-        extern std::string cluster_mode;
+        extern std::string g_executable_name;
+        extern std::string g_cluster_mode;
 
         std::string get_executable_name();
-        void set_executable_name(const std::string executable_name_);
+        void set_executable_name(const std::string executable_name);
 
         std::string get_cluster_mode();
-        void set_cluster_mode(const std::string cluster_mode_);
+        void set_cluster_mode(const std::string cluster_mode);
 
         // Managing device
         enum Device {

@@ -13,28 +13,28 @@ template <typename Iterator>
 class DimensionIterator
 {
 public:
-    DimensionIterator(const Iterator begin_iterator_, const Iterator end_iterator_) : begin_iterator(begin_iterator_), end_iterator(end_iterator_), N(end_iterator_ - begin_iterator_)
+    DimensionIterator(const Iterator begin_iterator, const Iterator end_iterator) : begin_iterator_(begin_iterator), end_iterator_(end_iterator), N_(end_iterator - begin_iterator)
     {}
 
     const Iterator begin() const
     {
-        return begin_iterator;
+        return begin_iterator_;
     }
 
     const Iterator end() const
     {
-        return end_iterator;
+        return end_iterator_;
     }
 
     uint size() const
     {
-        return N;
+        return N_;
     }
 
 private:
-    Iterator begin_iterator;
-    Iterator end_iterator;
-    uint N;
+    Iterator begin_iterator_;
+    Iterator end_iterator_;
+    uint N_;
 };
 
 template<typename Vec, typename VecIterator, typename ConstVecIterator>
@@ -43,17 +43,17 @@ class DevDat : public Vec
 public:
     DevDat()
     {
-        dim = 0;
-        N = 0;
+        dim_ = 0;
+        N_ = 0;
         initialize_dimension_iterators();
     }
 
-    DevDat(const uint dim_, const uint N_, const cudaT init_val = 0) : Vec(dim_ * N_, init_val), dim(dim_), N(N_)
+    DevDat(const uint dim, const uint N, const cudaT init_val = 0) : Vec(dim * N, init_val), dim_(dim), N_(N)
     {
         initialize_dimension_iterators();
     }
 
-    DevDat(const Vec device_data_, const uint dim_) : Vec(device_data_), dim(dim_), N(device_data_.size() / dim_)
+    DevDat(const Vec device_data, const uint dim) : Vec(device_data), dim_(dim), N_(device_data.size() / dim)
     {
         initialize_dimension_iterators();
     }
@@ -61,9 +61,9 @@ public:
     DevDat(std::vector< std::vector<double > > data) : DevDat(data[0].size(), data.size())
     {
         // Fill iterators with data
-        for(int j = 0; j < dim; j++) {
+        for(int j = 0; j < dim_; j++) {
             dev_iterator it = (*this)[j].begin();
-            for (uint i = 0; i < N; i++) {
+            for (uint i = 0; i < N_; i++) {
                 *it = data[i][j];
                 it++;
             }
@@ -71,7 +71,7 @@ public:
     }
 
     // Copy Constructor
-    DevDat(const DevDat& b) : dim(b.dim), N(b.N), Vec(b)
+    DevDat(const DevDat& b) : dim_(b.dim_), N_(b.N_), Vec(b)
     {
         initialize_dimension_iterators();
     }
@@ -98,17 +98,17 @@ public:
 
     const DimensionIterator<ConstVecIterator >& operator[] (int i) const
     {
-        return const_dimension_iterators[i];
+        return const_dimension_iterators_[i];
     }
 
     DimensionIterator<VecIterator >& operator[] (int i)
     {
-        return dimension_iterators[i];
+        return dimension_iterators_[i];
     }
 
     uint dim_size() const
     {
-        return dim;
+        return dim_;
     }
 
     // https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
@@ -119,10 +119,10 @@ public:
 
         // by swapping the members of two objects,
         // the two objects are effectively swapped
-        swap(first.dim, second.dim);
-        swap(first.N, second.N);
-        swap(first.dimension_iterators, second.dimension_iterators);
-        swap(first.const_dimension_iterators, second.const_dimension_iterators);
+        swap(first.dim_, second.dim_);
+        swap(first.N_, second.N_);
+        swap(first.dimension_iterators_, second.dimension_iterators_);
+        swap(first.const_dimension_iterators_, second.const_dimension_iterators_);
     }
 
     template<typename Vecc>
@@ -133,46 +133,46 @@ public:
 
     std::vector<double> get_ith_element(const int i) const
     {
-        std::vector<double> ith_element(dim, 0);
+        std::vector<double> ith_element(dim_, 0);
         auto iterator = this->begin();
         // Jump to ith element in zeroth dimension
         thrust::advance(iterator, i);
         ith_element[0] = *iterator;
         // Fill further dimensions
-        for(auto j = 1; j < dim; j++)
+        for(auto j = 1; j < dim_; j++)
         {
-            thrust::advance(iterator, N);
+            thrust::advance(iterator, N_);
             ith_element[j] = *iterator;
         }
         return ith_element;
     }
 
-    void set_dim(const uint dim_)
+    void set_dim(const uint dim)
     {
-        dim = dim_;
+        dim_ = dim;
     }
 
-    void set_N(const uint N_)
+    void set_N(const uint N)
     {
-        N = N_;
+        N_ = N;
     }
 
     void initialize_dimension_iterators()
     {
-        dimension_iterators.clear();
-        const_dimension_iterators.clear();
+        dimension_iterators_.clear();
+        const_dimension_iterators_.clear();
 
         VecIterator begin = this->begin();
         VecIterator end = this->begin();
-        thrust::advance(end, N);
-        dimension_iterators.reserve(dim);
-        for(auto i = 0; i < dim; i++)
+        thrust::advance(end, N_);
+        dimension_iterators_.reserve(dim_);
+        for(auto i = 0; i < dim_; i++)
         {
-            dimension_iterators.push_back(DimensionIterator<VecIterator> (begin, end));
-            const_dimension_iterators.push_back(DimensionIterator<ConstVecIterator> (begin, end));
+            dimension_iterators_.push_back(DimensionIterator<VecIterator> (begin, end));
+            const_dimension_iterators_.push_back(DimensionIterator<ConstVecIterator> (begin, end));
             // std::cout << *begin << " " << *(end - 1) << std::endl;
-            thrust::advance(begin, N);
-            thrust::advance(end, N);
+            thrust::advance(begin, N_);
+            thrust::advance(end, N_);
         }
     }
 
@@ -183,20 +183,20 @@ public:
         // vs. total_number_of_coordinates x dim (len = dim)
         thrust::host_vector<cudaT> host_device_data(*this);
 
-        std::vector< std::vector<double > > transposed_device_data(N, std::vector<double> (dim, 0));
-        for(auto j = 0; j < dim; j++) {
-            for (auto i = 0; i < N; i++) {
-                transposed_device_data[i][j] = host_device_data[j * N + i];
+        std::vector< std::vector<double > > transposed_device_data(N_, std::vector<double> (dim_, 0));
+        for(auto j = 0; j < dim_; j++) {
+            for (auto i = 0; i < N_; i++) {
+                transposed_device_data[i][j] = host_device_data[j * N_ + i];
             }
         }
         return transposed_device_data;
     }
 
 private:
-    uint dim;
-    uint N;
-    std::vector< DimensionIterator<VecIterator> > dimension_iterators;
-    std::vector < DimensionIterator<ConstVecIterator> > const_dimension_iterators;
+    uint dim_;
+    uint N_;
+    std::vector< DimensionIterator<VecIterator> > dimension_iterators_;
+    std::vector < DimensionIterator<ConstVecIterator> > const_dimension_iterators_;
 };
 
 

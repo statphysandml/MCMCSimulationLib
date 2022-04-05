@@ -36,7 +36,7 @@ if __name__ == "__main__":
                                      )
 
     # Equilibrium time simulation
-    mode_simulation.equilibrium_time_simulation(run=True, eval=True, sample_size=100, number_of_steps=2000,
+    mode_simulation.equilibrium_time_simulation(run=True, eval=True, sample_size=20, number_of_steps=2000,
                                                 eval_confidence_range=0.1,
                                                 eval_confidence_window=10, measure="Mean")
 

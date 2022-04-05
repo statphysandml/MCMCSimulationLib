@@ -12,8 +12,8 @@ namespace mcmc {
         template<typename Derived>
         class SystemBase : public param_helper::params::Parameters {
         public:
-            SystemBase(const json params_) : Parameters(params_),
-                                             measures(get_entry<std::vector<std::string>>("measures", {}))
+            SystemBase(const json params) : Parameters(params),
+                                             measures_(get_entry<std::vector<std::string>>("measures", {}))
             {}
 
             // Parameter related functions
@@ -28,19 +28,19 @@ namespace mcmc {
 
             // Function that enables to add parameters of other used classes with parameters
             virtual param_helper::params::Parameters build_expanded_raw_parameters() const {
-                Parameters parameters(params);
+                Parameters parameters(params_);
                 return parameters;
             }
 
             // Enables execution modes to temporarily use their own measures -> only works with systembase - not with plain_systembase
-            void set_measures(const std::vector<std::string> measures_)
+            void set_measures(const std::vector<std::string> measures)
             {
-                measures = measures_;
-                params["measures"] = measures_;
+                measures_ = measures;
+                params_["measures"] = measures;
             }
 
             const std::vector<std::string> measure_names() const {
-                return measures;
+                return measures_;
             }
 
             // System related functions (CRTP pattern)
@@ -98,7 +98,7 @@ namespace mcmc {
                 this->operator()() = val;
             }
 
-            std::vector<std::string> measures;
+            std::vector<std::string> measures_;
 
         protected:
             Derived &systembase() {

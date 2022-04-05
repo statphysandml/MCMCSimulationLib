@@ -10,7 +10,7 @@ Python integration
 .. doxygenfile:: python_integration.hpp
    :sections: detaileddescription
 
-.. doxygenvariable:: mcmc::util::is_python_initialized
+.. doxygenvariable:: mcmc::util::g_is_python_initialized
 
 .. doxygenfunction:: mcmc::util::initialize_python
 
@@ -20,7 +20,7 @@ Python integration
 Integrating external python modules
 ***********************************
 
-.. doxygenvariable:: mcmc::util::python_modules_path
+.. doxygenvariable:: mcmc::util::g_python_modules_path
 
 .. doxygenfunction:: mcmc::util::get_python_modules_path
 
@@ -35,9 +35,9 @@ Random number generation
 .. doxygenfile:: random.hpp
    :sections: detaileddescription
 
-.. doxygenvariable:: mcmc::util::rd
+.. doxygenvariable:: mcmc::util::g_rd
 
-.. doxygenvariable:: mcmc::util::gen
+.. doxygenvariable:: mcmc::util::g_gen
 
 .. doxygenfunction:: mcmc::util::set_random_seed
 

@@ -38,23 +38,23 @@ namespace mcmc {
         
         // Project dependent variables
         /** Path to a directory containing custom python code for computing measures, etc. the modules are imported in python in ... */
-        extern std::string python_modules_path;
+        extern std::string g_python_modules_path;
         /** Variable for checking if Python has been initialized correctly. */
-        extern bool is_python_initialized;
+        extern bool g_is_python_initialized;
 
         /** @brief Returns the python_modules_path. */
         std::string get_python_modules_path();
         /** @brief Sets the python_modules_path. */
-        void set_python_modules_path(const std::string python_modules_path_);
+        void set_python_modules_path(const std::string python_modules_path);
 
         /** @brief Initialize Python and set important variables
          * 
-         * @param python_modules_path_ Path to a directory containing custom python code
+         * @param python_modules_path Path to a directory containing custom python code
          * @param fma_develop Indicate whether plots should be written to file or loaded locally
          * @param executing_from_python Variable for indicating whether the code is executed from C++ (false) or executed via pybind from Python (true)
          *
          */
-        void initialize_python(const std::string python_modules_path_, const bool fma_develop=false, const bool executing_from_python=false);
+        void initialize_python(const std::string python_modules_path, const bool fma_develop=false, const bool executing_from_python=false);
         /** @brief Finalize Python. */
         void finalize_python();
     }

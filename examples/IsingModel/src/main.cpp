@@ -17,7 +17,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::Re
     void prepare() override
     {
         IsingModel system_params(0.4, 1.0, 0.0, {4, 4});
-        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters.get_rel_data_dir());
+        mcmc::measures::ReadableMeasure readable_measures(this->path_parameters_.get_rel_data_dir());
 
 
         auto simulation = mcmc::simulation::Simulation<IsingModel>::prepare_simulation_from_file(
@@ -28,17 +28,17 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::Re
         EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");
 
         typedef mcmc::mode::CorrelationTime CorrelationTimeParams;
-        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters.get_rel_results_dir(), "Mean");
+        CorrelationTimeParams correlation_time_parameters(1000, 400, this->path_parameters_.get_rel_results_dir(), "Mean");
 
         typedef mcmc::mode::ExpectationValue ExpectationValueParams;
         ExpectationValueParams expectation_value_parameters(
-            this->path_parameters.get_rel_results_dir(), 20000, this->path_parameters.get_rel_results_dir(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}, "hot", "statistical");
+            this->path_parameters_.get_rel_results_dir(), 20000, this->path_parameters_.get_rel_results_dir(), {"AbsMean", "SecondMoment", "Mean", "Config"}, {"Energy"}, "hot", "statistical");
 
         // Store simulation parameters
-        simulation.write_to_file(this->path_parameters.get_rel_config_dir());
-        equilibrium_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
-        correlation_time_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
-        expectation_value_parameters.write_to_file(this->path_parameters.get_rel_config_dir());
+        simulation.write_to_file(this->path_parameters_.get_rel_config_dir());
+        equilibrium_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
+        correlation_time_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
+        expectation_value_parameters.write_to_file(this->path_parameters_.get_rel_config_dir());
     }
 };
 

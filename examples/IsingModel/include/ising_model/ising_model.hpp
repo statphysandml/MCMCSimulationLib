@@ -14,118 +14,120 @@ public:
     explicit IsingModel(const json params):
         MeasureSystemBase(params),
         // Configuration parameters
-        beta(get_entry<double>("beta", 0.4)),
-        J(get_entry<double>("J", 1.0)),
-        h(get_entry<double>("h", 0.0)),
-        dimensions(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4})),
+        beta_(get_entry<double>("beta", 0.4)),
+        J_(get_entry<double>("J", 1.0)),
+        h_(get_entry<double>("h", 0.0)),
+        dimensions_(get_entry< std::vector<int> >("dimensions", std::vector<int> {4, 4})),
 
         // Further member variables
-        rand(std::uniform_real_distribution<double> (0,1))
+        rand_(std::uniform_real_distribution<double> (0,1))
     {
-        n_sites = 1;
-        dim_mul.push_back(n_sites);
-        for(auto dim: dimensions) {
-            n_sites *= dim;
-            dim_mul.push_back(n_sites);
+        n_sites_ = 1;
+        dim_mul_.push_back(n_sites_);
+        for(auto dim: dimensions_) {
+            n_sites_ *= dim;
+            dim_mul_.push_back(n_sites_);
         }
 
-        rnd_lattice_site = std::uniform_int_distribution<uint>(0, get_size());
+        rnd_lattice_site_ = std::uniform_int_distribution<uint>(0, get_size());
     }
 
-    IsingModel(double beta_=0.4, double J_=1.0, double h_=0.0, std::vector<int> dimensions_={4, 4}) : IsingModel(json{
-            {"beta", beta_},
-            {"J", J_},
-            {"h", h_},
-            {"dimensions", dimensions_}
+    IsingModel(double beta=0.4, double J=1.0, double h=0.0, std::vector<int> dimensions={4, 4}) : IsingModel(json{
+            {"beta", beta},
+            {"J", J},
+            {"h", h},
+            {"dimensions", dimensions}
     })
     {}
 
     void initialize(std::string starting_mode)
     {
-        generate_measures(measures);
+        // It is important to generate the predefined measures based on the virtual method of the base class - Note that this method can,
+        // of course also be overloaded.
+        generate_measures(measures_);
 
         std::uniform_int_distribution<uint> uniint(0, 1);
-        lattice = std::vector<int> (get_size(), 1.0);
+        lattice_ = std::vector<int> (get_size(), 1.0);
         if(starting_mode == "hot")
         {
-            for(auto &site : lattice)
-                site = 2 * uniint(mcmc::util::gen) - 1;
+            for(auto &site : lattice_)
+                site = 2 * uniint(mcmc::util::g_gen) - 1;
         }
     }
 
     // Metropolis update step
     void update_step(uint measure_interval=1)
     {
-        auto random_site_index = rnd_lattice_site(mcmc::util::gen);
+        auto random_site_index = rnd_lattice_site_(mcmc::util::g_gen);
 
         // Flip spin
-        auto proposed_state = -1 * lattice[random_site_index];
+        auto proposed_state = -1 * lattice_[random_site_index];
 
-        auto current_energy = local_energy(random_site_index, lattice[random_site_index]);
+        auto current_energy = local_energy(random_site_index, lattice_[random_site_index]);
         auto proposal_energy = local_energy(random_site_index, proposed_state);
 
-        if(rand(mcmc::util::gen) < std::min(1.0, std::exp(-1.0 * (proposal_energy - current_energy))))
-            lattice[random_site_index] = proposed_state;
+        if(rand_(mcmc::util::g_gen) < std::min(1.0, std::exp(-1.0 * (proposal_energy - current_energy))))
+            lattice_[random_site_index] = proposed_state;
         // else
         //     reject
     }
 
     uint16_t get_size() const
     {
-        return n_sites;
+        return n_sites_;
     }
 
     auto at(int i) const
     {
-        return lattice[i];
+        return lattice_[i];
     }
 
     auto& at(int i)
     {
-        return lattice[i];
+        return lattice_[i];
     }
 
     auto get_system_representation() const
     {
-        return lattice;
+        return lattice_;
     }
 
     auto& get_system_representation()
     {
-        return lattice;
+        return lattice_;
     }
 
     double local_energy(uint site_index, int site_value)
     {
         double energy = 0;
-        for(uint d = 0; d < dimensions.size(); d++)
+        for(uint d = 0; d < dimensions_.size(); d++)
         {
-            energy += lattice[neigh_dir(site_index, d, true)];
-            energy += lattice[neigh_dir(site_index, d, false)];
+            energy += lattice_[neigh_dir(site_index, d, true)];
+            energy += lattice_[neigh_dir(site_index, d, false)];
         }
-        return  -1.0 * beta * site_value * (J * energy + h); // 0.5
+        return  -1.0 * beta_ * site_value * (J_ * energy + h_); // 0.5
     }
 
 private:
-    double beta;
-    double J;
-    double h;
+    double beta_;
+    double J_;
+    double h_;
 
-    uint16_t n_sites; // Total number of sites
-    std::vector<int> dimensions; // Different dimensions
-    std::vector<int> dim_mul; // Accumulated different dimensions (by product)
+    uint16_t n_sites_; // Total number of sites
+    std::vector<int> dimensions_; // Different dimensions
+    std::vector<int> dim_mul_; // Accumulated different dimensions (by product)
 
-    std::vector<int> lattice;
+    std::vector<int> lattice_;
 
-    std::uniform_real_distribution<double> rand;
-    std::uniform_int_distribution<uint> rnd_lattice_site;
+    std::uniform_real_distribution<double> rand_;
+    std::uniform_int_distribution<uint> rnd_lattice_site_;
 
     //site, moving dimension, direction
     int neigh_dir(int i, int d, bool dir) const {
         if(dir)
-            return i-i%(dim_mul[d]*dimensions[d])+(i+dim_mul[d])%(dim_mul[d]*dimensions[d]);
+            return i-i%(dim_mul_[d]*dimensions_[d])+(i+dim_mul_[d])%(dim_mul_[d]*dimensions_[d]);
         else
-            return i-i%(dim_mul[d]*dimensions[d])+(i-dim_mul[d]+dim_mul[d]*dimensions[d])%(dim_mul[d]*dimensions[d]);
+            return i-i%(dim_mul_[d]*dimensions_[d])+(i-dim_mul_[d]+dim_mul_[d]*dimensions_[d])%(dim_mul_[d]*dimensions_[d]);
     }
 };
 
