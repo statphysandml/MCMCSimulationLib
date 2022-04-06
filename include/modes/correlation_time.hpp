@@ -11,19 +11,21 @@ using json = nlohmann::json;
 
 namespace mcmc {
     namespace mode {
-        /** @brief Computes the autocorrelation time of the studied system
+        /** @brief Computes the autocorrelation time of the studied system.
          *
-         * This class defines necessary parameters for running a MCMC simulation
-         * for determining the autocorrelation of the model according to Eq. (3.21) from
-         * <em>Newman - Monte Carlo Methods in Statistical Physics</em>:
-         * \f{eqnarray*}{
-         *  \chi(t) &=& \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t') m(t' + t) \\&&- \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t') \times \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t' + t)\,,
-         * \f}
-         * where \f$t\f$ refers to the computer time, \f$t_{\text{max}}\f$ to the ``maximum_correlation_time``
-         * and \f$m\f$ to the ``measure`` used to evaluate the autocorrelation time.
-         * 
-         * Note that some of the parameters are only needed for the respective evaluation which
-         * is executed afterwards in Python.
+         * The class defines necessary parameters for running a MCMC simulation
+         * for determining the autocorrelation of the model according to Eq.
+         * (3.21) from <em>Newman - Monte Carlo Methods in Statistical
+         * Physics</em>: \f{eqnarray*}{ \chi(t) &=& \frac{1}{t_{\text{max}} -
+         * t}\sum_{t'=0}^{t_{\text{max}} - t} m(t') m(t' + t) \\&&-
+         * \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t} m(t')
+         * \times \frac{1}{t_{\text{max}} - t}\sum_{t'=0}^{t_{\text{max}} - t}
+         * m(t' + t)\,, \f} where \f$t\f$ refers to the computer time,
+         * \f$t_{\text{max}}\f$ to the ``maximum_correlation_time`` and \f$m\f$
+         * to the ``measure`` used to evaluate the autocorrelation time.
+         *
+         * Note that some of the parameters are only needed for the respective
+         * evaluation which is executed afterwards in Python.
          */
         class CorrelationTime : public param_helper::params::Parameters {
         public:
@@ -36,21 +38,25 @@ namespace mcmc {
                 starting_mode_ = get_entry<std::string>("starting_mode", "hot");
             }
 
-            /** @brief Constructor defining all important parameters for the computation of the correlation time
+            /** @brief Constructor defining all important parameters for the
+             * computation of the correlation time.
              *
-             * @param minimum_sample_size Minimum number of Monte Carlo samples used to compute an average of the considered measure
-             * @param maximum_correlation_time Maximum measurable correlation time
-             * @param start_measuring Number of Monte Carlo sweeps before starting with the first measurement
+             * @param minimum_sample_size Minimum number of Monte Carlo samples
+             * used to compute an average of the considered measure
+             * @param maximum_correlation_time Maximum measurable correlation
+             * time
+             * @param start_measuring Number of Monte Carlo sweeps before
+             * starting with the first measurement
              * @param measure Measure used to evalute the autocorrelation time
-             * @param starting_mode Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param starting_mode Defines how the Markov chain is initialized;
+             * Possible values are ``"hot"`` or ``"cold"``.
              */
-
             CorrelationTime(
                     uint minimum_sample_size=100,
                     uint maximum_correlation_time=1000,
                     uint start_measuring=0,
                     std::string measure="Mean",
-                    std::string starting_mode = "hot"
+                    std::string starting_mode="hot"
             ) : CorrelationTime(
                     json{{"minimum_sample_size",      minimum_sample_size},
                          {"maximum_correlation_time", maximum_correlation_time},
@@ -58,21 +64,27 @@ namespace mcmc {
                          {"measure",                 measure},
                          {"starting_mode",          starting_mode}}) {}
 
-            /** @brief Same as above with the exception that the time to equilibrium before the first measurement,
-             * which can be computed by the EquilibriumTime mode, is loaded from file.
+            /** @brief Same as above with the exception that the time to
+             * equilibrium before the first measurement, which can be computed
+             * by the EquilibriumTime mode, is loaded from file.
              *
-             * @param minimum_sample_size Minimum number of Monte Carlo samples used to compute an average of the considered measure
-             * @param maximum_correlation_time Maximum measurable correlation time
-             * @param equilibrium_time_rel_results_dir Relative path (with respect to the top-level directory of the project) to the equilibrium_time_results.json results file
+             * @param minimum_sample_size Minimum number of Monte Carlo samples
+             * used to compute an average of the considered measure
+             * @param maximum_correlation_time Maximum measurable correlation
+             * time
+             * @param equilibrium_time_rel_results_dir Relative path (with
+             * respect to the top-level directory of the project) to the
+             * ``equilibrium_time_results.json`` results file
              * @param measure Measure used to evalute the autocorrelation time
-             * @param starting_mode Defines how the Markov chain is initialized; Possible values are "hot" or "cold".
+             * @param starting_mode Defines how the Markov chain is initialized;
+             * Possible values are ``"hot"`` or ``"cold"``.
              */
             CorrelationTime(                    
                     uint minimum_sample_size,
                     uint maximum_correlation_time,
                     std::string equilibrium_time_rel_results_dir,
                     std::string measure="Mean",
-                    std::string starting_mode = "hot"
+                    std::string starting_mode="hot"
             ) : CorrelationTime(
                     json{{"minimum_sample_size",      minimum_sample_size},
                          {"maximum_correlation_time", maximum_correlation_time},
@@ -81,9 +93,11 @@ namespace mcmc {
                          {"measure",                 measure},
                          {"starting_mode",          starting_mode}}) {}
 
-            /** @brief Write the correlation time parameters as correlation_time_params.json into rel_root_dir
+            /** @brief Write the correlation time parameters as
+             * ``correlation_time_params.json`` into ``rel_root_dir``.
              *
-             * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
+             * @param rel_root_dir Relative path to the ``project_root_dir`` for
+             * storing configuration files
              * @returns None
              */
             void write_to_file(const std::string rel_root_dir) {
@@ -99,13 +113,22 @@ namespace mcmc {
                 return "correlation_time";
             }
 
-            /** @brief Evaluates the correlation time by calling the respective Python functions and writes the results to file
+            /** @brief Evaluates the correlation time by calling the respective
+             * Python functions and writes the results to file.
              *
-             * For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
-             * 
-             * @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
-             * @param rel_results_dir Relative path to the project_root_dir for storing the results
-             * @param running_parameter Name of the running parameter (default: "None")
+             * For the evaluation to work, one needs to enable Python in CMake
+             * and initialize Python by
+             * ``mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH)`` in the
+             * main function.
+             *
+             * @param rel_data_dir Relative path to the ``project_root_dir``
+             * (set by
+             * ``param_helper::proj::set_relative_path_to_project_root_dir("../")``)
+             * for storing the MCMC simulation data
+             * @param rel_results_dir Relative path to the ``project_root_dir``
+             * for storing the results
+             * @param running_parameter Name of the running parameter (default:
+             * ``"None"``)
              * @param rp_intervals List of values for the running parameter
              * @returns None
              */
@@ -130,7 +153,7 @@ namespace mcmc {
             }
 
             mcmc::simulation::MarkovChain
-            generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
+            generate_markov_chain(std::string running_parameter="None", double rp=0) {
                 uint equilibrium_time = start_measuring_;
                 if (equilibrium_time_rel_results_dir_ != "None") {
                     auto equilibrium_time_results = param_helper::fs::read_parameter_file(

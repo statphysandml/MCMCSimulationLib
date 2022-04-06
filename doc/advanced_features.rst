@@ -13,6 +13,8 @@ C++
 - prepare_simulation_from_file / generate_simulation_from_file
 - command line interface
 
+.. _Running simulations on a CPU / GPU cluster:
+
 Running simulations on a CPU / GPU cluster
 ******************************************
 

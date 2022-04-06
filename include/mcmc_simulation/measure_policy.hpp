@@ -12,18 +12,22 @@ namespace mcmc {
         // Measure policies
 
         /** @brief Base policy class for defining measures.
-         * 
-         * In addition to the two virtual classes, most of the measures provide a static function called "compute_measure", which returns the
+         *
+         * In addition to the two virtual classes, most of the measures provide
+         * a static function called ``compute_measure``, which returns the
          * measure as a number instead of a string.
-        */
+         */
         template<typename SB>
         struct Measure {
-            /** @brief Returns the measure; Note that for complex types, the mcmc_simulation/util/complex_type.hpp header overloads std::to_string
-             * @param system_ Instance of a systembase class
+            /** @brief Returns the measure; Note that for complex types, the
+             * ``mcmc_simulation/util/complex_type.hpp`` header overloads
+             * ``std::to_string``.
+             * @param system Instance of a systembase class
              */
             virtual std::string measure(const SB &system) = 0;
 
-            /** @brief Returns the name, used as an identifier, of the measure. */
+            /** @brief Returns the name used as an identifier for the measure.
+             */
             virtual std::string name() = 0;
         };
 
@@ -141,7 +145,8 @@ namespace mcmc {
             }
         };
 
-        /** @brief Returns all variables of the system in a comma separated list. */
+        /** @brief Returns all variables of the system in a comma separated
+         * list. */
         template<typename SB>
         struct Config : public Measure<SB> {
             static auto compute_measure(const SB &system) {

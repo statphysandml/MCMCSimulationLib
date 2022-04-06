@@ -16,7 +16,8 @@ namespace mcmc {
         template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
         template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
-        /** @brief Class taking care of initalizing and writing measurements to file.
+        /** @brief Class taking care of initalizing and writing measurements to
+         * file.
          */
         struct ReadableMeasure : public param_helper::params::Parameters
         {
@@ -25,8 +26,11 @@ namespace mcmc {
             {}
 
             /** @brief Prepare directory for writing simulation data to file.
-             * 
-             *  @param rel_data_dir Relative path to the project_root_dir (set by param_helper::proj::set_relative_path_to_project_root_dir("../")) for storing the MCMC simulation data
+             *
+             *  @param rel_data_dir Relative path to the ``project_root_dir``
+             *  (set by
+             *  ``param_helper::proj::set_relative_path_to_project_root_dir("../")``)
+             *  for storing the MCMC simulation data
              */
             ReadableMeasure(std::string rel_data_dir="./data/") :
                 ReadableMeasure(
@@ -34,9 +38,11 @@ namespace mcmc {
                 )
             {}
 
-            /** @brief Write the readable measure parameters as readable_meausre_params.json into rel_root_dir
+            /** @brief Write the readable measure parameters as
+             * ``readable_measuse_params.json`` into ``rel_root_dir``.
              *
-             * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
+             * @param rel_root_dir Relative path to the ``project_root_dir`` for
+             * storing configuration files
              * @returns None
              */
             void write_to_file(const std::string rel_root_dir) {

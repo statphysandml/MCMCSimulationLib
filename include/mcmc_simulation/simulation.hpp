@@ -26,42 +26,39 @@ namespace mcmc
 
         json update_running_parameter(const json params, std::vector<std::string> running_parameter_path, double new_running_parameter);
 
-        /** @brief Helper class for preparing a MCMC simulation
+        /** @brief Class for performing the MCMC simulation as well as for
+         * computing simulation results based on different evaluation modes.
          *
-         * The class features different constructores allowing for running simulations based
-         * on the same system, execution and measure parameters, for simulations from configuration files.
-         * 
-         * The static constructor Simulation::generate_simulation is overloaded to allow for various combinations
-         * of parameters defined within in C++ or loaded from file. The list of possible parameters is as follows:
+         * The class features different constructores allowing for running
+         * simulations based on the same system, execution and measure
+         * parameters from configuration files.
+         *
+         * The static constructor Simulation::generate_simulation is overloaded
+         * to allow for various combinations of parameters defined in C++ or
+         * loaded from file. The list of possible parameters is as follows:
          * 
          * <b>Parameters</b>:
          *     - <b>systembase</b> Object of a systembase parameter class
-         *     - <b>execution_mode</b> Object of an exeuction mode parameter class
+         *     - <b>execution_mode</b> Object of an execution mode parameter class
          *     - <b>measurement</b> Object of a measure parameter class handling gathering and writing the simulation data to file
-         *     - <b>running_parameter_kind</b> Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-         *     - <b>running_parameter</b> Name of the running parameter (default: "None")
-         *     - <b>rp_intervals</b> List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
-         *     - <b>rel_systembase_params_path</b> Relative path to the project_dir of the simulation pointing to the sim_params.json file
-         *     - <b>rel_execution_mode_path</b> Relative path to the project_dir of the simulation pointing to the execution_mode.json file
-         *     - <b>rel_measurement_path</b> Relative path to the project_dir of the simulation pointing to the readable_measurement.json file
+         *     - <b>running_parameter_kind</b> Parent configuration module key, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: ``"None"``)
+         *     - <b>running_parameter</b> Name of the running parameter (default: ``"None"``)
+         *     - <b>rp_intervals</b> List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: ``std::vector<double>{0.0}``)
+         *     - <b>rel_systembase_params_path</b> Relative path to the ``project_root_dir`` of the simulation pointing to the ``systembase_params.json`` file
+         *     - <b>rel_execution_mode_path</b> Relative path to the ``project_root_dir`` of the simulation pointing to the execution mode params ``.json`` file
+         *     - <b>rel_measurement_path</b> Relative path to the ``project_root_dir`` of the simulation pointing to the measurement processing params ``.json`` file
          * 
-         * The respective constructors and constructors for generating simulations entirely from file are listed below.
-         */
-        /* template <typename SBP, typename EP=mcmc::mode::FromFilePreparation, typename MS=mcmc::measures::ReadableMeasureParameters>
-        class Simulation : public param_helper::params::Parameters {
-        public: */
-
-        /** @brief Class for performing the actual simulation as well as evaluation of a MCMC simulation
-         * 
+         * Respective constructors and constructors for generating simulations
+         * entirely from file are listed below.
          */
         template <typename SB, typename EP=mcmc::mode::FromFilePreparation, typename MS=mcmc::measures::ReadableMeasure>
         class Simulation : public param_helper::params::Parameters {
         public:
             // Constructor for loading from params
             explicit Simulation(const json params) : Parameters(params), mode_(EP::name()), measure_system_(MS::name()),// The remaining parameters are all optional
-                                                                running_parameter_kind_(get_entry<std::string>("running_parameter_kind", "None")),
-                                                                running_parameter_(get_entry<std::string>("running_parameter", "None")),
-                                                                rp_intervals_(get_entry<std::vector<double>>("rp_intervals", std::vector<double>{0.0}))
+                running_parameter_kind_(get_entry<std::string>("running_parameter_kind", "None")),
+                running_parameter_(get_entry<std::string>("running_parameter", "None")),
+                rp_intervals_(get_entry<std::vector<double>>("rp_intervals", std::vector<double>{0.0}))
             {
                 std::cout << "\n-- Setting up MCMC simulation --" << std::endl;
 
@@ -117,7 +114,8 @@ namespace mcmc
 
             /* Constructors with measurement as an object */
 
-            /** @brief Simulation based on systembase parameters, execution parameters and measure parameters */
+            /** @brief Simulation based on systembase parameters, execution
+             * parameters and measure parameters. */
             static Simulation generate_simulation(
                     SB& systembase,
                     EP& execution_mode,
@@ -139,8 +137,9 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation based on execution parameters and measure parameters, where systembase parameters are loaded
-             * from rel_systembase_params_path */
+            /** @brief Simulation based on execution parameters and measure
+             * parameters, where systembase parameters are loaded from
+             * ``rel_systembase_params_path``. */
             static Simulation generate_simulation(
                     const std::string rel_systembase_params_path,
                     EP& execution_mode,
@@ -168,9 +167,10 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation based on systembase parameters and measure parameters, where execution parameters are
-             * loaded from rel_execution_mode_path
-             * */
+            /** @brief Simulation based on systembase parameters and measure
+             * parameters, where execution parameters are loaded from
+             * ``rel_execution_mode_path``.
+             */
             static Simulation generate_simulation(
                     SB& systembase,
                     const std::string rel_execution_mode_path,
@@ -198,8 +198,9 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation based on measure parameters, where systembase parameters are loaded from rel_systembase_params_path
-             * and execution parameters from rel_execution_mode_path
+            /** @brief Simulation based on measure parameters, where systembase
+             * parameters are loaded from ``rel_systembase_params_path`` and
+             * execution parameters from ``rel_execution_mode_path``.
              */
             static Simulation generate_simulation(
                     const std::string rel_systembase_params_path,
@@ -236,8 +237,9 @@ namespace mcmc
 
             /* Constructors with measurement loaded from file */
 
-            /** @brief Simulation based on systembase parameters and execution parameters, where measure parameters are loaded
-             * from rel_measurement_path
+            /** @brief Simulation based on systembase parameters and execution
+             * parameters, where measure parameters are loaded from
+             * ``rel_measurement_path``.
              */
             static Simulation generate_simulation(
                     SB& systembase,
@@ -266,8 +268,10 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation based on execution parameters, where systembase parameters are loaded from
-             * rel_systembase_params_path and measure parameters from rel_measurement_path
+            /** @brief Simulation based on execution parameters, where
+             * systembase parameters are loaded from
+             * ``rel_systembase_params_path`` and measure parameters from
+             * ``rel_measurement_path``.
              */
             static Simulation generate_simulation(
                     const std::string rel_systembase_params_path,
@@ -302,8 +306,9 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation based on systembase parameters, where execution parameters are loaded from
-             * rel_execution_mode_path and measure parameters from rel_measurement_path
+            /** @brief Simulation based on systembase parameters, where
+             * execution parameters are loaded from ``rel_execution_mode_path``
+             * and measure parameters from ``rel_measurement_path``.
              */
             static Simulation generate_simulation(
                     SB& systembase,
@@ -338,8 +343,10 @@ namespace mcmc
                 );
             }
 
-            /** @brief Simulation, where systembase parameters are loaded from rel_systembase_params_path,
-             * execution parameters from rel_execution_mode_path and measure parameters from rel_measurement_path
+            /** @brief Simulation, where systembase parameters are loaded from
+             * ``rel_systembase_params_path``, execution parameters from
+             * ``rel_execution_mode_path`` and measure parameters from
+             * ``rel_measurement_path``.
              */
             static Simulation generate_simulation(
                     const std::string rel_systembase_params_path,
@@ -380,13 +387,21 @@ namespace mcmc
                 );
             }
 
-            /** @brief Prepare a simulation that will be executed from file
-             * 
+            /** @brief Prepare a simulation that will be executed from file.
+             *
              * @param systembase Object of a systembase parameter class
-             * @param measurement Object of a measure parameter class handling gathering and writing the simulation data to file
-             * @param running_parameter_kind Parent parameter module name, providing the program with the necessary information of where to find the running parameter. If none is given, the simulation is only executed for the original set of parameters (default: "None")
-             * @param running_parameter Name of the running parameter (default: "None")
-             * @param rp_intervals List of values for the running parameter. A MCMC simulation is executed for each of these values one by one (default: std::vector<double>{0.0})
+             * @param measurement Object of a measure parameter class handling
+             * gathering and writing the simulation data to file
+             * @param running_parameter_kind Parent configuration module key,
+             * providing the program with the necessary information of where to
+             * find the running parameter. If none is given, the simulation is
+             * only executed for the original set of parameters (default:
+             * ``"None"``)
+             * @param running_parameter Name of the running parameter (default:
+             * ``"None"``)
+             * @param rp_intervals List of values for the running parameter. A
+             * MCMC simulation is executed for each of these values one by one
+             * (default: ``std::vector<double>{0.0}``)
              */
             static Simulation prepare_simulation_from_file(
                     SB& systembase,
@@ -410,16 +425,24 @@ namespace mcmc
                 );
             }
 
-            /** @brief Generate a simulation solely from file
-             *  
-             * Uses the given paths to load an entire simulation - It is important that the template parameters are in
-             * concordance with the simulation parameter file.
-             * 
-             * @param rel_sim_params_path Relative path to the project_dir of the simulation pointing to the sim_params.json file
-             * @param rel_execution_mode_path Relative path to the project_dir of the simulation pointing to the execution params .json file. if
-             *  no path is provided, the default path is the one provided in sim_params.json
-             * @param rel_measurement_path Relative path to the project_dir of the simulation pointing to the measurement processing params .json file. if
-             *  no path is provided, the default path is the one provided in sim_params.json.
+            /** @brief Generate a simulation solely from file.
+             *
+             * Uses the given paths to load an entire simulation - It is
+             * important that the template parameters are in concordance with
+             * the simulation parameter file.
+             *
+             * @param rel_sim_params_path Relative path to the
+             * ``project_root_dir`` of the simulation pointing to the
+             * ``sim_params.json file``
+             * @param rel_execution_mode_path Relative path to the
+             *  ``project_root_dir`` of the simulation pointing to the execution
+             *  mode params ``.json`` file. If no path is provided, the default
+             *  path is the one provided in sim_params.json.
+             * @param rel_measurement_path Relative path to the
+             *  ``project_root_dir`` of the simulation pointing to the
+             *  measurement processing params ``.json`` file. if no path is
+             *  provided, the default path is the one provided in
+             *  ``sim_params.json``.
              */
             static Simulation generate_simulation_from_file(
                     const std::string rel_sim_params_path,
@@ -447,9 +470,12 @@ namespace mcmc
                 }
             }
 
-            /** @brief Write the simulation parameters as sim_params.json to file.
-             * 
-             * @param rel_config_dir Reltive path to the project_root define by param_helper::proj::set_relative_path_to_project_root_dir("../"). The file will be sotred in project_root/rel_config_dir, respectively.
+            /** @brief Write the simulation parameters as ``sim_params.json to
+             * file``.
+             *
+             * @param rel_config_dir Relative path to the ``project_root_dir``
+             * defined by
+             * ``param_helper::proj::set_relative_path_to_project_root_dir("../")``.
              */
             void write_to_file(const std::string rel_config_dir) {
                 // Create folder in config directory if not present
@@ -511,14 +537,8 @@ namespace mcmc
                 return "sim_params";
             }
             
-            /** @brief Constructor for setting up a simulation
-             * 
-             *  @param sp_: Simulation containing all important parameters for the simulation
-             */
-            /* explicit Simulation(Simulation<SBP, EP, MS> &sp_) : sp(sp_)
-            {} */
-
-            /** @brief Runs the MCMC simulation and generates .txt file containing all the measurements in the rel_data_dir of the simulation parameters
+            /** @brief Runs the MCMC simulation and processes all measuremnts
+             * based on the provided measurement processor.
              */
             void run() {
                 std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
@@ -532,11 +552,17 @@ namespace mcmc
                 }
             }
             
-            /** @brief Executes the respective Python functions for evaluating the MCMC simulation and stores the results in rel_results_dir
-             *  
-             *  For the evaluation to work, one needs to enable Python in CMake and initialize Python by mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH) in the main function.
-             * 
-             *  @param rel_results_dir Relative path to the project_root_dir for storing the results
+            /** @brief Executes the respective Python functions for evaluating
+             *  the MCMC simulation and stores the results in
+             *  ``rel_results_dir``.
+             *
+             *  For the evaluation to work, one needs to enable Python in CMake
+             *  and initialize Python by
+             *  ``mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH)`` in the
+             *  main function.
+             *
+             *  @param rel_results_dir Relative path to the ``project_root_dir
+             *  `` for storing the results
              */
             void eval(std::string rel_results_dir)
             {
