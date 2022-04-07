@@ -124,7 +124,7 @@ A template project can be generated with the help of the
 
     python generate_application.py -h
     usage: Build Application [-h] [-o OUTPUT_DIR] [-n PROJECT_NAME] [-pdm PREDEFINED_MEASURES]
-                             [-pyb PYTHON_BINDINGS] [-mt MAIN_TEMPLATE]
+                             [-pyb PYTHON_BINDINGS] [-mt MAIN_TEMPLATE] [-cs CUDA_SUPPORT]
 
 with the following parameters:
 
@@ -136,6 +136,8 @@ with the following parameters:
   project: ``Yes`` (default) or ``No``.
 * ``MAIN_TEMPLATE``: Define the kind of template used as a starting point in the
   project: ``standard`` (default), ``command_line_support`` or ``cluster_support``.
+* ``CUDA_SUPPORT``: Whether the execution of CUDA code should be supported:
+  ``Yes`` or ``No`` (default).
 
 i.e., for example, by running::
 
