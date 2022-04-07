@@ -25,7 +25,7 @@ Further, it simplifies setting up and running simulations by providing support f
 
 In short, the library takes care of all the annoying parts of a Markov Chain Monte Carlo algorithm and leaves to you the implementation of the actual considered problem.
 
-A detailed documentation of the MCMCSimulationLib can be found here.
+A detailed documentation of the MCMCSimulationLib can be found [here](https://mcmcsimulationlib.readthedocs.io/en/latest/).
 
 Prerequisites
 -------------
