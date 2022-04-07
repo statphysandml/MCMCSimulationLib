@@ -72,5 +72,5 @@ if read_the_docs_build:
     os.makedirs("build-cmake", exist_ok=True)
     builddir = os.path.join(cwd, "build-cmake")
     subprocess.check_call("cmake -DBUILD_DOCS=ON -DBUILD_TESTING=OFF -DBUILD_PYTHON_BINDINGS=OFF ../..".split(), cwd=builddir)
-    subprocess.check_call("cmake --build . --target doxygen".split(), cwd=builddir)
+    subprocess.check_call("cmake --build . --target mcmcsimulationlib_doxygen".split(), cwd=builddir)
     breathe_projects["MCMCSimulationLib"] = os.path.join(builddir, "doc", "xml")
