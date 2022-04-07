@@ -27,7 +27,7 @@ namespace mcmc {
          * allows to perform a smoothening of the averaged evolution based on a
          * local convolution. The reduces the maximum number of Monte Carlo
          * sweeps to be in equilibrium to ``max(confidence_window,
-         * number_of_steps) - min(confidence_window, , number_of_steps) + 1``.
+         * number_of_steps) - min(confidence_window, number_of_steps) + 1``.
          */
         class EquilibriumTime : public param_helper::params::Parameters {
         public:

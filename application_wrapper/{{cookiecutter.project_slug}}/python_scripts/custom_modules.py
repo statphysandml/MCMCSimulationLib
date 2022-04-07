@@ -1,7 +1,7 @@
 """ If provided, the two functions are imported and passed to the routines of the MCMCEValuationLib used for evaluating the equilibrium time, correlation time and expectation values.
 
 This is implemented by the MCMCEvaluationLib/mcmctools/loading/custom_function_support.py file which tries to load the functions from the custom_modules.py module and by respective function calls in the .hpp files
-in the MCMCSimulationLib/include/modes/ directory. The path to the custom_modules.py file can be set with the help of the cmake variable ``PYTHON_SCRIPTS_PATH``. """
+in the MCMCSimulationLib/include/modes/ directory. The path to the custom_modules.py file can be set with the help of the CMake variable ``PYTHON_SCRIPTS_PATH``. """
 
 
 """ Input:

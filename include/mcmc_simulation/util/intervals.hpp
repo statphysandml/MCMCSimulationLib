@@ -3,7 +3,7 @@
 
 namespace mcmc {
     namespace util {
-        /** @brief Returns evenly spaced numbers over a specified interval, where min and max are included
+        /** @brief Returns evenly spaced numbers over a specified interval, where ``min`` and ``max`` are included.
          *
          * @param min Lower bound of the interval
          * @param max Upper bound of the interval

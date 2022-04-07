@@ -23,6 +23,7 @@ namespace mcmc {
              * ``mcmc_simulation/util/complex_type.hpp`` header overloads
              * ``std::to_string``.
              * @param system Instance of a systembase class
+             * @returns The measurement as a string
              */
             virtual std::string measure(const SB &system) = 0;
 

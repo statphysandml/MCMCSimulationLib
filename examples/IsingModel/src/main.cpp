@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     mcmc::util::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
     
-    /* Example usage of mcmc::cmdint::simulation, where the prepare() method is used to specify the simulation configuration parameters.
+    /* Example usage of mcmc::cmdint::CmdIntSim, where the prepare() method is used to specify the simulation configuration parameters.
     * 
     * The simulation parameters need to be written into a first to file by running the executable without any further arguments:
     * 
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     * 
     * ./IsingModel equilibrium_time IsingModelSimulation "./" true true true
     * 
-    * for a computation of the times to equilibrum,
+    * for a computation of the times to equilibrium,
     * 
     * ./IsingModel correlation_time IsingModelSimulation "./" true true true
     * 
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
     CmdIntSimulation cmdint_simulation("IsingModelSimulation", "./", true);
     cmdint_simulation.main(argc, argv);
 
-    /* Note that is also possible to directly call mcmc::cmdint::simulation. In this case, the default constructors are used to
+    /* Note that is also possible to directly call mcmc::cmdint::CmdIntSim. In this case, the default constructors are used to
     * write default configuration files to file. After adapting those to the desired settings, the simulation can be executed
     * in the same manner as above:
     */

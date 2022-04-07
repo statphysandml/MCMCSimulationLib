@@ -31,7 +31,8 @@ namespace mcmc {
             void finalize_measurements(std::string starting_mode, uint rep=1)
             {}
 
-            /* By overiding this function one can also add custom generated measures */
+            /* By overriding this function one can also add custom generated
+            measures */
             virtual void generate_measures(const std::vector<std::string>& measure_names)
             {
                 measurements_.clear();

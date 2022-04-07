@@ -1,16 +1,7 @@
 #ifndef VIRTUAL_ENV_INTEGRATION_HPP
 #define VIRTUAL_ENV_INTEGRATION_HPP
 
-/** \file virtual_env_integration.hpp
- * Important variables and methods for a correct initialization and usage of a virtual environment with conda/miniconda.
- * Note that this is only needed if the simulation is supposed to be executed on a cluster. In the provided support for
- * executions on a cluster the virtual environment is activated by (see cpu_cluster_integration.cpp).
- * \code{.sh}
- * source conda_activate_path virtual_env
- * \endcode
- * The respective settings can be adapted based on your cluster and used virtual environment. The imporant variables can be
- * set with the help of the cmake variables -DCONDA_ACTIVATE_PATH=... and -DVIRTUAL_ENV=... or manually by the methods given
- * below.
+/** \file The MCMCSimulationLib provides the possibility to pass the conda activate path and the name of the used virtual environment to C++, since knowing these variables can be necessary for generating the bash scripts for a submission to a cluster:
  */
 
 #include <iostream>
@@ -19,16 +10,17 @@
 namespace mcmc {
     namespace virtualenv {
             // Global parameters
-            /** Used path to activate the virtual environment before executing the MCMC simulation in C++ on a cluster. Per default, this path is set to the cmake variable CONDA_ACTIVATE_PATH which can be set by -DCONDA_ACTIVATE_PATH when the library is built. */
+
+            /** Path to conda activate (for example: ``~/miniconda3/bin/activate``). Per default, this path is set to the CMake variable ``CONDA_ACTIVATE_PATH``. */
             extern std::string g_conda_activate_path;
-            /** Name of the virtual environment used to execute the MCMC simulation in C++ on a cluster. Per default, this path is set to the cmake variable VIRTUAL_ENV which can be set by -DVIRTUAL_ENV when the library is built. */
+            /** Name of the virtual environment to be activated before execution of the script. Per default, this path is set to the CMake variable ``VIRTUAL_ENV``. */
             extern std::string g_virtual_env;
 
-            /** @brief Can be used to set the conda_activate_path to a different than the default one
-             * @param conda_activate_path Path to conda activate (to the binary called when source activate is executed, for example .../.miniconda3/bin)
+            /** @brief Can be used to set the conda_activate_path to a different than the default one.
+             * @param conda_activate_path Path to conda activate
              */
             void set_conda_activate_path(const std::string conda_activate_path);
-            /** @brief Can be used to set the virtual environment to a different than the default one
+            /** @brief Can be used to set the virtual environment to a different than the default one.
              *  @param virtual_env Name of the virtual environment to be activated
              */
             void set_virtual_env(const std::string virtual_env);

@@ -11,6 +11,14 @@ using json = nlohmann::json;
 
 namespace mcmc {
     namespace mode {
+
+        /** @brief Alternative execution mode which can be used in combination
+         * with the static constructor
+         * ``mcmc::simulation::Simulation<SB>::prepare_simulation_from_file`` to
+         * generate ``.json`` configuration files for preparing later runs with
+         * actual execution modes. Note that running a MCMC simulation with this
+         * execution mode is meaningless.
+         */
         class FromFilePreparation : public param_helper::params::Parameters {
         public:
             explicit FromFilePreparation(const json params) : Parameters(params) {}

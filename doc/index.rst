@@ -25,7 +25,6 @@ Further, it simplifies setting up and running simulations by providing support f
    basic_features.rst
    advanced_features.rst
    functional_features.rst
-   python_modules.rst
 
 
 Indices and tables

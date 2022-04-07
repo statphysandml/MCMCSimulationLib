@@ -37,6 +37,8 @@ processing of simulation results:
     python setup.py sdist
     pip install .
 
+.. _Installation:
+
 Installation
 ------------
 

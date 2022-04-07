@@ -20,7 +20,7 @@ import subprocess
 # -- Project information -----------------------------------------------------
 
 project = 'MCMCSimulationLib'
-copyright = '2020, Lukas Kades'
+copyright = '2022, Lukas Kades'
 author = 'Lukas Kades'
 
 # The full version, including alpha/beta/rc tags

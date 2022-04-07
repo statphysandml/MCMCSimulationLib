@@ -451,7 +451,7 @@ namespace mcmc
             {
                 // Prechecks if there exists a file at rel_sim_params_path
                 auto params_ = param_helper::fs::read_parameter_file(rel_sim_params_path, name());
-                // Enables the possiblity to run with an execution parameter file that is stored somewhere else in different execution modes
+                // Enables the possibility to run with an execution parameter or measurement parameter file that is stored somewhere else
                 if(rel_execution_mode_path != "")
                     params_["execution_mode_path"] = rel_execution_mode_path;
                 if(rel_measurement_path != "")

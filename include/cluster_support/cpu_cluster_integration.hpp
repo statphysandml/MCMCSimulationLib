@@ -14,7 +14,9 @@
 namespace mcmc {
     namespace cluster {
         
-        /** @brief Function used by mcmc::cmdint::from_file to prepare the bash script for executing a simulation on a cpu cluster. It needs to be adapted according to the used cpu cluster. */
+        /** @brief Function used by mcmc::cluster::execute to prepare the bash
+         * script for executing a simulation on a cpu cluster. Note that the
+         * function needs to be adapted according to the used cpu cluster. */
         void prepare_execution_on_cpu_cluster(
             const std::string mode_type,
             const mcmc::cmdint::PathParameters path_parameters,
@@ -24,7 +26,9 @@ namespace mcmc {
             const std::vector<std::string> additional_args = {}
         );
         
-        /** @brief Function used by mcmc::cmdint::from_file to submit the job to a cpu cluster. It needs to be adapted according to the used cpu cluster. */
+        /** @brief Function used by mcmc::cluster::execute to submit the job to
+         * a cpu cluster. Note that the function needs to be adapted according
+         * to the used cpu cluster. */
         void run_execution_on_cpu_cluster(
             const std::string mode_type,
             const mcmc::cmdint::PathParameters path_parameters,

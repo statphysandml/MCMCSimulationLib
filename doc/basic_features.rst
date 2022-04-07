@@ -88,7 +88,7 @@ consists of the following building blocks:
    // Setting up the execution mode
    typedef mcmc::mode::ExpectationValue ExpectationValueParams; ExpectationValueParams expectation_value_parameters(
       10, // measure_interval
-      1000, //  number_of_measurements
+      100000, //  number_of_measurements
       100, // start_measuring
       {"Config", "Mean"}, // measures
       {}, // post_measures

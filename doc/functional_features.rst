@@ -1,4 +1,4 @@
-Functional features
+Functional Features
 ===================
 
 Python support
@@ -17,7 +17,7 @@ Python integration
 .. doxygenfunction:: mcmc::util::finalize_python
 
 
-Integrating external python modules
+Integrating external Python modules
 ***********************************
 
 .. doxygenvariable:: mcmc::util::g_python_modules_path

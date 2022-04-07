@@ -27,9 +27,12 @@ namespace mcmc {
 
         std::string mode_to_string(ExecutionMode mode_);
 
-        /** @brief Helper function for preparing a simulation based on the default arguments of the respective template class arguments
-         * 
-         * @param path_parameters Path parameters containing all important paths for finding the necessary config files and for storing data and results
+        /** @brief Helper function for preparing a simulation based on the
+         * default arguments of the respective template class arguments.
+         *
+         * @param path_parameters Path parameters containing all important paths
+         * for finding the necessary configurations files and for storing data
+         * and results.
          */
         template<typename ExecutionParams, typename SB, typename MS>
         void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
@@ -42,19 +45,25 @@ namespace mcmc {
             simulation.write_to_file(path_parameters.get_rel_config_dir());
         }
 
-        /** @brief Helper function for preparing and exeuction simulations based on a mode type and path parameters
-         * 
-         * @param mode_type The execution mode used for the simulation ("equilibrium_time", "correlation_time" or "expectation_value")
-         * @param path_paramers Path parameters containing all important paths for finding the necessary config files and for storing data and results
-         * @param run Indicate whether the MCMC simulation is performed (true) or not (false)
-         * @param eval Indicate whether the evaluation should be performed in the same run (true) or not (false)
+        /** @brief Helper function for preparing and executing simulations based
+         * on a mode type and path parameters.
+         *
+         * @param mode_type The execution mode used for the simulation
+         * (``"equilibrium_time"``, ``"correlation_time"`` or
+         * ``"expectation_value"``)
+         * @param path_paramers Path parameters containing all important paths
+         * for finding the necessary configuration files and for storing data
+         * and results
+         * @param run Indicate whether the MCMC simulation is performed
+         * (``true``) or not (``false``)
+         * @param eval Indicate whether the evaluation should be performed in
+         * the same run (``true``) or not (``false``)
          */
         template<typename SB, typename MS>
         void execute(const std::string mode_type, const mcmc::cmdint::PathParameters path_parameters,
             const bool run = true, const bool eval = true
         )
         {
-            // Run based on target name - Does the same as ./{ProjectName} {ExecutionMode} {Directory} - might also call directly the respective main function - exception!
             std::setlocale(LC_ALL, "C"); // Ensures a correct reading of the number in the file name - there might be the need to adapt this in dependence on your default settings
 
             ExecutionMode mode;
@@ -130,22 +139,37 @@ namespace mcmc {
             }
         }
 
-        /** @brief Base class for preparing and executin a simulation from the command line.
+        /** @brief Base strcut for preparing and executing a simulation from the
+         * command line.
          */
         template<typename SB, typename MS>
         struct CmdIntSim
         {
-            /** @brief Constructor for providing all important path variables
+            /** @brief Constructor for providing all important path variables.
              * 
-            */
+             * @param target_name Identifier of the current simulation (the
+             * directory is used for storing files in ``sim_root_dir/config/``,
+             * ``sim_root_dir/data/``, ``sim_root_dir/results/``,
+             * ``sim_root_dir/cpu_cluster_runs/``,
+             * ``sim_root_dir/gpu_cluster_runs/`` throughout the simulation)
+             * @param sim_root_dir Relative path to the ``project_root_dir``
+             * (set by
+             * ``param_helper::proj::set_relative_path_to_project_root_dir("../")``)
+             * or absolute path to the simulation directory used for storing the
+             * configuration, data and result files of the simulation 
+             * @param rel_path Variable indicating whether ``sim_root_dir``
+             * refers to an absolute (``false``) or a relative (``true``) path
+             */
             CmdIntSim(const std::string target_name, // 
-                      const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
-                      const bool rel_path = true) : path_parameters_(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
+                      const std::string sim_root_dir="./",
+                      const bool rel_path=true) : path_parameters_(mcmc::cmdint::PathParameters(target_name, sim_root_dir, rel_path))
             {}
 
-            /** @brief Main function for executing or preparing the simulation from file. If no argc=0, the overloaded ``prepare`` function is called,
-             * otherwise the simulation is executed with the help of the mcmc::cmdint::execute function.
-             * */
+            /** @brief Main function for executing or preparing the simulation
+             * from file. If ``argc=0``, the overloaded ``prepare`` function is
+             * called, otherwise the simulation is executed with the help of the
+             * ``mcmc::cmdint::execute`` function.
+             */
             void main(int argc, char **argv)
             {
                 if(argc > 1)
@@ -192,7 +216,10 @@ namespace mcmc {
                 mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters, run, eval);
             }
 
-            /** @brief Virtual method which is supposed to be overloaded. Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
+            /** @brief Virtual method which is supposed to be overloaded.
+             *
+             * Helpful for a preparation of the simulation or an immediate
+             * execution (on cpu/gpu/locally, testing/running directly)
              */
             virtual void prepare()
             {}
@@ -202,6 +229,6 @@ namespace mcmc {
     }
 }
 
-// ./{Main} {mode_type} {target_name} {sim_root_dir="/data/"} {rel_path=true}
+// ./{executable} {execution_mode} {target_name} {sim_root_dir="./"} {rel_path=true} {run=true} {eval=true}
 
 #endif //FROM_FILE_HPP
