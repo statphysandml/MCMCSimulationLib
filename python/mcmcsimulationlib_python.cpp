@@ -4,8 +4,6 @@
 
 #include <iostream>
 
-#include "config.h"
-
 // #include "MCMCSimulationLib/MCMCSimulationLib.hpp"
 
 namespace py = pybind11;
