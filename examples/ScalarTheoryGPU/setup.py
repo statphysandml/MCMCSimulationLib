@@ -34,8 +34,7 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DBUILD_DOCS=OFF',
                       '-DBUILD_TESTING=OFF',
                       '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPYTHON_EXECUTABLE=' + sys.executable,
-                      '-DCudaUsage=GPU']
+                      '-DPYTHON_EXECUTABLE=' + sys.executable]
         if mcmcsimulationlib_cmake_prefix_path is not None:
             cmake_args += ['-DCMAKE_PREFIX_PATH=' + mcmcsimulationlib_cmake_prefix_path]
 
@@ -56,13 +55,13 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.', '--target', 'scalartheorygou_python'] + build_args, cwd=self.build_temp)
+        subprocess.check_call(['cmake', '--build', '.', '--target', 'scalartheorygpu_python'] + build_args, cwd=self.build_temp)
 
 
 class InstallCommand(install):
     user_options = install.user_options + [
         # ('someopt', None, None), # a 'flag' option
-        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
+        ('mcmcsimulationlib-cmake-prefix-path=', None, "CMAKE_PREFIX_PATH to the MCMCSimulationLib") # an option that takes a value
     ]
 
     def initialize_options(self):
@@ -92,7 +91,7 @@ setup(
     description='Add description here',
     long_description='',
     ext_modules=[CMakeExtension(
-        name='ScalarTheory'
+        name='ScalarTheoryGPU'
     )],
     cmdclass=dict(build_ext=CMakeBuild, install=InstallCommand),
     zip_safe=False,

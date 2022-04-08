@@ -72,7 +72,7 @@ if(BUILD_PYTHON_BINDINGS)
     message("Integrate python for python_bindings")
     add_subdirectory(ext/pybind11)
     # Python wrapper
-    # add_subdirectory(python_pybind)
+    add_subdirectory(python_pybind)
 elseif(RUN_WITH_PYTHON_BACKEND)
     message("Load pybind11 module")
     add_subdirectory(ext/pybind11)
