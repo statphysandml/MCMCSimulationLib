@@ -8,8 +8,8 @@
 
 #include <param_helper/params.hpp>
 
-#include "mcmc_simulation/simulation.hpp"
-#include "modes/mode_header.hpp"
+#include "../mcmc_simulation/simulation.hpp"
+#include "../modes/mode_header.hpp"
 
 #include "path_parameters.hpp"
 

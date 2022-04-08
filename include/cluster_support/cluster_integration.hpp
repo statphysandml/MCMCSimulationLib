@@ -8,12 +8,12 @@
 
 #include "config.h"
 
-#include "command_line_support/path_parameters.hpp"
-#include "command_line_support/cmdint.hpp"
+#include "../command_line_support/path_parameters.hpp"
+#include "../command_line_support/cmdint.hpp"
 
-#include "cluster_support/cpu_cluster_integration.hpp"
-#include "cluster_support/gpu_cluster_integration.hpp"
-#include "cluster_support/virtual_env_integration.hpp"
+#include "cpu_cluster_integration.hpp"
+#include "gpu_cluster_integration.hpp"
+#include "virtual_env_integration.hpp"
 
 namespace mcmc {
     namespace cluster {
