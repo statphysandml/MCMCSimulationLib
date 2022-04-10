@@ -5,7 +5,7 @@
  */
 
 #include <iostream>
-#include "cluster_support/config.h"
+#include "config.h"
 
 namespace mcmc {
     namespace virtualenv {

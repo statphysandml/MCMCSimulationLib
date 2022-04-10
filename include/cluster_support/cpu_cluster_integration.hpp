@@ -8,8 +8,8 @@
 
 #include <param_helper/params.hpp>
 
-#include "command_line_support/path_parameters.hpp"
-#include "cluster_support/virtual_env_integration.hpp"
+#include "../command_line_support/path_parameters.hpp"
+#include "virtual_env_integration.hpp"
 
 namespace mcmc {
     namespace cluster {

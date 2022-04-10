@@ -4,8 +4,8 @@
 #include <param_helper/params.hpp>
 #include <param_helper/json.hpp>
 
-#include "mcmc_simulation/markov_chain.hpp"
-#include "mcmc_simulation/util/python_integration.hpp"
+#include "../mcmc_simulation/markov_chain.hpp"
+#include "../mcmc_simulation/util/python_integration.hpp"
 
 using json = nlohmann::json;
 

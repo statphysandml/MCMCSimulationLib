@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "command_line_support/path_parameters.hpp"
+#include "../command_line_support/path_parameters.hpp"
 
 namespace mcmc {
     namespace cluster {

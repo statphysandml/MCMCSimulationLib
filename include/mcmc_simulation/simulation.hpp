@@ -13,8 +13,8 @@
 #include <param_helper/json.hpp>
 #include <param_helper/filesystem.hpp>
 
-#include "modes/from_file_preparation.hpp"
-#include "measure_processors/readable_measure.hpp"
+#include "../modes/from_file_preparation.hpp"
+#include "../measure_processors/readable_measure.hpp"
 
 using json = nlohmann::json;
 
