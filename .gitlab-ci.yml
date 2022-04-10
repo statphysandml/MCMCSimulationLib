@@ -22,7 +22,7 @@ build-and-test:clang:
   <<: *template
 
 generate-coverage-report:
-  image: conanio/gcc7
+  image: conanio/gcc9
   <<: *template
   script:
     - sudo apt-get update
