@@ -27,8 +27,8 @@ jobs:
         submodules: 'recursive'
 
     - name: upgrade g++ complier on ubuntu
-        run: update-alternatives --set g++ /usr/bin/g++-9
-        if: runner.os == 'Linux'
+      run: update-alternatives --set g++ /usr/bin/g++-9
+      if: runner.os == 'Linux'
 
     - name: make build directory
       run: cmake -E make_directory ${{runner.workspace}}/build
