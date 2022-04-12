@@ -29,7 +29,6 @@ jobs:
     - name: upgrade g++ complier on ubuntu
       run: |
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 10
-        ls -l /usr/bin/g++* cpp /usr/bin/g++    
         sudo update-alternatives --set g++ /usr/bin/g++-9
       if: runner.os == 'Linux'
 
