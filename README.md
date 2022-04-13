@@ -3,8 +3,8 @@ MCMCSimulationLib
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/statphysandml/MCMCSimulationLib/CI)](https://github.com/statphysandml/MCMCSimulationLib/actions?query=workflow%3ACI)
-<!-- [![PyPI Release](https://img.shields.io/pypi/v/MCMCSimulationLib.svg)](https://pypi.org/project/MCMCSimulationLib) -->
 [![Documentation Status](https://readthedocs.org/projects/mcmcsimulationlib/badge/)](https://mcmcsimulationlib.readthedocs.io/)
+<!-- [![PyPI Release](https://img.shields.io/pypi/v/MCMCSimulationLib.svg)](https://pypi.org/project/MCMCSimulationLib) -->
 <!-- [![codecov](https://codecov.io/gh/statphysandml/MCMCSimulationLib/branch/main/graph/badge.svg)](https://codecov.io/gh/statphysandml/MCMCSimulationLib)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=statphysandml_MCMCSimulationLib&metric=alert_status)](https://sonarcloud.io/dashboard?id=statphysandml_MCMCSimulationLib) -->
 
