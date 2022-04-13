@@ -3,7 +3,7 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     types:
       - opened
@@ -40,6 +40,8 @@ jobs:
 
       - name: Compile, Run and Analyse the tests
         run: |
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 10
+          sudo update-alternatives --set g++ /usr/bin/g++-9
           mkdir build
           cd build
           cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage" -DBUILD_DOCS=OFF
