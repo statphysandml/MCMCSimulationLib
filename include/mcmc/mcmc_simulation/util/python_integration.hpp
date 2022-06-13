@@ -55,7 +55,7 @@ namespace mcmc::util {
     /** @brief Initialize Python and set important variables
      * 
      * @param python_modules_path Path to a directory containing custom Python code
-     * @param fma_develop Indicate whether plots should be written to file or loaded locally
+     * @param fma_develop Indicate whether plots should be written to file or loaded Device::locally
      * @param executing_from_python Variable for indicating whether the code is executed from C++ (false) or executed via pybind from Python (true)
      *
      */

@@ -76,14 +76,14 @@ int main(int argc, char **argv) {
     * for a computation of the expectation values.
     */
     CmdIntSimulation cmdint_simulation("IsingModelSimulation", "./", true);
-    cmdint_simulation.main(argc, argv);
+    cmdint_simulation.run(argc, argv);
 
     /* Note that is also possible to directly call mcmc::cmdint::CmdIntSim. In this case, the default constructors are used to
     * write default configuration files to file. After adapting those to the desired settings, the simulation can be executed
     * in the same manner as above:
     */
     // mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::ReadableMeasure> cmdint_simulation("IsingModelSimulation", "./", true);
-    // cmdint_simulation.main(argc, argv);
+    // cmdint_simulation.run(argc, argv);
 
     // Finalization
 #ifdef PYTHON_BACKEND

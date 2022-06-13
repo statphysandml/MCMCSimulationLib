@@ -64,7 +64,7 @@ repository::
 The build process can be customized with the following CMake variables, which
 can be set by adding ``-D<var>={ON, OFF}/{other}`` to the ``cmake`` call:
 
-* ``CMAKE_INSTALL_PREFIX``: If the library is supposed to be installed locally
+* ``CMAKE_INSTALL_PREFIX``: If the library is supposed to be installed Device::locally
   (for example: ``../install``)
 * ``BUILD_PYTHON_BINDINGS``: Enable building Python bindings (default: ``ON``)
 * ``RUN_WITH_PYTHON_BACKEND``: Use Python backend to compute expectation values,
@@ -93,7 +93,7 @@ project by adding the following line to your ``CMakeLists.txt`` file::
 
     find_package(MCMCSimulationLib CONFIG REQUIRED)
 
-and by providing the ``CMAKE_PREFIX_PATH`` if the library was installed locally,
+and by providing the ``CMAKE_PREFIX_PATH`` if the library was installed Device::locally,
 i.e.::
 
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=~/MCMCSimulationLib/install ..
@@ -166,7 +166,7 @@ similar sequence of commands as above::
 The build process can be customized with the following CMake variables, which
 can be set by adding ``-D<var>={ON, OFF}/{other}`` to the ``cmake`` call:
 
-* ``CMAKE_PREFIX_PATH``: Required if the library is installed locally, for
+* ``CMAKE_PREFIX_PATH``: Required if the library is installed Device::locally, for
   example: ``/home/<user>/MCMCSimulationLib/install``
 * ``BUILD_PYTHON_BINDINGS``: Enable building Python bindings (default: ``ON``)
 * ``RUN_WITH_PYTHON_BACKEND``: Use Python backend to compute expectation values,
@@ -174,11 +174,11 @@ can be set by adding ``-D<var>={ON, OFF}/{other}`` to the ``cmake`` call:
 
 The additional CMake variable ``CLUSTER_MODE`` is only required if the library
 is used to submit jobs on a cluster or if running your job on a cluster is
-tested locally:
+tested Device::locally:
 
 * ``CLUSTER_MODE``: Mode to run the cluster, ``local`` or ``on_cluster``
   (default: ``local``). The ``local`` mode can be used to test the execution on
-  a cluster locally. By changing the parameter to ``on_cluster``, the code will
+  a cluster Device::locally. By changing the parameter to ``on_cluster``, the code will
   be submitted and executed in the same manner on the cluster.
 
 More details can be found :ref:`here<Running simulations on a CPU / GPU

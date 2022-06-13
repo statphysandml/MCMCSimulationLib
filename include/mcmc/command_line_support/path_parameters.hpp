@@ -37,27 +37,27 @@ namespace mcmc::cmdint {
                 rel_gpu_bash_script_dir_(sim_root_dir + "/gpu_cluster_runs/" + target_name + "/")
                 {}
 
-        void set_rel_config_dir(const std::string &rel_config_dir)
+        void set_rel_config_dir(std::string_view rel_config_dir)
         {
             rel_config_dir_ = rel_config_dir;
         }
 
-        void set_rel_data_dir(const std::string &rel_data_dir)
+        void set_rel_data_dir(std::string_view rel_data_dir)
         {
             rel_data_dir_ = rel_data_dir;
         }
 
-        void set_rel_results_dir(const std::string &rel_results_dir)
+        void set_rel_results_dir(std::string_view rel_results_dir)
         {
             rel_results_dir_ = rel_results_dir;
         }
 
-        void set_rel_cpu_bash_script_dir(const std::string &rel_cpu_bash_script_dir)
+        void set_rel_cpu_bash_script_dir(std::string_view rel_cpu_bash_script_dir)
         {
             rel_cpu_bash_script_dir_ = rel_cpu_bash_script_dir;
         }
 
-        void set_rel_gpu_bash_script_dir(const std::string &rel_gpu_bash_script_dir)
+        void set_rel_gpu_bash_script_dir(std::string_view rel_gpu_bash_script_dir)
         {
             rel_gpu_bash_script_dir_ = rel_gpu_bash_script_dir;
         }
@@ -66,7 +66,6 @@ namespace mcmc::cmdint {
          * if not present.
          */
         std::string get_rel_config_dir() const {
-            // std::cout << "Create directory " << target_name_ << " in configs/ for config files if not existing" << std::endl;
             param_helper::fs::generate_directory_if_not_present(rel_config_dir_, rel_path_);
             return rel_config_dir_; 
         }
@@ -75,7 +74,6 @@ namespace mcmc::cmdint {
          * not present.
          */
         std::string get_rel_data_dir() const {
-            // std::cout << "Create " << target_name_ << " directory in data/ for config files if not existing" << std::endl;
             param_helper::fs::generate_directory_if_not_present(rel_data_dir_, rel_path_);
             return rel_data_dir_;
         }
@@ -84,7 +82,6 @@ namespace mcmc::cmdint {
          * if not present.
          */
         std::string get_rel_results_dir() const {
-            // std::cout << "Create " << target_name_ << " directory in results/ for config files if not existing" << std::endl;
             param_helper::fs::generate_directory_if_not_present(rel_results_dir_, rel_path_);
             return rel_results_dir_;
         }
@@ -93,9 +90,6 @@ namespace mcmc::cmdint {
          * directory if not present.
          */
         std::string get_rel_cpu_bash_script_dir() const {
-            // std::cout << "Create " << target_name_
-            //           << " directory in cpu_cluster_runs/ for bash scripts and output files of respective runs"
-            //          << std::endl;
             param_helper::fs::generate_directory_if_not_present(rel_cpu_bash_script_dir_, rel_path_);
             return rel_cpu_bash_script_dir_;
         }
@@ -104,9 +98,6 @@ namespace mcmc::cmdint {
          * directory if not present.
          */
         std::string get_rel_gpu_bash_script_dir() const {
-            // std::cout << "Create " << target_name_
-            //           << " directory in gpu_cluster_runs/ for bash scripts and output files of respective runs"
-            //          << std::endl;
             param_helper::fs::generate_directory_if_not_present(rel_gpu_bash_script_dir_, rel_path_);
             return rel_gpu_bash_script_dir_;
         }

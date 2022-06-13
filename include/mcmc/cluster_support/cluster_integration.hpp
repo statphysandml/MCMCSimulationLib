@@ -34,7 +34,7 @@ namespace mcmc::cluster {
      *
      * @param executable_name Name of the executable
      * @param cluster_mode Variable allowing to test the submission to the
-     * cluster locally before an actual submission to the cluster. By
+     * cluster Device::locally before an actual submission to the cluster. By
      * setting ``cluster_mode="local"``, the job will be started by
      * executing
      * \code{.sh}
@@ -52,30 +52,30 @@ namespace mcmc::cluster {
     {
         static std::string g_executable_name;
         static std::string g_cluster_mode;
+
+        static std::string get_executable_name();
+        static void set_executable_name(const std::string &executable_name);
+
+        static std::string get_cluster_mode();
+        static void set_cluster_mode(const std::string &cluster_mode);
     };
 
-    std::string get_executable_name();
-    void set_executable_name(const std::string &executable_name);
-
-    std::string get_cluster_mode();
-    void set_cluster_mode(const std::string &cluster_mode);
-
     // Managing device
-    enum Device {
+    enum class Device {
         locally, on_gpu_cluster, on_cpu_cluster
     };
 
     // Managing running mode
-    enum RunningMode {
+    enum class RunningMode {
         prep, exec, prep_and_exec
     };
 
     /** @brief Main function for preparing and executing MCMC simulations
      * on a cluster
      *
-     * Note that the function supports with the help of ``device=locally``
+     * Note that the function supports with the help of ``device=Device::locally``
      * the possibility to execute exactly the same code as the one being
-     * executed on the cluster beforehand locally.
+     * executed on the cluster beforehand Device::locally.
      *
      * @param mode_type The execution mode used for the simulation
      * (``"equilibrium_time"``, ``"correlation_time"`` or
@@ -87,18 +87,18 @@ namespace mcmc::cluster {
      * (``true``) or not (``false``)
      * @param eval Indicate whether the evaluation should be performed in
      * the same run (``true``) or not (``false``)
-     * @param device Indicate the device to be used (``locally``,
-     * ``on_gpu_cluster`` or ``on_cpu_cluster``) by choosing ``locally``, it
+     * @param device Indicate the device to be used (``Device::locally``,
+     * ``Device::on_gpu_cluster`` or ``Device::on_cpu_cluster``) by choosing ``Device::locally``, it
      * can be checked if the simulation runs properly before an actual
      * simulation on the cluster. This is in particular useful to avoid
      * unnecessary submissions to the cluster.
      * @param running_mode Indicate whether a submission on the cluster
      * should be:
-     *      - prepared (``prep``), referring to a generation of the ``.sh``
+     *      - prepared (``RunningMode::prep``), referring to a generation of the ``.sh``
      *        file for execution,
-     *      - executed (``prep``), referring to a submission of the job to
+     *      - executed (``RunningMode::exec``), referring to a submission of the job to
      *        the cluster,
-     *      - or prepared and executed (``prep_and_exec``), referring to a
+     *      - or prepared and executed (``RunningMode::prep_and_exec``), referring to a
      *        generation of the ``.sh`` file and a subsequent submission to
      *        the cluster.
      * @param addition_args List of optional additional args to be passed to
@@ -107,35 +107,35 @@ namespace mcmc::cluster {
     template<typename SBP, typename MS>
     void execute(const std::string &mode_type, const mcmc::cmdint::PathParameters &path_parameters,
         const bool run = true, const bool eval = true,
-        const Device device = locally,
-        const RunningMode running_mode = prep_and_exec,
-        const std::vector<std::string> additional_args = {}
+        const Device device = Device::locally,
+        const RunningMode running_mode = RunningMode::prep_and_exec,
+        const std::vector<std::string>& additional_args = {}
     )
     {
-        if (device == locally) {
-            if (running_mode == prep_and_exec or running_mode == prep)
+        if (device == Device::locally) {
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::prep)
             {
-                // std::cout << "-- Note, if locally is used as running device, no preparation is necessary. Change running_mode to exec instead -- " << std::endl;
+                // -- Note, if Device::locally is used as running device, no preparation is necessary. Change running_mode to exec instead --
             }
-            if (running_mode == prep_and_exec or running_mode == exec)
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::exec)
             {
                 // Run based on target name - Does the same as ./{ProjectName} {ExecutionMode} {Directory} - might also call directly the respective main function - exception!
                 mcmc::cmdint::execute<SBP, MS>(mode_type, path_parameters, run, eval);
             }
         }
-        else if (device == on_cpu_cluster) {
+        else if (device == Device::on_cpu_cluster) {
             // Ensure that all necessary variables are set!
-            if (running_mode == prep_and_exec or running_mode == prep)
+            if (running_mode == RunningMode::prep_and_exec or running_mode == RunningMode::prep)
                 mcmc::cluster::prepare_execution_on_cpu_cluster(
-                    mode_type, path_parameters, get_executable_name(), run, eval, additional_args);
-            if (running_mode == prep_and_exec or running_mode == exec)
-                mcmc::cluster::run_execution_on_cpu_cluster(mode_type, path_parameters, get_cluster_mode());
-        } else if (device == on_gpu_cluster) {
-            if (running_mode == prep_and_exec or running_mode == prep)
+                    mode_type, path_parameters, cluster_integration::get_executable_name(), run, eval, additional_args);
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::exec)
+                mcmc::cluster::run_execution_on_cpu_cluster(mode_type, path_parameters, cluster_integration::get_cluster_mode());
+        } else if (device == Device::on_gpu_cluster) {
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::prep)
                 mcmc::cluster::prepare_execution_on_gpu_cluster(
-                    mode_type, path_parameters, get_executable_name(), run, eval, additional_args);
-            if (running_mode == prep_and_exec or running_mode == exec)
-                mcmc::cluster::run_execution_on_gpu_cluster(mode_type, path_parameters, get_cluster_mode());
+                    mode_type, path_parameters, cluster_integration::get_executable_name(), run, eval, additional_args);
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::exec)
+                mcmc::cluster::run_execution_on_gpu_cluster(mode_type, path_parameters, cluster_integration::get_cluster_mode());
         }
     }
 }

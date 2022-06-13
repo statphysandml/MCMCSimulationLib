@@ -39,7 +39,7 @@ namespace mcmc::simulation {
         }
 
         template<typename MS, typename SB>
-        void run(MS &measurements, SB &systembase) {
+        void run(MS &measurements, SB &systembase) const {
             unsigned long long int total_number_of_sweeps = long(repetitions_) * long(number_of_measurements_) * long(measure_interval_) + long(repetitions_) * long(start_measuring_);
             std::cout << "\n --- Running " << repetitions_ << " Markov Chain(s) to make " << number_of_measurements_
                         << " measurements with a measure interval of " <<

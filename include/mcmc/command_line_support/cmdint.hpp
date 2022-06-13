@@ -18,7 +18,7 @@ using json = nlohmann::json;
 
 namespace mcmc::cmdint {
     // Managing execution modes
-    enum ExecutionMode {
+    enum class ExecutionMode {
         expectation_value, correlation_time, equilibrium_time, plot_site_distribution
     };
 
@@ -34,7 +34,7 @@ namespace mcmc::cmdint {
      * and results.
      */
     template<typename ExecutionParams, typename SB, typename MS>
-    void prep_default_execution(const mcmc::cmdint::PathParameters path_parameters) {
+    void prep_default_execution(const mcmc::cmdint::PathParameters &path_parameters) {
         SB systembase;
         MS measurement_processor(path_parameters.get_rel_data_dir());
         auto simulation = mcmc::simulation::Simulation<SB, ExecutionParams, MS>::prepare_simulation_from_file(
@@ -42,6 +42,63 @@ namespace mcmc::cmdint {
             measurement_processor
         );
         simulation.write_to_file(path_parameters.get_rel_config_dir());
+    }
+
+    /** @brief Helper function for the execute function with expectation_values */
+    template<typename SB, typename MS>
+    void execute_expectation_value(bool in_preparation, const mcmc::cmdint::PathParameters &path_parameters,
+        const bool run = true, const bool eval = true)
+    {
+        if (in_preparation) {
+            prep_default_execution<mcmc::mode::ExpectationValue, SB, MS>(path_parameters);
+        } else {
+            auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::ExpectationValue, MS>::generate_simulation_from_file(
+                path_parameters.get_rel_config_dir()
+            );
+            
+            if(run)
+                simulation.run();
+            if(eval)
+                simulation.eval(path_parameters.get_rel_results_dir());
+        }
+    }
+
+    /** @brief Helper function for the execute function with correlation_time */
+    template<typename SB, typename MS>
+    void execute_correlation_time(bool in_preparation, const mcmc::cmdint::PathParameters &path_parameters,
+        const bool run = true, const bool eval = true)
+    {
+        if (in_preparation) {
+            prep_default_execution<mcmc::mode::CorrelationTime, SB, MS>(path_parameters);
+        } else {
+            auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::CorrelationTime, MS>::generate_simulation_from_file(
+                path_parameters.get_rel_config_dir()
+            );
+
+            if(run)
+                simulation.run();
+            if(eval)
+                simulation.eval(path_parameters.get_rel_results_dir());
+        }
+    }
+
+    /** @brief Helper function for the execute function with equilibrium_time */
+    template<typename SB, typename MS>
+    void execute_equilibrium_time(bool in_preparation, const mcmc::cmdint::PathParameters &path_parameters,
+        const bool run = true, const bool eval = true)
+    {
+        if (in_preparation) {
+            prep_default_execution<mcmc::mode::EquilibriumTime, SB, MS>(path_parameters);
+        } else {
+            auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::EquilibriumTime, MS>::generate_simulation_from_file(
+                path_parameters.get_rel_config_dir()
+            );
+                
+            if(run)
+                simulation.run();
+            if(eval)
+                simulation.eval(path_parameters.get_rel_results_dir());
+        }
     }
 
     /** @brief Helper function for preparing and executing simulations based
@@ -87,53 +144,20 @@ namespace mcmc::cmdint {
         }
 
         switch (mode) {
-            case expectation_value: {
-                if (in_preparation) {
-                    prep_default_execution<mcmc::mode::ExpectationValue, SB, MS>(path_parameters);
-                } else {
-                    auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::ExpectationValue, MS>::generate_simulation_from_file(
-                        path_parameters.get_rel_config_dir()
-                    );
-                    
-                    if(run)
-                        simulation.run();
-                    if(eval)
-                        simulation.eval(path_parameters.get_rel_results_dir());
-                }
+            case ExecutionMode::expectation_value: {
+                execute_expectation_value<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
             }
-            case correlation_time: {
-                if (in_preparation) {
-                    prep_default_execution<mcmc::mode::CorrelationTime, SB, MS>(path_parameters);
-                } else {
-                    auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::CorrelationTime, MS>::generate_simulation_from_file(
-                        path_parameters.get_rel_config_dir()
-                    );
-
-                    if(run)
-                        simulation.run();
-                    if(eval)
-                        simulation.eval(path_parameters.get_rel_results_dir());
-                }
+            case ExecutionMode::correlation_time: {
+                execute_correlation_time<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
             }
-            case equilibrium_time: {
-                if (in_preparation) {
-                    prep_default_execution<mcmc::mode::EquilibriumTime, SB, MS>(path_parameters);
-                } else {
-                    auto simulation = mcmc::simulation::Simulation<SB, mcmc::mode::EquilibriumTime, MS>::generate_simulation_from_file(
-                        path_parameters.get_rel_config_dir()
-                    );
-                        
-                    if(run)
-                        simulation.run();
-                    if(eval)
-                        simulation.eval(path_parameters.get_rel_results_dir());
-                }
+            case ExecutionMode::equilibrium_time: {
+                execute_equilibrium_time<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
             };
             default:
-                std::cerr << "execution mode not known..." << std::endl;
+                std::cout << "execution mode not known..." << std::endl;
                 break;
         }
     }
@@ -169,7 +193,7 @@ namespace mcmc::cmdint {
          * called, otherwise the simulation is executed with the help of the
          * ``mcmc::cmdint::execute`` function.
          */
-        void main(int argc, char **argv)
+        void run(int argc, char **argv)
         {
             if(argc > 1)
             {
@@ -182,8 +206,8 @@ namespace mcmc::cmdint {
         }
 
         void execute(int argc, char **argv) {
-            std::string mode_type = std::string(argv[1]);
-            std::string target_name = std::string(argv[2]);
+            const auto mode_type = std::string(argv[1]);
+            const auto target_name = std::string(argv[2]);
             std::string sim_root_dir = "./";
             bool rel_path = true;
             bool run = true;
@@ -191,25 +215,20 @@ namespace mcmc::cmdint {
             if (argc > 3)
                 sim_root_dir = std::string(argv[3]);
             if (argc > 4) {
-                std::string rel_path_boolean = std::string(argv[4]);
+                auto rel_path_boolean = std::string(argv[4]);
                 if (rel_path_boolean == "false" or rel_path_boolean == "0")
                     rel_path = false;
             }
             if (argc > 5) {
-                std::string run_boolean = std::string(argv[5]);
-                if (run_boolean == "false" or run_boolean == "0")
+                auto run_boolean = std::string(argv[5]);
+                if (run_boolean == "false" || run_boolean == "0")
                     run = false;
             }
             if (argc > 6) {
-                std::string eval_boolean = std::string(argv[6]);
-                if (eval_boolean == "false" or eval_boolean == "0")
+                auto eval_boolean = std::string(argv[6]);
+                if (eval_boolean == "false" || eval_boolean == "0")
                     eval = false;
             }
-
-            /* std::cout << "mode_type: " << mode_type << std::endl;
-            std::cout << "target_name: " << target_name << std::endl;
-            std::cout << "sim_root_dir: " << sim_root_dir << std::endl;
-            std::cout << "rp: " << rel_path << "\n\n" << std::endl; */
 
             mcmc::cmdint::PathParameters path_parameters(target_name, sim_root_dir, rel_path);
             mcmc::cmdint::execute<SB, MS>(mode_type, path_parameters, run, eval);
@@ -218,10 +237,12 @@ namespace mcmc::cmdint {
         /** @brief Virtual method which is supposed to be overloaded.
          *
          * Helpful for a preparation of the simulation or an immediate
-         * execution (on cpu/gpu/locally, testing/running directly)
+         * execution (on cpu/gpu/Device::locally, testing/running directly)
          */
         virtual void prepare()
-        {}
+        {
+            // Per default no preparation is performed.
+        }
 
         mcmc::cmdint::PathParameters path_parameters_;
     };

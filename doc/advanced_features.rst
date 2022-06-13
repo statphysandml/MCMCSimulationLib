@@ -14,7 +14,7 @@ The main function of the ``mcmc::cmdint::CmdIntSim`` struct:
 
 .. code-block:: c++
 
-   void main(int argc, char **argv)
+   void run(int argc, char **argv)
    {
       if(argc > 1)
       {
@@ -112,7 +112,7 @@ simulation with command line support:
 
       // Setting up and calling the main function for command line support
       ExpectationValueSimulation expectation_value_simulation("MCMCSystemSimulation", "./", true);
-      expectation_value_simulation.main(argc, argv);
+      expectation_value_simulation.run(argc, argv);
 
       // Finalization
    #ifdef PYTHON_BACKEND
@@ -183,7 +183,7 @@ where the script takes care of the following tasks:
 
 - the ``prepare`` function generates the configuration files for the MCMC
   simulation and calls ``mcmc::cluster::execute`` with
-  ``running_mode=prep_and_exec``
+  ``running_mode=RunningMode::prep_and_exec``
 - the ``mcmc::cluster::execute`` generates the required bash script for a
   submission to the cluster and submits the job to cluster afterwards
 - when the job is executed on the cluster, the executable is called with command
@@ -233,7 +233,7 @@ The modified ``main.cpp`` file looks as follows:
          // Prepare expectation value simulation on a cluster and submit the job with one function call
          mcmc::cluster::execute<MCMCSystem, mcmc::measures::ReadableMeasure>(
                "expectation_value", this->path_parameters_, true, true,
-               mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+               mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::RunningMode::prep_and_exec, {});
       }
    };
 
@@ -249,7 +249,7 @@ The modified ``main.cpp`` file looks as follows:
 
       // Setting up and calling the main function for command line support
       ExpectationValueSimulation expectation_value_simulation("MCMCSystemSimulation", "./", true);
-      expectation_value_simulation.main(argc, argv);
+      expectation_value_simulation.run(argc, argv);
 
       // Finalization
    #ifdef PYTHON_BACKEND
@@ -321,14 +321,14 @@ and the name of the used virtual environment to C++, since knowing these
 variables can be necessary for generating the bash scripts for a submission to a
 cluster:
 
-.. doxygenvariable:: mcmc::virtualenv::g_conda_activate_path
+.. doxygenvariable:: mcmc::virtualenv::virtual_env_integration::g_conda_activate_path
 
-.. doxygenvariable:: mcmc::virtualenv::g_virtual_env
+.. doxygenvariable:: mcmc::virtualenv::virtual_env_integration::g_virtual_env
 
 As explained in the :ref:`Installation` section, the variables can be set
 globally by providing respective CMake variables. Alternatively, the following
 functions can be used to temporarily change these variables:
 
-.. doxygenfunction:: mcmc::virtualenv::set_conda_activate_path
+.. doxygenfunction:: mcmc::virtualenv::virtual_env_integration::set_conda_activate_path
 
-.. doxygenfunction:: mcmc::virtualenv::set_virtual_env
+.. doxygenfunction:: mcmc::virtualenv::virtual_env_integration::set_virtual_env

@@ -10,19 +10,22 @@
 namespace mcmc::virtualenv {
     // Global parameters
 
-    /** Path to conda activate (for example: ``~/miniconda3/bin/activate``). Per default, this path is set to the CMake variable ``CONDA_ACTIVATE_PATH``. */
-    extern std::string g_conda_activate_path;
-    /** Name of the virtual environment to be activated before execution of the script. Per default, this path is set to the CMake variable ``VIRTUAL_ENV``. */
-    extern std::string g_virtual_env;
+    struct virtual_env_integration
+    {
+        /** Path to conda activate (for example: ``~/miniconda3/bin/activate``). Per default, this path is set to the CMake variable ``CONDA_ACTIVATE_PATH``. */
+        static std::string g_conda_activate_path;
+        /** Name of the virtual environment to be activated before execution of the script. Per default, this path is set to the CMake variable ``VIRTUAL_ENV``. */
+        static std::string g_virtual_env;
 
-    /** @brief Can be used to set the conda_activate_path to a different than the default one.
-     * @param conda_activate_path Path to conda activate
-     */
-    void set_conda_activate_path(const std::string &conda_activate_path);
-    /** @brief Can be used to set the virtual environment to a different than the default one.
-     *  @param virtual_env Name of the virtual environment to be activated
-     */
-    void set_virtual_env(const std::string &virtual_env);
+        /** @brief Can be used to set the conda_activate_path to a different than the default one.
+         * @param conda_activate_path Path to conda activate
+         */
+        static void set_conda_activate_path(const std::string &conda_activate_path);
+        /** @brief Can be used to set the virtual environment to a different than the default one.
+         *  @param virtual_env Name of the virtual environment to be activated
+         */
+        static void set_virtual_env(const std::string &virtual_env);
+    };
 }
 
 

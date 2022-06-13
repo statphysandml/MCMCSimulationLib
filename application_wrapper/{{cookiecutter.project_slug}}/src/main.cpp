@@ -85,14 +85,14 @@ int main(int argc, char **argv) {
     * for a computation of the expectation values.
     */
     CmdIntSimulation cmdint_simulation("{{ cookiecutter.project_name }}Simulation", "./", true);
-    cmdint_simulation.main(argc, argv);
+    cmdint_simulation.run(argc, argv);
 
     /* Note that is also possible to directly call mcmc::cmdint::CmdIntSim. In this case, the default constructors are used to
     * write default configuration files to file. After adapting those to the desired settings, the simulation can be executed
     * in the same manner as above:
     */
     // mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure> cmdint_simulation("{{ cookiecutter.project_name }}Simulation", "./", true);
-    // cmdint_simulation.main(argc, argv);
+    // cmdint_simulation.run(argc, argv);
 
     // Finalization
 #ifdef PYTHON_BACKEND
@@ -136,7 +136,7 @@ struct EquilibriumTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
                 "equilibrium_time", this->path_parameters_, true, true,
-                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::RunningMode::prep_and_exec, {});
     }
 };
 
@@ -155,7 +155,7 @@ struct CorrelationTimeSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proje
         // Prepare simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
                 "correlation_time", this->path_parameters_, true, true,
-                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::RunningMode::prep_and_exec, {});
     }
 };
 
@@ -176,7 +176,7 @@ struct ExpectationValueSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.proj
         // Prepare expectation value simulation on a cluster and submit the job with one function call
         mcmc::cluster::execute<{{ cookiecutter.project_name }}, mcmc::measures::ReadableMeasure>(
                 "expectation_value", this->path_parameters_, true, true,
-                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::prep_and_exec, {});
+                mcmc::cluster::Device::on_cpu_cluster, mcmc::cluster::RunningMode::RunningMode::prep_and_exec, {});
     }
 };
 
@@ -197,13 +197,13 @@ int main(int argc, char **argv) {
     prepare_simulation_parameters(target_name, sim_root_dir, rel_path);
 
     EquilibriumTimeSimulation equilibrium_time_simulation(target_name, sim_root_dir, rel_path);
-    equilibrium_time_simulation.main(argc, argv);
+    equilibrium_time_simulation.run(argc, argv);
 
     CorrelationTimeSimulation correlation_time_simulation(target_name, sim_root_dir, rel_path);
-    correlation_time_simulation.main(argc, argv);
+    correlation_time_simulation.run(argc, argv);
 
     ExpectationValueSimulation expectation_value_simulation(target_name, sim_root_dir, rel_path);
-    expectation_value_simulation.main(argc, argv);
+    expectation_value_simulation.run(argc, argv);
 
 
     // Finalization
