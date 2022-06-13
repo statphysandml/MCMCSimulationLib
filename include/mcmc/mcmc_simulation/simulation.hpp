@@ -10,7 +10,7 @@
 #include <mcmc/mcmc_simulation/util/mcmc_parameter_functions.hpp>
 #include <mcmc/mcmc_simulation/markov_chain.hpp>
 
-#include <param_helper/json.hpp>
+#include <nlohmann/json.hpp>
 #include <param_helper/filesystem.hpp>
 
 #include <mcmc/modes/from_file_preparation.hpp>

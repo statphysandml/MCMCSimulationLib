@@ -2,7 +2,7 @@
 #define MCMCSIMULATIONLIB_EQUILIBRIUM_HPP
 
 #include <param_helper/params.hpp>
-#include <param_helper/json.hpp>
+#include <nlohmann/json.hpp>
 
 #include <mcmc/mcmc_simulation/markov_chain.hpp>
 #include <mcmc/mcmc_simulation/util/python_integration.hpp>

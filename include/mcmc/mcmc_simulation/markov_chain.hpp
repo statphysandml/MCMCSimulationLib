@@ -3,7 +3,7 @@
 
 #include <mcmc/mcmc_simulation/util/tqdm.h>
 #include <param_helper/params.hpp>
-#include <param_helper/json.hpp>
+#include <nlohmann/json.hpp>
 
 
 using json = nlohmann::json;

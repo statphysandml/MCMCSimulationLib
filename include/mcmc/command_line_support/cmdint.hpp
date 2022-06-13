@@ -13,7 +13,7 @@
 
 #include <mcmc/command_line_support/path_parameters.hpp>
 
-#include <param_helper/json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 namespace mcmc::cmdint {
