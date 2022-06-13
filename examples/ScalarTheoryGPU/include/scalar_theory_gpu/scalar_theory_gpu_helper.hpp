@@ -1,10 +1,10 @@
 #ifndef SCALARTHEORYGPU_SCALAR_THEORY_GPU_HELPER_HPP
 #define SCALARTHEORYGPU_SCALAR_THEORY_GPU_HELPER_HPP
 
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
-#include <mcmc_simulation/systembase_parameters.hpp>
-#include <mcmc_simulation/systembase.hpp>
+#include <mcmc/mcmc_simulation/systembase_parameters.hpp>
+#include <mcmc/mcmc_simulation/systembase.hpp>
 
 #include "../thrust/thrust_header.hpp"
 #include "../thrust/thrust_functors.hpp"
@@ -55,6 +55,7 @@ double fourth_moment_helper(const dev_vec &lattice, dev_vec &identity_scalar_pro
 
 // Structs used by the helper functions implementing parallel computations on the GPU
 
+/* https://stackoverflow.com/questions/40142493/using-curand-inside-a-thrust-functor */
 
 // Functor for initializing the random generators on the GPU
 struct curand_setup

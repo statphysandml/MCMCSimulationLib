@@ -41,7 +41,7 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/ext/ParamHelper/CMakeLists.txt")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
-configure_file(./include/cluster_support/config.h.in ../include/cluster_support/config.h @ONLY)
+configure_file(include/mcmc/cluster_support/config.h.in ../include/mcmc/cluster_support/config.h @ONLY)
 
 # Compilation options
 

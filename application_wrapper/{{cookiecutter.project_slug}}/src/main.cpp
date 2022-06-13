@@ -1,9 +1,9 @@
 #include "../include/{{ cookiecutter.project_slug }}/config.h"
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/intervals.hpp>
-#include <modes/mode_header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/intervals.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 {%- if cookiecutter.main_template != "standard" %}
 #include <command_line_support/cmdint.hpp>
@@ -101,8 +101,8 @@ int main(int argc, char **argv) {
     return 0;
 }
 {%- elif cookiecutter.main_template == "cluster_support" %}
-void prepare_simulation_parameters(const std::string target_name, // Name of the simulation
-                        const std::string sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
+void prepare_simulation_parameters(const std::string &target_name, // Name of the simulation
+                        const std::string &sim_root_dir = "./", // Relative path from project_root to simulation_root or absolute path to simulation root
                         const bool rel_path = true)
 {
     mcmc::cmdint::PathParameters path_parameters(target_name, sim_root_dir, rel_path);

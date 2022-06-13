@@ -8,10 +8,10 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include "../include/mcmc_simulation/header.hpp"
-#include "../include/mcmc_simulation/util/python_integration.hpp"
-#include "../include/modes/mode_header.hpp"
-#include "../include/measure_processors/readable_measure.hpp"
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/python_integration.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/measure_processors/readable_measure.hpp>
 
 namespace mcmc {
     namespace pybind {

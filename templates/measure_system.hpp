@@ -2,8 +2,8 @@
 #define MCMCMEASURESYSTEM_HPP
 
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 
 // Template implementation for a MCMC measure system

@@ -30,8 +30,6 @@ void initialize_helper(std::string starting_mode, dev_vec &lattice, thrust::devi
     if(starting_mode == "hot") {
         s = thrust::device_vector<curandState>(lattice.size());
 
-        rnd_offset = 0;
-
         // Initialize the random generators
         thrust::for_each_n(thrust::make_zip_iterator(thrust::make_tuple(thrust::counting_iterator<int>(0), s.begin())),
                            lattice.size(), curand_setup(rnd_offset));

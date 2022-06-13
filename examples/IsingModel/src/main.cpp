@@ -1,9 +1,9 @@
 #include "../include/ising_model/config.h"
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/intervals.hpp>
-#include <modes/mode_header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/intervals.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 #include <command_line_support/cmdint.hpp>
 

@@ -49,7 +49,7 @@ jobs:
           ctest
           mkdir gcov
           cd gcov
-          gcov -p ../tests//CMakeFiles/MCMCSimulationLib.dir/*.cpp.gcno > /dev/null
+          gcov -p ../tests//CMakeFiles/mcmcsimulationlib_tests.dir/*.cpp.gcno > /dev/null
           cd ../..
           $HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux/bin/sonar-scanner
         env:

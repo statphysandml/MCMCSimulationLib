@@ -2,8 +2,8 @@
 #define {{ cookiecutter.project_slug.upper() }}_HPP
 
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 
 {%- if cookiecutter.use_predefined_measures == "No" %}

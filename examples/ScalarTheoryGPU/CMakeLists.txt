@@ -88,7 +88,7 @@ if(RUN_WITH_PYTHON_BACKEND)
     target_compile_definitions(ScalarTheoryGPU PUBLIC PYTHON_BACKEND)
 endif()
 
-if (GPU)
+if(GPU)
     target_compile_definitions(ScalarTheoryGPU PUBLIC -D GPU)
 endif()
 set_target_properties(ScalarTheoryGPU PROPERTIES CUDA_SEPARABLE_COMPILATION ON CUDA_STANDARD 14)

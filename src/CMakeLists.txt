@@ -15,6 +15,8 @@ if (RUN_WITH_PYTHON_BACKEND)
   target_link_libraries(mcmcsimulationlib PRIVATE ${target_link_libraries_python_appendix})
 endif()
 
+target_link_libraries(mcmcsimulationlib PUBLIC paramhelper::paramhelper)
+
 target_include_directories(mcmcsimulationlib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>

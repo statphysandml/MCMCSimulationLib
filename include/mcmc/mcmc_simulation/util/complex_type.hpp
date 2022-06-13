@@ -1,7 +1,7 @@
 #ifndef MCMCSIMULATIONLIB_COMPLEX_TYPE_HPP
 #define MCMCSIMULATIONLIB_COMPLEX_TYPE_HPP
 
-#include "complex"
+#include <complex>
 
 namespace std
 {

@@ -77,7 +77,7 @@ class InstallCommand(install):
     def run(self):
         global mcmcsimulationlib_cmake_prefix_path
         if self.mcmcsimulationlib_cmake_prefix_path is None:
-            mcmcsimulationlib_prefix_path = None
+            mcmcsimulationlib_cmake_prefix_path = None
         else:
             mcmcsimulationlib_cmake_prefix_path = self.mcmcsimulationlib_cmake_prefix_path
         install.run(self)

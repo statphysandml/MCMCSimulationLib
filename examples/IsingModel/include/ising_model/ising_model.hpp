@@ -2,7 +2,7 @@
 #define MCMCSIMULATIONLIB_ISING_MODEL_HPP
 
 
-#include <mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
 
 
 // Example implementation of the Ising model
