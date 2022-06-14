@@ -27,7 +27,7 @@ class tqdm {
         int period = 1;
         unsigned int smoothing = 50;
         bool use_ema = true;
-        float alpha_ema = 0.1;
+        double alpha_ema = 0.1;
 
         std::vector<const char*> bars = {" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"};
 
@@ -41,19 +41,19 @@ class tqdm {
         std::string right_pad = "▏";
         std::string label = "";
 
-        void hsv_to_rgb(float h, float s, float v, int& r, int& g, int& b) {
+        void hsv_to_rgb(double h, double s, double v, int& r, int& g, int& b) const {
             if (s < 1e-6) {
                 v *= 255.;
-                r = v; g = v; b = v;
+                r = (int)v; g = (int)v; b = (int)v;
             }
-            int i = (int)(h*6.0);
-            float f = (h*6.)-i;
-            int p = (int)(255.0*(v*(1.-s)));
-            int q = (int)(255.0*(v*(1.-s*f)));
-            int t = (int)(255.0*(v*(1.-s*(1.-f))));
+            auto i = (int)(h*6.0);
+            double f = (h*6.)-i;
+            auto p = (int)(255.0*(v*(1.-s)));
+            auto q = (int)(255.0*(v*(1.-s*f)));
+            auto t = (int)(255.0*(v*(1.-s*(1.-f))));
             v *= 255;
             i %= 6;
-            int vi = (int)v;
+            auto vi = (int)v;
             if (i == 0)      { r = vi; g = t;  b = p;  }
             else if (i == 1) { r = q;  g = vi; b = p;  }
             else if (i == 2) { r = p;  g = vi; b = t;  }
@@ -93,7 +93,7 @@ class tqdm {
             bars = {" ", " ", " ", " ", " ", " ", " ", " ", "#"}; 
             right_pad = "|";
         }
-        void set_label(std::string label_) { label = label_; }
+        void set_label(std::string_view label_) { label = label_; }
         void disable_colors() {
             color_transition = false;
             use_colors = false;
@@ -128,7 +128,7 @@ class tqdm {
                     }
                 } else {
                     double dtsum = std::accumulate(deq_t.begin(),deq_t.end(),0.);
-                    int dnsum = std::accumulate(deq_n.begin(),deq_n.end(),0.);
+                    int dnsum = (int) std::accumulate(deq_n.begin(),deq_n.end(),0.);
                     avgrate = dnsum/dtsum;
                 }
 
@@ -148,13 +148,15 @@ class tqdm {
                 }
 
                 double fills = ((double)curr / tot * width);
-                int ifills = (int)fills;
+                auto ifills = (int)fills;
 
                 printf("\015 ");
                 if (use_colors) {
                     if (color_transition) {
                         // red (hue=0) to green (hue=1/3)
-                        int r = 255, g = 255, b = 255;
+                        int r = 255;
+                        int g = 255;
+                        int b = 255;
                         hsv_to_rgb(0.0+0.01*pct/3,0.65,1.0, r,g,b);
                         printf("\033[38;2;%d;%d;%dm ", r, g, b);
                     } else {
@@ -162,7 +164,7 @@ class tqdm {
                     }
                 }
                 for (int i = 0; i < ifills; i++) std::cout << bars[8];
-                if (!in_screen and (curr != tot)) printf("%s",bars[(int)(8.0*(fills-ifills))]);
+                if (!in_screen && (curr != tot)) printf("%s",bars[(int)(8.0*(fills-ifills))]);
                 for (int i = 0; i < width-ifills-1; i++) std::cout << bars[0];
                 printf("%s ", right_pad.c_str());
                 if (use_colors) printf("\033[1m\033[31m");

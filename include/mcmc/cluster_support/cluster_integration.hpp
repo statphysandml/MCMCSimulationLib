@@ -54,10 +54,10 @@ namespace mcmc::cluster {
         static std::string g_cluster_mode;
 
         static std::string get_executable_name();
-        static void set_executable_name(const std::string &executable_name);
+        static void set_executable_name(std::string_view executable_name);
 
         static std::string get_cluster_mode();
-        static void set_cluster_mode(const std::string &cluster_mode);
+        static void set_cluster_mode(std::string_view cluster_mode);
     };
 
     // Managing device
@@ -125,7 +125,7 @@ namespace mcmc::cluster {
         }
         else if (device == Device::on_cpu_cluster) {
             // Ensure that all necessary variables are set!
-            if (running_mode == RunningMode::prep_and_exec or running_mode == RunningMode::prep)
+            if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::prep)
                 mcmc::cluster::prepare_execution_on_cpu_cluster(
                     mode_type, path_parameters, cluster_integration::get_executable_name(), run, eval, additional_args);
             if (running_mode == RunningMode::prep_and_exec || running_mode == RunningMode::exec)

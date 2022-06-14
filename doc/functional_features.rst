@@ -10,7 +10,7 @@ Python integration
 .. doxygenfile:: python_integration.hpp
    :sections: detaileddescription
 
-.. doxygenvariable:: mcmc::util::g_is_python_initialized
+.. doxygenvariable:: mcmc::util::python_integration::g_is_python_initialized
 
 .. doxygenfunction:: mcmc::util::initialize_python
 
@@ -20,11 +20,11 @@ Python integration
 Integrating external Python modules
 ***********************************
 
-.. doxygenvariable:: mcmc::util::g_python_modules_path
+.. doxygenvariable:: mcmc::util::python_integration::g_python_modules_path
 
-.. doxygenfunction:: mcmc::util::get_python_modules_path
+.. doxygenfunction:: mcmc::util::python_integration::get_python_modules_path
 
-.. doxygenfunction:: mcmc::util::set_python_modules_path
+.. doxygenfunction:: mcmc::util::python_integration::set_python_modules_path
 
 Utils
 -----
@@ -35,11 +35,11 @@ Random number generation
 .. doxygenfile:: random.hpp
    :sections: detaileddescription
 
-.. doxygenvariable:: mcmc::util::g_rd
+.. doxygenvariable:: mcmc::util::random::g_rd
 
-.. doxygenvariable:: mcmc::util::g_gen
+.. doxygenvariable:: mcmc::util::random::g_gen
 
-.. doxygenfunction:: mcmc::util::set_random_seed
+.. doxygenfunction:: mcmc::util::random::set_random_seed
 
 Linspace intervals
 ******************

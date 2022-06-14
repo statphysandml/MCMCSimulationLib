@@ -20,11 +20,11 @@ namespace mcmc::virtualenv {
         /** @brief Can be used to set the conda_activate_path to a different than the default one.
          * @param conda_activate_path Path to conda activate
          */
-        static void set_conda_activate_path(const std::string &conda_activate_path);
+        static void set_conda_activate_path(std::string_view conda_activate_path);
         /** @brief Can be used to set the virtual environment to a different than the default one.
          *  @param virtual_env Name of the virtual environment to be activated
          */
-        static void set_virtual_env(const std::string &virtual_env);
+        static void set_virtual_env(std::string_view virtual_env);
     };
 }
 

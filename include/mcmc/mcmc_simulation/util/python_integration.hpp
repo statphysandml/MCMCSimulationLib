@@ -1,6 +1,13 @@
 #ifndef PYTHON_INTEGRATION_HPP
 #define PYTHON_INTEGRATION_HPP
 
+#include <iostream>
+
+#include <pybind11/embed.h>
+namespace py = pybind11;
+
+#include <param_helper/params.hpp>
+
 /** \file python_integration.hpp Overview of important variables and methods for
  * a correct initialization and usage of Python throughout the project. For a
  * smooth integration, Python needs to be initialized before executing Python
@@ -29,28 +36,22 @@
  * functions and a custom function for loading MCMC simulation data from file.
  */
 
-#include <iostream>
-
-// #ifdef PYTHON_BACKEND
-
-#include <pybind11/embed.h>
-namespace py = pybind11;
-
-#include <param_helper/params.hpp>
-
 namespace mcmc::util {        
     // Project dependent variables
-    /** Path to the directory containing the ``custom_modules.py`` file with
-     * custom Python code for computing measures and loading MCMC simulation
-     * data. */
-    extern std::string g_python_modules_path;
-    /** Variable for checking if Python has been initialized correctly. */
-    extern bool g_is_python_initialized;
+    struct python_integration
+    {
+        /** Path to the directory containing the ``custom_modules.py`` file with
+         * custom Python code for computing measures and loading MCMC simulation
+         * data. */
+        static std::string g_python_modules_path;
+        /** Variable for checking if Python has been initialized correctly. */
+        static bool g_is_python_initialized;
 
-    /** @brief Returns the ``g_python_modules_path``. */
-    std::string get_python_modules_path();
-    /** @brief Sets the ``g_python_modules_path``. */
-    void set_python_modules_path(const std::string &python_modules_path);
+        /** @brief Returns the ``g_python_modules_path``. */
+        static std::string get_python_modules_path();
+        /** @brief Sets the ``g_python_modules_path``. */
+        static void set_python_modules_path(const std::string &python_modules_path);
+    };
 
     /** @brief Initialize Python and set important variables
      * 
@@ -63,7 +64,5 @@ namespace mcmc::util {
     /** @brief Finalize Python. */
     void finalize_python();
 }
-
-// #endif
 
 #endif //PYTHON_INTEGRATION_HPP

@@ -2,6 +2,7 @@ add_library(mcmcsimulationlib STATIC
   mcmc_simulation/simulation.cpp
   mcmc_simulation/util/random.cpp
   mcmc_simulation/util/python_integration.cpp
+  measure_processors/readable_measure.cpp
   cluster_support/cluster_integration.cpp
   cluster_support/gpu_cluster_integration.cpp
   cluster_support/cpu_cluster_integration.cpp

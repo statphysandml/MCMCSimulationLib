@@ -144,18 +144,15 @@ namespace mcmc::cmdint {
         }
 
         switch (mode) {
-            case ExecutionMode::expectation_value: {
+            case ExecutionMode::expectation_value:
                 execute_expectation_value<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
-            }
-            case ExecutionMode::correlation_time: {
+            case ExecutionMode::correlation_time:
                 execute_correlation_time<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
-            }
-            case ExecutionMode::equilibrium_time: {
+            case ExecutionMode::equilibrium_time:
                 execute_equilibrium_time<SB, MS>(in_preparation, path_parameters, run, eval);
                 break;
-            };
             default:
                 std::cout << "execution mode not known..." << std::endl;
                 break;
@@ -205,7 +202,7 @@ namespace mcmc::cmdint {
             }
         }
 
-        void execute(int argc, char **argv) {
+        void execute(int argc, char **argv) const {
             const auto mode_type = std::string(argv[1]);
             const auto target_name = std::string(argv[2]);
             std::string sim_root_dir = "./";
@@ -216,7 +213,7 @@ namespace mcmc::cmdint {
                 sim_root_dir = std::string(argv[3]);
             if (argc > 4) {
                 auto rel_path_boolean = std::string(argv[4]);
-                if (rel_path_boolean == "false" or rel_path_boolean == "0")
+                if (rel_path_boolean == "false" || rel_path_boolean == "0")
                     rel_path = false;
             }
             if (argc > 5) {

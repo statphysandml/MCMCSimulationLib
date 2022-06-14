@@ -52,7 +52,7 @@ namespace mcmc::mode {
          *  in Python. Note that for this work the configurations have to be
          *  stored as well which can be achieved by adding ``"Config"`` to
          *  measures
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          * @param error_type Method used to estimate the standard error of
          * the expectation value
@@ -94,7 +94,7 @@ namespace mcmc::mode {
          *  in Python. Note that for this work the configurations have to be
          *  stored as well which can be achieved by adding ``"Config"`` to
          *  measures
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          * @param error_type Method used to estimate the standard error of
          * the expectation value
@@ -137,7 +137,7 @@ namespace mcmc::mode {
          *  in Python. Note that for this work the configurations have to be
          *  stored as well which can be achieved by adding ``"Config"`` to
          *  measures
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          * @param error_type Method used to estimate the standard error of
          * the expectation value
@@ -183,7 +183,7 @@ namespace mcmc::mode {
          *  in Python. Note that for this work the configurations have to be
          *  stored as well which can be achieved by adding ``"Config"`` to
          *  measures
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          * @param error_type Method used to estimate the standard error of
          * the expectation value
@@ -217,7 +217,7 @@ namespace mcmc::mode {
          * @param rel_root_dir Relative path to the project_root_dir for storing configuration files
          * @returns None
          */
-        void write_to_file(const std::string &rel_root_dir) {
+        void write_to_file(const std::string &rel_root_dir) const {
             Parameters::write_to_file(rel_root_dir, "expectation_value_params");
         }
 
@@ -250,7 +250,7 @@ namespace mcmc::mode {
          * @returns None
          */
         void evaluate(const std::string &rel_data_dir, const std::string &rel_results_dir,
-            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
+            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={}) const
         {
             #ifdef PYTHON_BACKEND
             py::exec("from mcmctools.modes.expectation_value import expectation_value");
@@ -258,29 +258,29 @@ namespace mcmc::mode {
                 py::exec("from mcmctools.loading.custom_function_support import get_custom_measures_func, get_custom_load_data_func");
             else
                 py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func; get_custom_measures_func = lambda: None;");
-            py::exec(("expectation_value(\
-                measures=" + param_helper::params::merge_list_like<std::string>(measures_, post_measures_).dump() + ",\
-                running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
-                rp_values=" + json(rp_intervals).dump() + ",\
-                rel_data_dir='" + rel_data_dir + "',\
-                number_of_measurements=" + std::to_string(number_of_measurements_) + ",\
-                error_type='" + error_type_ + "',\
-                n_means_bootstrap=" + std::to_string(n_means_bootstrap_) + ",\
-                rel_results_dir='" + rel_results_dir + "',\
-                sim_base_dir='" + param_helper::proj::project_root() + "',\
-                custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',\
-                custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
+            py::exec(("expectation_value("
+                "measures=" + param_helper::params::merge_list_like<std::string>(measures_, post_measures_).dump() + ","
+                "running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',"
+                "rp_values=" + json(rp_intervals).dump() + ","
+                "rel_data_dir='" + rel_data_dir + "',"
+                "number_of_measurements=" + std::to_string(number_of_measurements_) + ","
+                "error_type='" + error_type_ + "',"
+                "n_means_bootstrap=" + std::to_string(n_means_bootstrap_) + ","
+                "rel_results_dir='" + rel_results_dir + "',"
+                "sim_base_dir='" + param_helper::proj::project_root() + "',"
+                "custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',"
+                "custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
             #endif
         }
 
         mcmc::simulation::MarkovChain
-        generate_markov_chain(std::string running_parameter="None", double rp=0) {
+        generate_markov_chain(std::string_view running_parameter="None", double rp=0) const {
             uint correlation_time = measure_interval_; // default
             if (correlation_time_rel_results_dir_ != "None") {
                 auto correlation_time_results = param_helper::fs::read_parameter_file(
                         correlation_time_rel_results_dir_ + "/", "correlation_time_results");
                 std::string rp_key;
-                if (running_parameter == "None")
+                if(running_parameter == "None")
                 {
                     rp_key = "default";
                     std::cout << " -- Looking for the correlation time in correlation_time_results.json --" << std::endl;
@@ -318,7 +318,7 @@ namespace mcmc::mode {
             return mcmc::simulation::MarkovChain(correlation_time, number_of_measurements_, 1, equililbrium_time, starting_mode_);
         }
 
-        std::vector<std::string> get_measures() {
+        std::vector<std::string> get_measures() const {
             return measures_;
         }
 

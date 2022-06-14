@@ -86,7 +86,7 @@ void update_step_helper(uint measure_interval, dev_vec &lattice, dev_vec &curren
         // std::cout << proposal_action + 0.5 / m * proposal_kinetic_term << " == " << current_action + 0.5 / m * current_kinetic_term << std::endl;
 
         // Accept/Reject step
-        if (rand(mcmc::util::g_gen) >= std::min(1.0, std::exp(
+        if (rand(mcmc::util::random::g_gen) >= std::min(1.0, std::exp(
                 -1.0 * (proposal_action - current_action) - 0.5 * (proposal_kinetic_term - current_kinetic_term) / m))) {
             thrust::copy(current_lattice.begin(), current_lattice.end(), lattice.begin()); // Reject
         }

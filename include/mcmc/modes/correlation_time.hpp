@@ -47,7 +47,7 @@ namespace mcmc::mode {
          * @param start_measuring Number of Monte Carlo sweeps before
          * starting with the first measurement
          * @param measure Measure used to evalute the autocorrelation time
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          */
         CorrelationTime(
@@ -75,7 +75,7 @@ namespace mcmc::mode {
          * respect to the top-level directory of the project) to the
          * ``equilibrium_time_results.json`` results file
          * @param measure Measure used to evalute the autocorrelation time
-         * @param starting_mode Defines how the Markov chain is initialized;
+         * @param starting_mode Defines how the Markov chain is initialized.
          * Possible values are ``"hot"`` or ``"cold"``.
          */
         CorrelationTime(                    
@@ -99,7 +99,7 @@ namespace mcmc::mode {
          * storing configuration files
          * @returns None
          */
-        void write_to_file(const std::string &rel_root_dir) {
+        void write_to_file(const std::string &rel_root_dir) const {
             Parameters::write_to_file(rel_root_dir, "correlation_time_params");
         }
 
@@ -132,33 +132,33 @@ namespace mcmc::mode {
          * @returns None
          */
         void evaluate(const std::string &rel_data_dir, const std::string &rel_results_dir,
-            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
+            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={}) const
         {
             #ifdef PYTHON_BACKEND
             py::exec("from mcmctools.modes.correlation_time import correlation_time");
             py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func");
-            py::exec(("correlation_time(\
-                minimum_sample_size=" + std::to_string(minimum_sample_size_) + ",\
-                maximum_correlation_time=" + std::to_string(maximum_correlation_time_) + ",\
-                measure='" + measure_ + "',\
-                running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
-                rp_values=" + json(rp_intervals).dump() + ",\
-                rel_data_dir='" + rel_data_dir + "',\
-                rel_results_dir='" + rel_results_dir + "',\
-                sim_base_dir='" + param_helper::proj::project_root() + "',\
-                fma=fma,\
-                custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
+            py::exec(("correlation_time("
+                "minimum_sample_size=" + std::to_string(minimum_sample_size_) + ","
+                "maximum_correlation_time=" + std::to_string(maximum_correlation_time_) + ","
+                "measure='" + measure_ + "',"
+                "running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',"
+                "rp_values=" + json(rp_intervals).dump() + ","
+                "rel_data_dir='" + rel_data_dir + "',"
+                "rel_results_dir='" + rel_results_dir + "',"
+                "sim_base_dir='" + param_helper::proj::project_root() + "',"
+                "fma=fma,"
+                "custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
             #endif
         }
 
         mcmc::simulation::MarkovChain
-        generate_markov_chain(std::string running_parameter="None", double rp=0) {
+        generate_markov_chain(std::string_view running_parameter="None", double rp=0) const {
             uint equilibrium_time = start_measuring_;
             if (equilibrium_time_rel_results_dir_ != "None") {
                 auto equilibrium_time_results = param_helper::fs::read_parameter_file(
                         equilibrium_time_rel_results_dir_, "equilibrium_time_results");
                 std::string rp_key;
-                if (running_parameter == "None")
+                if(running_parameter == "None")
                 {
                     rp_key = "default";
                     std::cout << " -- Looking for the equilibrium time in equilibrium_time_results.json --" << std::endl;
@@ -176,7 +176,7 @@ namespace mcmc::mode {
             return mcmc::simulation::MarkovChain(1, minimum_sample_size_ + maximum_correlation_time_, 1, equilibrium_time, starting_mode_);
         }
 
-        std::vector<std::string> get_measures() {
+        std::vector<std::string> get_measures() const {
             return std::vector<std::string>{measure_};
         }
 

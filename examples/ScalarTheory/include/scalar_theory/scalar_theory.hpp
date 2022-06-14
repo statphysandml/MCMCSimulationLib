@@ -67,7 +67,7 @@ public:
         if(starting_mode == "hot")
         {
             for(auto &site : lattice_)
-                site = normal_(mcmc::util::g_gen);
+                site = normal_(mcmc::util::random::g_gen);
         }
     }
 
@@ -84,7 +84,7 @@ public:
             auto current_lattice(lattice_);
 
             // Sample momenta
-            std::generate(momenta_.begin(), momenta_.end(), [this]() { return normal_(mcmc::util::g_gen); });
+            std::generate(momenta_.begin(), momenta_.end(), [this]() { return normal_(mcmc::util::random::g_gen); });
             std::copy(momenta_.begin(), momenta_.end(), current_momenta_.begin());
 
             // Hamiltonians' equation - Leapfrog
@@ -111,7 +111,7 @@ public:
             exponential_energy_violation += std::exp(-1.0 * energy_difference);
 
             // Accept/Reject step
-            if (rand_(mcmc::util::g_gen) >= std::min(1.0, std::exp(-1.0 * energy_difference))) {
+            if (rand_(mcmc::util::random::g_gen) >= std::min(1.0, std::exp(-1.0 * energy_difference))) {
                 lattice_ = current_lattice; // Reject
             }
             else {

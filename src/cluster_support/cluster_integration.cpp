@@ -15,7 +15,7 @@ namespace mcmc::cluster {
         return cluster_integration::g_executable_name;
     }
 
-    void cluster_integration::set_executable_name(const std::string &executable_name) {
+    void cluster_integration::set_executable_name(std::string_view executable_name) {
         cluster_integration::g_executable_name = executable_name;
         std::cout << " -- Setting executable name to '" << cluster_integration::g_executable_name << "' --" << std::endl;
     }
@@ -24,7 +24,7 @@ namespace mcmc::cluster {
         return cluster_integration::g_cluster_mode;
     }
 
-    void cluster_integration::set_cluster_mode(const std::string &cluster_mode) {
+    void cluster_integration::set_cluster_mode(std::string_view cluster_mode) {
         cluster_integration::g_cluster_mode = cluster_mode;
         std::cout << " -- Setting cluster mode to '" << cluster_integration::g_cluster_mode << "' --" << std::endl;
     }

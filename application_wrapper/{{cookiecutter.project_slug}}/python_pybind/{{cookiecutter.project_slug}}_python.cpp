@@ -7,7 +7,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include <mcmc_pybind/pybind_simulation_parameters.hpp>
+#include <mcmc/mcmc_pybind/pybind_simulation_parameters.hpp>
 
 
 #include "../include/{{ cookiecutter.project_slug }}/{{ cookiecutter.project_slug }}.hpp"

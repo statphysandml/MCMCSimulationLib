@@ -18,11 +18,11 @@ namespace mcmc::cluster {
      * function needs to be adapted according to the used cpu cluster. */
     void prepare_execution_on_cpu_cluster(
         const std::string &mode_type,
-        const mcmc::cmdint::PathParameters path_parameters,
+        const mcmc::cmdint::PathParameters &path_parameters,
         const std::string &executable_name,
         const bool run = true,
         const bool eval = true,
-        const std::vector<std::string> additional_args = {}
+        const std::vector<std::string> &additional_args = {}
     );
     
     /** @brief Function used by mcmc::cluster::execute to submit the job to
@@ -30,8 +30,8 @@ namespace mcmc::cluster {
      * to the used cpu cluster. */
     void run_execution_on_cpu_cluster(
         const std::string &mode_type,
-        const mcmc::cmdint::PathParameters path_parameters,
-        const std::string &cluster_mode
+        const mcmc::cmdint::PathParameters &path_parameters,
+        std::string_view cluster_mode
     );
 }
 

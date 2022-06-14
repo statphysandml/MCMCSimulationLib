@@ -10,7 +10,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include <mcmc/mcmc_simulation/header.hpp"
+#include <mcmc/mcmc_simulation/header.hpp>
 #include <mcmc/modes/mode_header.hpp>
 
 
@@ -53,8 +53,8 @@ namespace mcmc::pybind {
                     System&,
                     mcmc::mode::EquilibriumTime&,
                     MeasureProcessor&,
-                    const std::string,
-                    const std::string,
+                    const std::string&,
+                    const std::string&,
                     const std::vector<double>&>(&SystemEquilibriumTime::generate_simulation),
                 "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                 "running_parameter_kind"_a="None", "running_parameter"_a="None",
@@ -71,8 +71,8 @@ namespace mcmc::pybind {
                     System&,
                     mcmc::mode::CorrelationTime&,
                     MeasureProcessor&,
-                    const std::string,
-                    const std::string,
+                    const std::string&,
+                    const std::string&,
                     const std::vector<double>&>(&SystemCorrelationTime::generate_simulation),
                 "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                 "running_parameter_kind"_a="None", "running_parameter"_a="None",
@@ -89,8 +89,8 @@ namespace mcmc::pybind {
                     System&,
                     mcmc::mode::ExpectationValue&,
                     MeasureProcessor&,
-                    const std::string,
-                    const std::string,
+                    const std::string&,
+                    const std::string&,
                     const std::vector<double>&>(&SystemExpectationValue::generate_simulation),
                 "systembase_parameters"_a, "execution_parameters"_a, "measure_parameters"_a,
                 "running_parameter_kind"_a="None", "running_parameter"_a="None",

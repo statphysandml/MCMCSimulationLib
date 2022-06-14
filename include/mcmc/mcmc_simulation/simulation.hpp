@@ -52,7 +52,8 @@ namespace mcmc::simulation {
     class Simulation : public param_helper::params::Parameters {
     public:
         // Constructor for loading from params
-        explicit Simulation(const json params) : Parameters(params), mode_(EP::name()), measure_system_(MS::name()),// The remaining parameters are all optional
+        explicit Simulation(const json params) : Parameters(params),
+            // The remaining parameters are all optional
             running_parameter_kind_(get_entry<std::string>("running_parameter_kind", "None")),
             running_parameter_(get_entry<std::string>("running_parameter", "None")),
             rp_intervals_(get_entry<std::vector<double>>("rp_intervals", std::vector<double>{0.0}))
@@ -67,9 +68,9 @@ namespace mcmc::simulation {
             if(haskey("execution_mode")) {
                 execution_mode_ = EP(get_entry<json>("execution_mode"));
             }
-                // Load execution parameters from file
+            // Load execution parameters from file
             else {
-                // std::cout << "Load execution parameters from file based on given mode" << std::endl;
+                // Load execution parameters from file based on given mode
                 std::string execution_mode_path = get_entry<std::string>("execution_mode_path");
                 execution_mode_ = EP(param_helper::fs::read_parameter_file(execution_mode_path, mode_ + "_params"));
             }
@@ -79,9 +80,9 @@ namespace mcmc::simulation {
             if(haskey("measurement")) {
                 measurement_ = MS(get_entry<json>("measurement"));
             }
-                // Load measure parameters from file
+            // Load measure parameters from file
             else {
-                // std::cout << "Load measure parameters from file based on given measure_system" << std::endl;
+                // Load measure parameters from file based on given measure_system
                 std::string measurement_path = get_entry<std::string>("measurement_path");
                 measurement_ = MS(param_helper::fs::read_parameter_file(measurement_path, measure_system_ + "_params"));
             }
@@ -97,10 +98,8 @@ namespace mcmc::simulation {
             {
                 // Construct running parameter path for later simulations
                 auto expanded_parameters = build_expanded_raw_parameters();
-                // std::cout << expanded_parameters << std::endl;
                 running_parameter_path_ = std::vector<std::string> {};
-                auto running_parameter_kind_path_found = param_helper::params::construct_parameter_path(expanded_parameters.get_json(), running_parameter_kind_, running_parameter_path_);
-                if(!running_parameter_kind_path_found)
+                if(auto running_parameter_kind_path_found = param_helper::params::construct_parameter_path(expanded_parameters.get_json(), running_parameter_kind_, running_parameter_path_); !running_parameter_kind_path_found)
                 {
                     std::cerr << "Running parameter kind not found" << std::endl;
                     std::exit(EXIT_FAILURE);
@@ -243,7 +242,7 @@ namespace mcmc::simulation {
                 EP& execution_mode,
                 const std::string &rel_measurement_path,
                 const std::string &running_parameter_kind="None",
-                const std::string running_parameter="None",
+                const std::string &running_parameter="None",
                 const std::vector<double>& rp_intervals=std::vector<double>{0.0}
         )
         {
@@ -478,7 +477,6 @@ namespace mcmc::simulation {
             // Create folder in config directory if not present
             if(!param_helper::fs::direxists(param_helper::proj::project_root() + rel_config_dir))
             {
-                // std::cout << "Create config directory" << std::endl;
                 param_helper::fs::generate_directory_if_not_present(rel_config_dir);
             }
 
@@ -524,12 +522,12 @@ namespace mcmc::simulation {
             systembase_ = SB(new_system_params[SB::name()]);
         }
 
-        const std::vector<std::string> get_measures() const
+        std::vector<std::string> get_measures() const
         {
             return systembase_.get_measures();
         }
 
-        static const std::string name()
+        static std::string name()
         {
             return "sim_params";
         }
@@ -577,15 +575,16 @@ namespace mcmc::simulation {
         std::vector<double> rp_intervals_;
         std::string running_parameter_;
 
-        std::string mode_;
-        std::string measure_system_;
+        std::string mode_ = EP::name();
+        std::string measure_system_ = MS::name();
         std::string running_parameter_kind_;
         std::vector<std::string> running_parameter_path_;
 
-    private:
         SB systembase_;
         EP execution_mode_;
         MS measurement_;
+
+    private:
 
         MarkovChain markov_chain_;
 

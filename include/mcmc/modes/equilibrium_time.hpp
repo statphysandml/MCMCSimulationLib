@@ -71,7 +71,7 @@ namespace mcmc::mode {
          * storing configuration files
          * @returns None
          */
-        void write_to_file(const std::string &rel_root_dir) {
+        void write_to_file(const std::string &rel_root_dir) const {
             Parameters::write_to_file(rel_root_dir, "equilibrium_time_params");
         }
 
@@ -104,34 +104,34 @@ namespace mcmc::mode {
          * @returns None
          */
         void evaluate(const std::string &rel_data_dir, const std::string &rel_results_dir,
-            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
+            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={}) const
         {
             #ifdef PYTHON_BACKEND
             py::exec("import json");
             py::exec("from mcmctools.modes.equilibrium_time import equilibrium_time");
             py::exec("from mcmctools.loading.custom_function_support import get_custom_load_data_func");
-            py::exec(("equilibrium_time(\
-                sample_size=" + std::to_string(sample_size_) + ",\
-                number_of_steps=" + std::to_string(number_of_steps_) + ",\
-                measure='" + measure_ + "',\
-                confidence_range=" + std::to_string(confidence_range_) + ",\
-                confidence_window=" + std::to_string(confidence_window_) + ",\
-                running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',\
-                rp_values=" + json(rp_intervals).dump() + ",\
-                rel_data_dir='" + rel_data_dir + "',\
-                rel_results_dir='" + rel_results_dir + "',\
-                sim_base_dir='" + param_helper::proj::project_root() + "',\
-                fma=fma,\
-                custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
+            py::exec(("equilibrium_time("
+                "sample_size=" + std::to_string(sample_size_) + ","
+                "number_of_steps=" + std::to_string(number_of_steps_) + ","
+                "measure='" + measure_ + "',"
+                "confidence_range=" + std::to_string(confidence_range_) + ","
+                "confidence_window=" + std::to_string(confidence_window_) + ","
+                "running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',"
+                "rp_values=" + json(rp_intervals).dump() + ","
+                "rel_data_dir='" + rel_data_dir + "',"
+                "rel_results_dir='" + rel_results_dir + "',"
+                "sim_base_dir='" + param_helper::proj::project_root() + "',"
+                "fma=fma,"
+                "custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
             #endif
         }
 
         mcmc::simulation::MarkovChain
-        generate_markov_chain(std::string running_parameter="None", double rp=0) {
+        generate_markov_chain(std::string_view running_parameter="None", double rp=0) const {
             return mcmc::simulation::MarkovChain(1, number_of_steps_, 2 * sample_size_, 0, "alternating");
         }
 
-        std::vector<std::string> get_measures() {
+        std::vector<std::string> get_measures() const {
             return std::vector<std::string>{measure_};
         }
 

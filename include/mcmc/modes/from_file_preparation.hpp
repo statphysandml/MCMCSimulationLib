@@ -25,7 +25,7 @@ namespace mcmc::mode {
         FromFilePreparation() : FromFilePreparation(json{})
         {}
 
-        void write_to_file(const std::string &rel_root_dir) {
+        void write_to_file(const std::string &rel_root_dir) const {
             Parameters::write_to_file(rel_root_dir, "from_file_preparation_params");
         }
 
@@ -39,16 +39,16 @@ namespace mcmc::mode {
         }
 
         void evaluate(const std::string &rel_data_dir, const std::string &rel_results_dir,
-            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={})
+            const std::string &running_parameter="None", const std::vector<double>& rp_intervals=std::vector<double>{0.0}, const json simparams_json={}) const
         {}
 
         mcmc::simulation::MarkovChain
-        generate_markov_chain(std::string running_parameter = "None", double rp = 0) {
+        generate_markov_chain(std::string_view running_parameter = "None", double rp = 0) const {
             std::cerr << "-- A markov chain based on the from file preparation mode shouldn't be executed -- " << std::endl;
             return mcmc::simulation::MarkovChain(0, 0, 0, 0, "hot");
         }
 
-        std::vector<std::string> get_measures() {
+        std::vector<std::string> get_measures() const {
             return std::vector<std::string>{};
         }
     };

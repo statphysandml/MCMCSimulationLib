@@ -3,8 +3,8 @@
 
 namespace mcmc::cluster {
     void prepare_execution_on_cpu_cluster(
-        const std::string &mode_type, const mcmc::cmdint::PathParameters path_parameters,
-        const std::string &executable_name, const bool run, const bool eval, const std::vector<std::string> additional_args) {
+        const std::string &mode_type, const mcmc::cmdint::PathParameters &path_parameters,
+        const std::string &executable_name, const bool run, const bool eval, const std::vector<std::string> &additional_args) {
         if (executable_name == "None") {
             std::cerr << "Executable name not properly set";
             std::exit(EXIT_FAILURE);
@@ -28,13 +28,13 @@ namespace mcmc::cluster {
         os << param_helper::proj::project_root() << "build/" << executable_name
             << " "  << mode_type << " " << path_parameters.target_name_ << " " << path_parameters.sim_root_dir_
             << " "  << path_parameters.rel_path_ << " " << run << " " << eval;
-        if (additional_args.empty())
-            for (auto additional_arg: additional_args)
+        if(additional_args.empty())
+            for(const auto &additional_arg: additional_args)
                 os << " " << additional_arg;
         os << std::endl;
     }
 
-    void run_execution_on_cpu_cluster(const std::string &mode_type, const mcmc::cmdint::PathParameters path_parameters, const std::string &cluster_mode) {
+    void run_execution_on_cpu_cluster(const std::string &mode_type, const mcmc::cmdint::PathParameters &path_parameters, std::string_view cluster_mode) {
         std::this_thread::sleep_for(std::chrono::seconds(3));
         std::string filename = mode_type + "_" + path_parameters.target_name_;
         std::string qsubfile = param_helper::proj::project_root() + "/" +

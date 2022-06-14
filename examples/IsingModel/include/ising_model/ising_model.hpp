@@ -51,14 +51,14 @@ public:
         if(starting_mode == "hot")
         {
             for(auto &site : lattice_)
-                site = 2 * uniint(mcmc::util::g_gen) - 1;
+                site = 2 * uniint(mcmc::util::random::g_gen) - 1;
         }
     }
 
     // Metropolis update step
     void update_step(uint measure_interval=1)
     {
-        auto random_site_index = rnd_lattice_site_(mcmc::util::g_gen);
+        auto random_site_index = rnd_lattice_site_(mcmc::util::random::g_gen);
 
         // Flip spin
         auto proposed_state = -1 * lattice_[random_site_index];
@@ -66,7 +66,7 @@ public:
         auto current_energy = local_energy(random_site_index, lattice_[random_site_index]);
         auto proposal_energy = local_energy(random_site_index, proposed_state);
 
-        if(rand_(mcmc::util::g_gen) < std::min(1.0, std::exp(-1.0 * (proposal_energy - current_energy))))
+        if(rand_(mcmc::util::random::g_gen) < std::min(1.0, std::exp(-1.0 * (proposal_energy - current_energy))))
             lattice_[random_site_index] = proposed_state;
         // else
         //     reject

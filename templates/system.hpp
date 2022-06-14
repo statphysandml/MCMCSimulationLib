@@ -35,7 +35,7 @@ public:
     {
         // Called before every MCMC simulation for initalizing the system representation, starting mode can be "hot" or "cold", for example,
         if(starting_mode == "hot")
-            std::transform(mu_.begin(), mu_.end(), system_.begin(), [this] (const double param) -> double { return param + this->sigma_ * this->normal_(mcmc::util::g_gen); });
+            std::transform(mu_.begin(), mu_.end(), system_.begin(), [this] (const double param) -> double { return param + this->sigma_ * this->normal_(mcmc::util::random::g_gen); });
         else
             std::fill(system_.begin(), system_.end(), 0);
     }
@@ -44,7 +44,7 @@ public:
     {
         // Called every MCMC step
         for(auto i = 0; i < get_size(); i++)
-            system_[i] = system_[i] - dt_ * (system_[i] - mu_[i]) / std::pow(sigma_, 2.0) + std::sqrt(2.0 * dt_) * normal_(mcmc::util::g_gen);   
+            system_[i] = system_[i] - dt_ * (system_[i] - mu_[i]) / std::pow(sigma_, 2.0) + std::sqrt(2.0 * dt_) * normal_(mcmc::util::random::g_gen);   
     }
 
     uint16_t get_size() const
