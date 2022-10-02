@@ -20,9 +20,7 @@ cookiecutter(
     './application_wrapper',
     no_input=True,
     output_dir=args.output_dir,
-#     config_file=args.config_file,
     extra_context={
-        'path_to_mcmc_simulation_lib': os.path.dirname(os.path.realpath(__file__)),
         'project_name': args.project_name,
         'use_predefined_measures': args.predefined_measures,
         'python_bindings': args.python_bindings,
