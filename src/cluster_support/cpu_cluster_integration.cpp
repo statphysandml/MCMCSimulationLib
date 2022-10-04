@@ -28,7 +28,7 @@ namespace mcmc::cluster {
         os << param_helper::proj::project_root() << "build/" << executable_name
             << " "  << mode_type << " " << path_parameters.target_name_ << " " << path_parameters.sim_root_dir_
             << " "  << path_parameters.rel_path_ << " " << run << " " << eval;
-        if(additional_args.empty())
+        if(!additional_args.empty())
             for(const auto &additional_arg: additional_args)
                 os << " " << additional_arg;
         os << std::endl;

@@ -55,11 +55,11 @@ namespace mcmc::measures {
         auto &os = os_ptr_->get();
         // Write header of output file
         if (rep == 0) {
-            if(measure_names.empty())
+            if(!measure_names.empty())
                 os << measure_names[0];
             for (uint i = 1; i < measure_names.size(); i++)
                 os << "\t" << measure_names[i];
-            if(measure_names.empty())
+            if(!measure_names.empty())
                 os << std::endl;
         }
     }

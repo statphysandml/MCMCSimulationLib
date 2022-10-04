@@ -79,11 +79,11 @@ namespace mcmc::measures {
             auto measures = measurements_to_string(measurements);
 
             auto &os = os_ptr_->get();
-            if(measures.empty())
+            if(!measures.empty())
                 os << measures[0];
             for (uint j = 1; j < measures.size(); j++)
                 os << "\t" << measures[j];
-            if(measures.empty())
+            if(!measures.empty())
                 os << "\n";
         }
 
