@@ -270,7 +270,6 @@ namespace mcmc::mode {
                 "sim_base_dir='" + param_helper::proj::project_root() + "',"
                 "custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',"
                 "custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
-            py::exec(("print([float('{:.6f}'.format(mu)) for mu in " + json(rp_intervals).dump() + " ])").c_str());
             #endif
         }
 
