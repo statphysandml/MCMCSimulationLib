@@ -179,7 +179,7 @@ install/
 lib/
 __pycache__/
 
-include/execution/config.h
+include/mcmc/cluster_support/config.h
 python/config.h
 
 examples/*
