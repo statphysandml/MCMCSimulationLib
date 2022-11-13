@@ -16,8 +16,8 @@ namespace mcmc::cluster {
                                         ".sh");
         auto &os = fileos.get();
         os << "#!/bin/bash\n";
-        os << "#PBS -l nodes=1:ppn=1:medium_buster\n";
-        os << "#PBS -q medium_buster\n";
+        os << "#PBS -l nodes=1:ppn=1:medium_bullseye\n";
+        os << "#PBS -q medium_bullseye\n";
         os << "#PBS -l nice=19\n";
         os << "#PBS -l mem=2gb\n"; // 15gb
         os << "#PBS -l vmem=2gb\n"; // 15gb
