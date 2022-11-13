@@ -22,7 +22,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<IsingModel, mcmc::measures::Re
 
         auto simulation = mcmc::simulation::Simulation<IsingModel>::prepare_simulation_from_file(
             system_params, readable_measures,
-            "systembase_params", "beta", mcmc::util::linspace(0.1, 0.7, 7));
+            "systembase", "beta", mcmc::util::linspace(0.1, 0.7, 7));
 
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(100, 1000, 0.1, 10, "Mean");

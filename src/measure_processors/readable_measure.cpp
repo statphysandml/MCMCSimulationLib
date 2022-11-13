@@ -13,7 +13,7 @@ namespace mcmc::measures {
     {}
     
     void ReadableMeasure::write_to_file(const std::string &rel_root_dir) const {
-        Parameters::write_to_file(rel_root_dir, "readable_measure_params");
+        Parameters::write_to_file(rel_root_dir, ReadableMeasure::name());
     }
 
     param_helper::params::Parameters ReadableMeasure::build_expanded_raw_parameters() const {

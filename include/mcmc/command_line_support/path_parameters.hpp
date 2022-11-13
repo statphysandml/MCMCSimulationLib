@@ -30,11 +30,11 @@ namespace mcmc::cmdint {
                         const std::string &sim_root_dir="./",
                         const bool rel_path=true) :
                 target_name_(target_name), sim_root_dir_(sim_root_dir), rel_path_(rel_path),
-                rel_config_dir_(sim_root_dir + "/configs/" + target_name + "/"),
-                rel_data_dir_(sim_root_dir + "/data/" + target_name + "/"),
-                rel_results_dir_(sim_root_dir + "/results/" + target_name + "/"),
-                rel_cpu_bash_script_dir_(sim_root_dir + "/cpu_cluster_runs/" + target_name + "/"),
-                rel_gpu_bash_script_dir_(sim_root_dir + "/gpu_cluster_runs/" + target_name + "/")
+                rel_config_dir_(sim_root_dir + "configs/" + target_name + "/"),
+                rel_data_dir_(sim_root_dir + "data/" + target_name + "/"),
+                rel_results_dir_(sim_root_dir + "results/" + target_name + "/"),
+                rel_cpu_bash_script_dir_(sim_root_dir + "cpu_cluster_runs/" + target_name + "/"),
+                rel_gpu_bash_script_dir_(sim_root_dir + "gpu_cluster_runs/" + target_name + "/")
                 {}
 
         void set_rel_config_dir(std::string_view rel_config_dir)

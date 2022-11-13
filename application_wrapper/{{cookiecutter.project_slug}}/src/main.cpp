@@ -31,7 +31,7 @@ struct CmdIntSimulation : mcmc::cmdint::CmdIntSim<{{ cookiecutter.project_name }
 
         auto simulation_parameters = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
             system, readable_measures,
-            "systembase_params", "sigma", sigma_intervals);
+            "systembase", "sigma", sigma_intervals);
 
         typedef mcmc::mode::EquilibriumTime EquilibriumTimeParams;
         EquilibriumTimeParams equilibrium_time_parameters(20, 2000, 0.1, 10, "Mean");
@@ -115,7 +115,7 @@ void prepare_simulation_parameters(const std::string &target_name, // Name of th
 
     auto simulation = mcmc::simulation::Simulation<{{ cookiecutter.project_name }}>::prepare_simulation_from_file(
             system, readable_measures,
-            "systembase_params", "sigma", sigma_intervals);
+            "systembase", "sigma", sigma_intervals);
 
     // Store simulation parameters
     simulation.write_to_file(path_parameters.get_rel_config_dir());
@@ -260,7 +260,7 @@ int main(int argc, char **argv) {
             system,
             equilibrium_time_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "sigma", // running parameter (rp)
             sigma_intervals // rp_intervals
     );
@@ -293,7 +293,7 @@ int main(int argc, char **argv) {
             system,
             correlation_time_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "sigma", // running parameter (rp)
             sigma_intervals // rp_intervals
     );
@@ -327,7 +327,7 @@ int main(int argc, char **argv) {
             system,
             expectation_value_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "sigma", // running parameter (rp)
             sigma_intervals // rp_intervals
     );

@@ -6,7 +6,7 @@
 #include <map>
 #include <utility>
 
-#include "config.h"
+#include <mcmc/cluster_support/config.h>
 
 #include <mcmc/command_line_support/path_parameters.hpp>
 #include <mcmc/command_line_support/cmdint.hpp>

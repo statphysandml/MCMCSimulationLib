@@ -17,7 +17,7 @@ namespace mcmc::simulation {
         // Parameter related functions
 
         static const std::string name() {
-            return "systembase_params";
+            return "systembase";
         }
 
         virtual void write_to_file(const std::string &rel_root_dir) {

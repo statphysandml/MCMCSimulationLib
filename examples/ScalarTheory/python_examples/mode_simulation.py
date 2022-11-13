@@ -31,7 +31,7 @@ if __name__ == "__main__":
                                      sim_base_dir="./../",
                                      rel_data_dir="data/" + target_name + "/",
                                      rel_results_dir="results/" + target_name + "/",
-                                     running_parameter_kind="systembase_params", running_parameter="kappa",
+                                     running_parameter_kind="systembase", running_parameter="kappa",
                                      rp_values=rp_values
                                      )
 

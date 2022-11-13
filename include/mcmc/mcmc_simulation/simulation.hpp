@@ -72,7 +72,7 @@ namespace mcmc::simulation {
             else {
                 // Load execution parameters from file based on given mode
                 std::string execution_mode_path = get_entry<std::string>("execution_mode_path");
-                execution_mode_ = EP(param_helper::fs::read_parameter_file(execution_mode_path, mode_ + "_params"));
+                execution_mode_ = EP(param_helper::fs::read_parameter_file(execution_mode_path, mode_));
             }
 
             // *** MEASURES ***
@@ -84,7 +84,7 @@ namespace mcmc::simulation {
             else {
                 // Load measure parameters from file based on given measure_system
                 std::string measurement_path = get_entry<std::string>("measurement_path");
-                measurement_ = MS(param_helper::fs::read_parameter_file(measurement_path, measure_system_ + "_params"));
+                measurement_ = MS(param_helper::fs::read_parameter_file(measurement_path, measure_system_));
             }
 
             // Set systembase measures <-> Introduce this as an error for usage of systembase with Simulation? In the sense that as soon you run a simulation with an execution mode, systembase shouldn't have any measures?
@@ -529,7 +529,7 @@ namespace mcmc::simulation {
 
         static std::string name()
         {
-            return "sim_params";
+            return "simulation";
         }
         
         /** @brief Runs the MCMC simulation and processes all measuremnts

@@ -22,7 +22,7 @@ namespace mcmc::cluster {
         os << "#PBS -l mem=2gb\n"; // 15gb
         os << "#PBS -l vmem=2gb\n"; // 15gb
         os << "#PBS -l walltime=72:00:00\n" << std::endl;
-        if(!strcmp(VIRTUAL_ENV, "None"))
+        if(strcmp(VIRTUAL_ENV, "None") != 0)
             os << "source " << mcmc::virtualenv::virtual_env_integration::g_conda_activate_path << " " << mcmc::virtualenv::virtual_env_integration::g_virtual_env << "\n" << std::endl;
         os << "cd " << param_helper::proj::project_root() << "build/" << "\n";
         os << param_helper::proj::project_root() << "build/" << executable_name

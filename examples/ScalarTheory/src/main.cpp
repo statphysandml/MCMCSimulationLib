@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
             system,
             equilibrium_time_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "kappa", // running parameter (rp)
             kappa_intervals // rp_intervals
     );
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
             system,
             correlation_time_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "kappa", // running parameter (rp)
             kappa_intervals // rp_intervals
     );
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
             system,
             expectation_value_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "kappa", // running parameter (rp)
             kappa_intervals // rp_intervals
     );

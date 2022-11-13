@@ -127,8 +127,8 @@ namespace mcmc::cmdint {
 
         // Load config_file from file if present
         if (param_helper::fs::check_if_parameter_file_exists(path_parameters.get_rel_config_dir() + "/",
-                                                                mode_type + "_params",
-                                                                path_parameters.rel_path_)) {
+                                                             mode_type,
+                                                             path_parameters.rel_path_)) {
             std::cout << " -- Mode = " << mode_type
                         << " will be executed based on the provided json files -- "
                         << std::endl;

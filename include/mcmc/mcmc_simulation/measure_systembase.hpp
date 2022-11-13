@@ -36,6 +36,8 @@ namespace mcmc::simulation {
             measurements_.clear();
             auto common_defined_measures = generate_systembase_measures(measure_names);
             this->concat_measures(common_defined_measures);
+
+            this->sort_measures();
         }
 
     protected:
@@ -43,7 +45,9 @@ namespace mcmc::simulation {
 
         void concat_measures(std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements);
 
-        // Stores all measure objects - these objects need to created by the derived class by calling generate_measures in void initialize()
+        void sort_measures();
+
+        // Stores all measure objects - these objects need to be created by the derived class by calling generate_measures in void initialize()
         std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements_;
     };
 
@@ -51,7 +55,7 @@ namespace mcmc::simulation {
     std::vector< std::unique_ptr<measures::Measure<Derived>> > MeasureSystemBase<Derived>::generate_systembase_measures(const std::vector<std::string>& measure_names)
     {
         std::vector<std::unique_ptr<measures::Measure<Derived>>> measurements{};
-        for (auto &measure_name :  measure_names) {
+        for(auto &measure_name : measure_names) {
             if (measure_name == "Mean")
                 measurements.push_back(std::make_unique<measures::Mean<Derived>>());
             else if (measure_name == "AbsMean")
@@ -74,6 +78,25 @@ namespace mcmc::simulation {
     void  MeasureSystemBase<Derived>::concat_measures(
             std::vector<std::unique_ptr<measures::Measure<Derived>>> &measurements) {
         std::move(begin(measurements), end(measurements), std::inserter(measurements_, end(measurements_)));
+    }
+
+    template<typename Derived>
+    void MeasureSystemBase<Derived>::sort_measures()
+    {
+        for(auto i = 0; i < measurements_.size(); i++)
+        {
+            auto &measure_name = this->measures_[i];
+            if(measurements_[i]->name() != measure_name)
+            {
+                for(auto j = i + 1; j < measurements_.size(); j++)
+                {
+                    if(measurements_[j]->name() == measure_name)
+                    {
+                        std::swap(measurements_[i], measurements_[j]);
+                    }
+                }
+            }
+        }
     }
 }
 

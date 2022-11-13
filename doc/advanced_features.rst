@@ -89,7 +89,7 @@ simulation with command line support:
 
          auto simulation_parameters = mcmc::simulation::Simulation<MCMCSystem>::prepare_simulation_from_file(
                system, readable_measures,
-               "systembase_params", "sigma", sigma_intervals);
+               "systembase", "sigma", sigma_intervals);
 
          typedef mcmc::mode::ExpectationValue ExpectationValueParams;
          ExpectationValueParams expectation_value_parameters(
@@ -220,7 +220,7 @@ The modified ``main.cpp`` file looks as follows:
 
          auto simulation_parameters = mcmc::simulation::Simulation<MCMCSystem>::prepare_simulation_from_file(
                system, readable_measures,
-               "systembase_params", "sigma", sigma_intervals);
+               "systembase", "sigma", sigma_intervals);
 
          typedef mcmc::mode::ExpectationValue ExpectationValueParams;
          ExpectationValueParams expectation_value_parameters(

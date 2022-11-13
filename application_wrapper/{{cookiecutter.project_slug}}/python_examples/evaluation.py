@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     from pystatplottools.utils.bins_and_alignment import revert_align_bins
     sigmas = [0.3, 0.9]
-    mus = ["mu = " + str(mu) for mu in sim_params["systembase_params"]["mu"]] + ["mean"] + ["normalized"]
+    mus = ["mu = " + str(mu) for mu in sim_params["systembase"]["mu"]] + ["mean"] + ["normalized"]
 
     fig, axes = fma.newfig(1.8, nrows=1, ncols=2, ratio=1.0, figsize=(11, 4))
     for i, sigma in enumerate(sigmas):

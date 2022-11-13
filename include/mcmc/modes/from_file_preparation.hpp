@@ -26,7 +26,7 @@ namespace mcmc::mode {
         {}
 
         void write_to_file(const std::string &rel_root_dir) const {
-            Parameters::write_to_file(rel_root_dir, "from_file_preparation_params");
+            Parameters::write_to_file(rel_root_dir, FromFilePreparation::name());
         }
 
         Parameters build_expanded_raw_parameters() const {

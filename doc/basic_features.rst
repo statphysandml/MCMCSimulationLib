@@ -113,7 +113,7 @@ consists of the following building blocks:
             system,
             expectation_value_parameters,
             readable_measures,
-            "systembase_params", // running_parameter_kind
+            "systembase", // running_parameter_kind
             "sigma", // running parameter (rp)
             sigma_intervals // rp_intervals
    );

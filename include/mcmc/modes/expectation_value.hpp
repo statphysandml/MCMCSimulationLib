@@ -218,7 +218,7 @@ namespace mcmc::mode {
          * @returns None
          */
         void write_to_file(const std::string &rel_root_dir) const {
-            Parameters::write_to_file(rel_root_dir, "expectation_value_params");
+            Parameters::write_to_file(rel_root_dir, ExpectationValue::name());
         }
 
         Parameters build_expanded_raw_parameters() const {
@@ -261,7 +261,7 @@ namespace mcmc::mode {
             py::exec(("expectation_value("
                 "measures=" + param_helper::params::merge_list_like<std::string>(measures_, post_measures_).dump() + ","
                 "running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',"
-                "rp_values=" + json(rp_intervals).dump() + ","
+                "rp_values=[float('{:.6f}'.format(mu)) for mu in " + json(rp_intervals).dump() + " ],"
                 "rel_data_dir='" + rel_data_dir + "',"
                 "number_of_measurements=" + std::to_string(number_of_measurements_) + ","
                 "error_type='" + error_type_ + "',"
@@ -270,6 +270,7 @@ namespace mcmc::mode {
                 "sim_base_dir='" + param_helper::proj::project_root() + "',"
                 "custom_measures_func=get_custom_measures_func(), custom_measures_args='" + simparams_json.dump() + "',"
                 "custom_load_data_func=get_custom_load_data_func(), custom_load_data_args='" + simparams_json.dump() + "')").c_str());
+            py::exec(("print([float('{:.6f}'.format(mu)) for mu in " + json(rp_intervals).dump() + " ])").c_str());
             #endif
         }
 

@@ -12,7 +12,7 @@ def compute_scalar_theory_measures(data, measure_name, sim_params):
 
 
 def compute_two_point_correlation(data, sim_params):
-    dimensions = sim_params["systembase_params"]["dimensions"]
+    dimensions = sim_params["systembase"]["dimensions"]
     dim_mul = np.cumprod([1] + dimensions)
     lattice_configs = data["Config"].values
     elem_per_site = 1
@@ -34,7 +34,7 @@ def compute_two_point_correlation(data, sim_params):
 
 
 def compute_ith_two_point_correlation(data, sim_params):
-    dimensions = sim_params["systembase_params"]["dimensions"]
+    dimensions = sim_params["systembase"]["dimensions"]
     dim_mul = np.cumprod([1] + dimensions)
     lattice_configs = data["Config"].values
     elem_per_site = 1

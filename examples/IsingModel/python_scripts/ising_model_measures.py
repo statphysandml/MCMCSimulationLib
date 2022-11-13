@@ -10,15 +10,15 @@ def compute_ising_model_measures(data, measure_name, sim_params):
 
 
 def compute_ising_model_energy(data, sim_params):
-    dimensions = sim_params["systembase_params"]["dimensions"]
+    dimensions = sim_params["systembase"]["dimensions"]
     dim_mul = np.cumprod([1] + dimensions)
     lattice_configs = data["Config"].values
     elem_per_site = 1
     n_sites = np.size(lattice_configs, axis=1)
 
     beta = data["Beta"].values
-    J = sim_params["systembase_params"]["J"]
-    h = sim_params["systembase_params"]["h"]
+    J = sim_params["systembase"]["J"]
+    h = sim_params["systembase"]["h"]
 
     energies = np.zeros(len(data))
 

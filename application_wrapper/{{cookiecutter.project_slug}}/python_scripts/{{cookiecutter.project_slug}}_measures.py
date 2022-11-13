@@ -10,7 +10,7 @@ def compute_{{ cookiecutter.project_slug }}_measures(data, measure_name, sim_par
 
 
 def compute_normalized_random_variable(data, sim_params):
-    mus = sim_params["systembase_params"]["mu"]
+    mus = sim_params["systembase"]["mu"]
 
     # Compute expected mu and sigma for the sum of random variables
     total_mu = np.sum(mus)

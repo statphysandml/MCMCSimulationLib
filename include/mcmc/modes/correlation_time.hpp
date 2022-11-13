@@ -100,7 +100,7 @@ namespace mcmc::mode {
          * @returns None
          */
         void write_to_file(const std::string &rel_root_dir) const {
-            Parameters::write_to_file(rel_root_dir, "correlation_time_params");
+            Parameters::write_to_file(rel_root_dir, CorrelationTime::name());
         }
 
         Parameters build_expanded_raw_parameters() const {
@@ -142,7 +142,7 @@ namespace mcmc::mode {
                 "maximum_correlation_time=" + std::to_string(maximum_correlation_time_) + ","
                 "measure='" + measure_ + "',"
                 "running_parameter=None if '" + running_parameter + "' == 'None' else '" + running_parameter + "',"
-                "rp_values=" + json(rp_intervals).dump() + ","
+                "rp_values=[float('{:.6f}'.format(mu)) for mu in " + json(rp_intervals).dump() + " ],"
                 "rel_data_dir='" + rel_data_dir + "',"
                 "rel_results_dir='" + rel_results_dir + "',"
                 "sim_base_dir='" + param_helper::proj::project_root() + "',"
