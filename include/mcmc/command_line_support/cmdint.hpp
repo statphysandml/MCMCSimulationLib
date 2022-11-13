@@ -202,7 +202,7 @@ namespace mcmc::cmdint {
             }
         }
 
-        void execute(int argc, char **argv) const {
+        static void execute(int argc, char **argv) {
             const auto mode_type = std::string(argv[1]);
             const auto target_name = std::string(argv[2]);
             std::string sim_root_dir = "./";
